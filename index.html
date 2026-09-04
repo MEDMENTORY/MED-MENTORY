@@ -31,12 +31,12 @@
         .focus-dashboard { display: flex; gap: 20px; background: var(--card-bg); padding: 15px 30px; border-radius: 8px; border: 1px solid var(--border-color); text-align: center; }
 
         /* MODO LOGIN FIREBASE */
-        #loginOverlay { display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 10000; flex-direction: column; justify-content: center; align-items: center; }
+        #loginOverlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 10000; flex-direction: column; justify-content: center; align-items: center; }
         .login-box { background: var(--card-bg); padding: 30px; border-radius: 8px; width: 90%; max-width: 400px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
         .login-box h2 { color: var(--accent-color); margin-top: 0; }
         .login-box input { width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid var(--border-color); border-radius: 4px; box-sizing: border-box; }
         
-        #firebaseWarning { background-color: var(--warning-bg); color: white; padding: 10px; text-align: center; font-weight: bold; border-radius: 6px; margin-bottom: 12px; }
+        #firebaseWarning { display: none; background-color: var(--warning-bg); color: white; padding: 10px; text-align: center; font-weight: bold; border-radius: 6px; margin-bottom: 12px; }
 
         /* ALERTAS */
         #backupAlert { display: none; background-color: #f39c12; color: white; padding: 10px; text-align: center; font-weight: bold; cursor: pointer; border-radius: 6px; margin-bottom: 12px; }
@@ -101,17 +101,18 @@
 </head>
 <body>
 
-    <!-- TELA DE LOGIN FIREBASE -->
+    <!-- TELA DE LOGIN FIREBASE (OPCIONAL) -->
     <div id="loginOverlay">
         <div class="login-box">
             <h2>🧠 APROVA-MED CLOUD</h2>
-            <p style="font-size:12px; margin-bottom:20px;">Sincronização em Nuvem Ativa</p>
+            <p style="font-size:12px; margin-bottom:20px;">Sincronização em Nuvem Opcional</p>
             <input type="email" id="loginEmail" placeholder="Seu E-mail">
             <input type="password" id="loginPassword" placeholder="Sua Senha">
             <div style="display: flex; gap:10px;">
                 <button onclick="realizarLogin()" style="background-color: var(--accent-color);">Entrar</button>
                 <button onclick="realizarCadastro()" style="background-color: var(--header-bg);">Criar Conta</button>
             </div>
+            <button onclick="pularLoginOffline()" style="background-color: #7f8c8d; margin-top: 10px;">Continuar Offline (Usar Local)</button>
             <p id="loginError" style="color:var(--danger-color); font-size:12px; margin-top:10px;"></p>
         </div>
     </div>
@@ -136,7 +137,7 @@
         </div>
     </div>
 
-    <div id="firebaseWarning">⚠️ ATENÇÃO: Abra o arquivo HTML no bloco de notas e insira as suas chaves do Firebase (apiKey, projectId, etc) para a nuvem funcionar!</div>
+    <div id="firebaseWarning">⚠️ ATENÇÃO: Para habilitar a nuvem, insira as chaves do Firebase no script. Caso contrário, o app roda 100% local.</div>
 
     <!-- CABEÇALHO -->
     <header>
@@ -145,10 +146,10 @@
             <p style="margin:0; font-size:12px; opacity:0.8;">Sistema Preditivo de Estudos • Repetição Espaçada • Foco na Residência Médica</p>
         </div>
         <div style="display: flex; gap: 5px; align-items:center;">
-            <span id="userInfoHeader" style="font-size:11px; margin-right:10px; font-weight:bold;"></span>
+            <span id="userInfoHeader" style="font-size:11px; margin-right:10px; font-weight:bold;">Offline (Local)</span>
             <button class="main-aba-tab" onclick="toggleSobrevivencia()" id="btnSobrevivencia" style="background:var(--bg-color); color:var(--text-color);">🛡️ Sobrevivência</button>
             <button class="main-aba-tab" onclick="toggleFocusMode()" style="background:var(--primary-color); color:white;">🎯 Foco</button>
-            <button class="main-aba-tab" onclick="fazerLogout()" style="background:var(--danger-color); color:white;">Sair</button>
+            <button class="main-aba-tab" onclick="fazerLogout()" style="background:var(--danger-color); color:white; display:none;" id="btnLogout">Sair</button>
         </div>
     </header>
 
@@ -497,7 +498,7 @@
             <input type="text" id="configIntervalos" value="1, 7, 14, 30, 60, 90">
             <label>Limite de Saturação (Aviso de Burnout em 3 Dias):</label>
             <input type="number" id="configBurnout" value="15">
-            <button onclick="salvarConfiguracoes()">Salvar Configurações (Nuvem)</button>
+            <button onclick="salvarConfiguracoes()">Salvar Configurações</button>
         </div>
 
         <div class="card">
@@ -541,17 +542,13 @@
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
-        // =======================================================================
-        // ATENÇÃO: COLOQUE SUAS CHAVES DO FIREBASE AQUI PARA A NUVEM FUNCIONAR!
-        // =======================================================================
         const firebaseConfig = {
-            apiKey: "AIzaSyDbggm0tW-E3NaeSYJ_d4_wje6ncE4gk3o",
-  authDomain: "aprovados-da44a.firebaseapp.com",
-  projectId: "aprovados-da44a",
-  storageBucket: "aprovados-da44a.firebasestorage.app",
-  messagingSenderId: "248559853817",
-  appId: "1:248559853817:web:f9b6e1f973b92254120228"
-
+            apiKey: "COLE_SUA_API_KEY_AQUI",
+            authDomain: "COLE_SEU_PROJECT_ID.firebaseapp.com",
+            projectId: "COLE_SEU_PROJECT_ID",
+            storageBucket: "COLE_SEU_PROJECT_ID.appspot.com",
+            messagingSenderId: "COLE_SEU_SENDER_ID",
+            appId: "COLE_SEU_APP_ID"
         };
 
         let app, auth, db;
@@ -560,14 +557,13 @@
                 app = initializeApp(firebaseConfig);
                 auth = getAuth(app);
                 db = getFirestore(app);
-                document.getElementById('firebaseWarning').style.display = 'none';
             }
         } catch(e) {
-            console.error("Erro ao inicializar Firebase", e);
+            console.error("Firebase init error", e);
         }
 
         window.realizarLogin = async () => {
-            if(!auth) return alert("Configure as chaves do Firebase primeiro no HTML!");
+            if(!auth) return alert("Configure as chaves do Firebase primeiro!");
             const email = document.getElementById('loginEmail').value;
             const pass = document.getElementById('loginPassword').value;
             try {
@@ -576,7 +572,7 @@
         };
 
         window.realizarCadastro = async () => {
-            if(!auth) return alert("Configure as chaves do Firebase primeiro no HTML!");
+            if(!auth) return alert("Configure as chaves do Firebase primeiro!");
             const email = document.getElementById('loginEmail').value;
             const pass = document.getElementById('loginPassword').value;
             try {
@@ -586,6 +582,15 @@
 
         window.fazerLogout = async () => {
             if(auth) await signOut(auth);
+            window.currentUserUid = null;
+            document.getElementById('loginOverlay').style.display = 'flex';
+            document.getElementById('userInfoHeader').innerText = "Offline (Local)";
+            document.getElementById('btnLogout').style.display = 'none';
+        };
+
+        window.pularLoginOffline = () => {
+            document.getElementById('loginOverlay').style.display = 'none';
+            window.loadLocalState();
         };
 
         window.firebaseSaveData = async (uid, data) => {
@@ -601,37 +606,35 @@
                     window.currentUserUid = user.uid;
                     document.getElementById('loginOverlay').style.display = 'none';
                     document.getElementById('userInfoHeader').innerText = user.email;
+                    document.getElementById('btnLogout').style.display = 'inline-block';
                     
                     try {
                         const docSnap = await getDoc(doc(db, "usuarios", user.uid));
                         if(docSnap.exists()) {
                             window.hydrateData(docSnap.data());
                         } else {
-                            window.hydrateData({}); 
+                            window.loadLocalState();
+                            window.syncToCloud();
                         }
                     } catch(e) {
-                        console.error("Erro ao carregar dados", e);
-                        window.hydrateData({});
+                        window.loadLocalState();
                     }
                 } else {
-                    window.currentUserUid = null;
+                    // Se não estiver logado, exibe a tela de login opcional
                     document.getElementById('loginOverlay').style.display = 'flex';
                 }
             });
         } else {
-            // Fallback se não colocar chaves: inicia dados vazios e fecha o modal para usar offline
+            // Sem chaves configuradas: carrega direto do localStorage sem bloquear
             setTimeout(() => {
-                window.hydrateData({});
                 document.getElementById('loginOverlay').style.display = 'none';
-            }, 1000);
+                window.loadLocalState();
+            }, 300);
         }
     </script>
 
     <!-- SCRIPT DE LÓGICA DA APLICAÇÃO -->
     <script>
-        // ------------------------------------------------------------------
-        // TAXONOMIA 3 NÍVEIS OFICIAL (PESO VISÍVEL NO TEXTO)
-        // ------------------------------------------------------------------
         const taxonomia = {
             "Clínica Médica": {
                 "Cardiologia": [
@@ -1048,7 +1051,7 @@
         };
 
         // ------------------------------------------------------------------
-        // GLOBALS
+        // GLOBALS & LOCALSTORAGE HYDRATION
         // ------------------------------------------------------------------
         let listaEstudos = [];
         let configAlgoritmo = { intervalos: [1, 7, 14, 30, 60, 90], p5: 0.5, p4: 0.7, p3: 0.9, p2: 1.1, p1: 1.4, burnout: 15 };
@@ -1071,23 +1074,37 @@
         const diasSemanaArr = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
         const turnosArr = ['m', 't', 'n'];
 
-        // ------------------------------------------------------------------
-        // INICIALIZAÇÃO FIREBASE (HYDRATION)
-        // ------------------------------------------------------------------
+        // Carrega estado local para garantir que dados antigos nunca se percam
+        window.loadLocalState = function() {
+            listaEstudos = JSON.parse(localStorage.getItem('estudos_med')) || [];
+            configAlgoritmo = JSON.parse(localStorage.getItem('config_alg')) || { intervalos: [1, 7, 14, 30, 60, 90], p5: 0.5, p4: 0.7, p3: 0.9, p2: 1.1, p1: 1.4, burnout: 15 };
+            agendaProvas = JSON.parse(localStorage.getItem('agenda_provas')) || [];
+            cronogramaInternato = JSON.parse(localStorage.getItem('cronograma_internato')) || [];
+            gradesSemanaisStore = JSON.parse(localStorage.getItem('grades_semanais_internato')) || {};
+            cronogramaSemanasStore = JSON.parse(localStorage.getItem('crono_semanas_store')) || {};
+            backlogAdiados = JSON.parse(localStorage.getItem('backlog_adiados')) || [];
+            pomodoroDiario = JSON.parse(localStorage.getItem('pomodoro_diario')) || {};
+            notasIncidencia = JSON.parse(localStorage.getItem('incidencia_notas')) || {};
+            listaSimulados = JSON.parse(localStorage.getItem('simulados_med')) || [];
+            metaAnual = parseInt(localStorage.getItem('meta_questoes')) || 10000;
+            streak = parseInt(localStorage.getItem('user_streak')) || 0;
+            
+            initApp();
+        };
+
         window.hydrateData = function(d) {
-            listaEstudos = d.estudos || [];
-            configAlgoritmo = d.config || { intervalos: [1, 7, 14, 30, 60, 90], p5: 0.5, p4: 0.7, p3: 0.9, p2: 1.1, p1: 1.4, burnout: 15 };
-            agendaProvas = d.provas || [];
-            cronogramaInternato = d.internato || [];
-            gradesSemanaisStore = d.grades_semanais || {};
-            cronogramaSemanasStore = d.crono_semanas || {};
-            backlogAdiados = d.backlog || [];
-            pomodoroDiario = d.pomodoro || {};
-            notasIncidencia = d.notas || {};
-            listaSimulados = d.simulados || [];
-            if(d.pomodoroTemas) pomodoroTemas = d.pomodoroTemas;
-            if(d.metaAnual) metaAnual = d.metaAnual;
-            if(d.streak) streak = d.streak;
+            listaEstudos = d.estudos || JSON.parse(localStorage.getItem('estudos_med')) || [];
+            configAlgoritmo = d.config || JSON.parse(localStorage.getItem('config_alg')) || { intervalos: [1, 7, 14, 30, 60, 90], p5: 0.5, p4: 0.7, p3: 0.9, p2: 1.1, p1: 1.4, burnout: 15 };
+            agendaProvas = d.provas || JSON.parse(localStorage.getItem('agenda_provas')) || [];
+            cronogramaInternato = d.internato || JSON.parse(localStorage.getItem('cronograma_internato')) || [];
+            gradesSemanaisStore = d.grades_semanais || JSON.parse(localStorage.getItem('grades_semanais_internato')) || {};
+            cronogramaSemanasStore = d.crono_semanas || JSON.parse(localStorage.getItem('crono_semanas_store')) || {};
+            backlogAdiados = d.backlog || JSON.parse(localStorage.getItem('backlog_adiados')) || [];
+            pomodoroDiario = d.pomodoro || JSON.parse(localStorage.getItem('pomodoro_diario')) || {};
+            notasIncidencia = d.notas || JSON.parse(localStorage.getItem('incidencia_notas')) || {};
+            listaSimulados = d.simulados || JSON.parse(localStorage.getItem('simulados_med')) || [];
+            metaAnual = d.metaAnual || parseInt(localStorage.getItem('meta_questoes')) || 10000;
+            streak = d.streak || parseInt(localStorage.getItem('user_streak')) || 0;
             
             initApp();
         };
@@ -1113,22 +1130,27 @@
             atualizarEstatisticasNerds();
         }
 
-        // Função de Sincronização
+        // Sincronização Local + Nuvem
         window.syncToCloud = function() {
+            localStorage.setItem('estudos_med', JSON.stringify(listaEstudos));
+            localStorage.setItem('config_alg', JSON.stringify(configAlgoritmo));
+            localStorage.setItem('agenda_provas', JSON.stringify(agendaProvas));
+            localStorage.setItem('cronograma_internato', JSON.stringify(cronogramaInternato));
+            localStorage.setItem('grades_semanais_internato', JSON.stringify(gradesSemanaisStore));
+            localStorage.setItem('crono_semanas_store', JSON.stringify(cronogramaSemanasStore));
+            localStorage.setItem('backlog_adiados', JSON.stringify(backlogAdiados));
+            localStorage.setItem('pomodoro_diario', JSON.stringify(pomodoroDiario));
+            localStorage.setItem('incidencia_notas', JSON.stringify(notasIncidencia));
+            localStorage.setItem('simulados_med', JSON.stringify(listaSimulados));
+            localStorage.setItem('meta_questoes', metaAnual);
+            localStorage.setItem('user_streak', streak);
+
             const dataToSave = {
-                estudos: listaEstudos,
-                config: configAlgoritmo,
-                provas: agendaProvas,
-                internato: cronogramaInternato,
-                grades_semanais: gradesSemanaisStore,
-                crono_semanas: cronogramaSemanasStore,
-                backlog: backlogAdiados,
-                pomodoro: pomodoroDiario,
-                notas: notasIncidencia,
-                simulados: listaSimulados,
-                pomodoroTemas: pomodoroTemas,
-                metaAnual: metaAnual,
-                streak: streak
+                estudos: listaEstudos, config: configAlgoritmo, provas: agendaProvas,
+                internato: cronogramaInternato, grades_semanais: gradesSemanaisStore,
+                crono_semanas: cronogramaSemanasStore, backlog: backlogAdiados,
+                pomodoro: pomodoroDiario, notas: notasIncidencia, simulados: listaSimulados,
+                metaAnual: metaAnual, streak: streak
             };
             if(window.firebaseSaveData && window.currentUserUid) {
                 window.firebaseSaveData(window.currentUserUid, dataToSave);
@@ -1891,9 +1913,7 @@
 
             if(slotsLivres.length === 0) return alert("Não há turnos de revisão ou descanso disponíveis na semana ativa para resgate!");
 
-            let msg = `Escolha o turno para encaixar:
-` + slotsLivres.map((s, i) => `${i+1}. ${s.desc}`).join('
-');
+            let msg = "Escolha o turno para encaixar:\n" + slotsLivres.map((s, i) => `${i+1}. ${s.desc}`).join('\n');
             let esc = prompt(msg, "1");
             if(esc === null) return;
             let num = parseInt(esc) - 1;
@@ -2126,15 +2146,15 @@
             reader.onload = function(evt) {
                 try {
                     let d = JSON.parse(evt.target.result);
-                    window.hydrateData(d); // reaplica globais e renderiza
-                    window.syncToCloud(); // joga pro firebase logo após importar
+                    window.hydrateData(d);
+                    window.syncToCloud();
                     alert("Backup restaurado!");
                 } catch(err) { alert("Arquivo JSON inválido."); }
             }; reader.readAsText(file);
         }
 
         function salvarEAtualizar() {
-            window.syncToCloud(); // Salva estado atual na nuvem
+            window.syncToCloud(); 
             renderizarTabela(); 
             atualizarRadar(); 
             atualizarGraficoSimulados(); 
