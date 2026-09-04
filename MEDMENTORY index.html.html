@@ -1,0 +1,2148 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>APROVA-MED BETA</title>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg-color: #f4f6f9; --card-bg: #ffffff; --text-color: #333333;
+            --header-bg: #2c3e50; --border-color: #ddd;
+            --primary-color: #27ae60; --primary-hover: #219653;
+            --accent-color: #2980b9; --danger-color: #c0392b;
+            --warning-bg: #f39c12; --sobrevivencia-bg: #8e44ad;
+        }
+
+        .dark-mode {
+            --bg-color: #121212; --card-bg: #1e1e1e; --text-color: #e0e0e0;
+            --header-bg: #1f2c34; --border-color: #333333;
+            --primary-color: #2ecc71; --primary-hover: #27ae60;
+            --accent-color: #3498db; --danger-color: #e74c3c;
+        }
+
+        body { font-family: Arial, sans-serif; max-width: 1150px; margin: 0 auto 30px auto; padding: 15px; background-color: var(--bg-color); color: var(--text-color); transition: background 0.3s; }
+
+        /* MODO FOCO */
+        body.focus-mode header, body.focus-mode .main-nav-abas, body.focus-mode .tab-content, body.focus-mode #backupAlert { display: none !important; }
+        .focus-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-color); z-index: 9999; flex-direction: column; justify-content: center; align-items: center; gap: 20px; }
+        body.focus-mode .focus-overlay { display: flex; }
+        .focus-dashboard { display: flex; gap: 20px; background: var(--card-bg); padding: 15px 30px; border-radius: 8px; border: 1px solid var(--border-color); text-align: center; }
+
+        /* MODO LOGIN FIREBASE */
+        #loginOverlay { display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 10000; flex-direction: column; justify-content: center; align-items: center; }
+        .login-box { background: var(--card-bg); padding: 30px; border-radius: 8px; width: 90%; max-width: 400px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        .login-box h2 { color: var(--accent-color); margin-top: 0; }
+        .login-box input { width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid var(--border-color); border-radius: 4px; box-sizing: border-box; }
+        
+        #firebaseWarning { background-color: var(--warning-bg); color: white; padding: 10px; text-align: center; font-weight: bold; border-radius: 6px; margin-bottom: 12px; }
+
+        /* ALERTAS */
+        #backupAlert { display: none; background-color: #f39c12; color: white; padding: 10px; text-align: center; font-weight: bold; cursor: pointer; border-radius: 6px; margin-bottom: 12px; }
+        .alert-bar { background-color: var(--danger-color); color: white; padding: 10px; text-align: center; font-weight: bold; border-radius: 6px; margin-bottom: 15px; }
+
+        /* CABEÇALHO E CARDS */
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; background: var(--card-bg); padding: 12px 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); flex-wrap: wrap; gap: 10px; }
+        h1, h2, h3, h4 { color: var(--text-color); margin-top: 0; }
+        .card { background: var(--card-bg); padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; border: 1px solid var(--border-color); }
+        
+        label { font-weight: bold; display: block; margin-top: 10px; font-size: 14px; }
+        select, input, textarea { width: 100%; padding: 8px; margin-top: 5px; margin-bottom: 10px; border: 1px solid var(--border-color); border-radius: 4px; background: var(--card-bg); color: var(--text-color); box-sizing: border-box; }
+        button { background-color: var(--primary-color); color: white; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; width: 100%; margin-top: 10px; font-weight: bold; transition: 0.2s; }
+        button:hover { filter: brightness(1.1); }
+        .btn-acao { background-color: var(--accent-color); width: auto; padding: 6px 12px; font-size: 12px; margin: 2px; }
+        .btn-excluir { background-color: var(--danger-color); }
+        .btn-edit { background-color: #f39c12; }
+
+        /* NAVEGAÇÃO */
+        .main-nav-abas { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+        .main-aba-tab { background: var(--card-bg); color: var(--text-color); border: 1px solid var(--border-color); padding: 10px 14px; cursor: pointer; border-radius: 6px; font-weight: bold; font-size: 13px; }
+        .main-aba-tab.active { background: var(--accent-color); color: white; border-color: var(--accent-color); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .sub-nav-abas { display: flex; gap: 5px; margin-bottom: 10px; flex-wrap: wrap; }
+        .sub-aba-btn { background: var(--border-color); color: var(--text-color); border: none; padding: 7px 12px; cursor: pointer; border-radius: 4px; font-weight: bold; width: auto; font-size: 13px; }
+        .sub-aba-btn.active { background: var(--accent-color); color: white; }
+
+        /* TABELAS */
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid var(--border-color); padding: 9px; text-align: left; font-size: 13px; }
+        th { background-color: var(--header-bg); color: white; }
+        tr.atrasado { background-color: rgba(231, 76, 60, 0.1); border-left: 3px solid var(--danger-color); }
+        .badge { padding: 4px 8px; border-radius: 4px; color: white; font-weight: bold; font-size: 11px; display: inline-block; }
+        .badge-macro { background-color: var(--header-bg); margin-bottom: 3px; }
+
+        /* DASHBOARD GRID */
+        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin-bottom: 20px; }
+        .stat-box { background: var(--card-bg); padding: 15px; border-radius: 8px; border: 1px solid var(--border-color); text-align: center; }
+        .stat-box h3 { margin: 0; font-size: 22px; color: var(--accent-color); }
+        .stat-box p { margin: 5px 0 0; font-size: 12px; opacity: 0.8; }
+
+        /* POMODORO */
+        .pomodoro-box { display: flex; align-items: center; justify-content: space-between; background: var(--card-bg); padding: 12px 20px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
+        .timer-display { font-size: 22px; font-weight: bold; font-family: monospace; color: var(--accent-color); }
+        body.modo-sobrevivencia .pomodoro-box { border: 2px solid var(--sobrevivencia-bg); box-shadow: 0 0 15px rgba(142, 68, 173, 0.4); }
+
+        /* KANBAN INTERNATO */
+        .semana-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin-top: 10px; }
+        .dia-col { background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 4px; padding: 5px; text-align: center; }
+        .dia-col h4 { font-size: 11px; margin: 0 0 5px 0; background: var(--header-bg); color: white; padding: 4px; border-radius: 3px; }
+        .sel-turno { font-size: 10px; padding: 2px; width: 100%; border-radius: 3px; border: 1px solid #ccc; margin-bottom: 4px; }
+
+        /* MODAL */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); justify-content: center; align-items: center; z-index: 1000; }
+        .modal-content { background: var(--card-bg); padding: 20px; border-radius: 8px; width: 90%; max-width: 550px; max-height: 85vh; overflow-y: auto; }
+        .grafico-container { position: relative; height: 300px; width: 100%; }
+        
+        .row-form { display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end; }
+        .col-form { flex: 1; min-width: 150px; }
+    </style>
+</head>
+<body>
+
+    <!-- TELA DE LOGIN FIREBASE -->
+    <div id="loginOverlay">
+        <div class="login-box">
+            <h2>🧠 APROVA-MED CLOUD</h2>
+            <p style="font-size:12px; margin-bottom:20px;">Sincronização em Nuvem Ativa</p>
+            <input type="email" id="loginEmail" placeholder="Seu E-mail">
+            <input type="password" id="loginPassword" placeholder="Sua Senha">
+            <div style="display: flex; gap:10px;">
+                <button onclick="realizarLogin()" style="background-color: var(--accent-color);">Entrar</button>
+                <button onclick="realizarCadastro()" style="background-color: var(--header-bg);">Criar Conta</button>
+            </div>
+            <p id="loginError" style="color:var(--danger-color); font-size:12px; margin-top:10px;"></p>
+        </div>
+    </div>
+
+    <!-- MODO FOCO -->
+    <div class="focus-overlay">
+        <h2>🎯 MODO FOCO ATIVO</h2>
+        <div class="timer-display" id="focusTimerDisplay" style="font-size: 60px;">25:00</div>
+        <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+            <button class="main-aba-tab active" onclick="iniciarPomodoro()">▶️ Iniciar</button>
+            <button class="main-aba-tab" onclick="pausarPomodoro()">⏸️ Pausar</button>
+            <button class="main-aba-tab" onclick="resetarPomodoro()">🔄 Reiniciar</button>
+        </div>
+        <div class="focus-dashboard">
+            <div><span style="font-size: 24px; font-weight: bold; color: var(--accent-color);" id="focusTotalTime">0</span><br><span style="font-size: 12px;">Minutos Hoje</span></div>
+            <div><span style="font-size: 24px; font-weight: bold; color: var(--primary-color);" id="focusMetaStatus">0/0</span><br><span style="font-size: 12px;">Revisões Feitas</span></div>
+            <div><span style="font-size: 24px; font-weight: bold; color: #f39c12;" id="focusStreak">0</span><br><span style="font-size: 12px;">Dias Seguidos</span></div>
+        </div>
+        <div style="display: flex; gap: 15px; margin-top: 20px;">
+            <button onclick="toggleDarkMode()" style="background: var(--header-bg); width: auto; padding: 10px 20px;">🌓 Luz</button>
+            <button onclick="toggleFocusMode()" style="background: var(--danger-color); width: auto; padding: 10px 25px;">Sair do Foco</button>
+        </div>
+    </div>
+
+    <div id="firebaseWarning">⚠️ ATENÇÃO: Abra o arquivo HTML no bloco de notas e insira as suas chaves do Firebase (apiKey, projectId, etc) para a nuvem funcionar!</div>
+
+    <!-- CABEÇALHO -->
+    <header>
+        <div>
+            <h1>🧠 APROVA-MED BETA</h1>
+            <p style="margin:0; font-size:12px; opacity:0.8;">Sistema Preditivo de Estudos • Repetição Espaçada • Foco na Residência Médica</p>
+        </div>
+        <div style="display: flex; gap: 5px; align-items:center;">
+            <span id="userInfoHeader" style="font-size:11px; margin-right:10px; font-weight:bold;"></span>
+            <button class="main-aba-tab" onclick="toggleSobrevivencia()" id="btnSobrevivencia" style="background:var(--bg-color); color:var(--text-color);">🛡️ Sobrevivência</button>
+            <button class="main-aba-tab" onclick="toggleFocusMode()" style="background:var(--primary-color); color:white;">🎯 Foco</button>
+            <button class="main-aba-tab" onclick="fazerLogout()" style="background:var(--danger-color); color:white;">Sair</button>
+        </div>
+    </header>
+
+    <div id="retaFinalAlert" class="alert-bar" style="display:none;"></div>
+    <div id="sobrevivenciaAlert" class="alert-bar" style="display:none; background:var(--sobrevivencia-bg);">🛡️ MODO SOBREVIVÊNCIA ATIVO: Exibindo estritamente revisões para hoje e atrasadas.</div>
+    <div id="sprintAlert" class="alert-bar" style="display:none; background:var(--accent-color);">⚡ SPRINT ATIVO: Exibindo estritamente temas com Pesos 4 e 5 para reta final.</div>
+
+    <!-- NAVEGAÇÃO PRINCIPAL -->
+    <div class="main-nav-abas">
+        <button class="main-aba-tab active" onclick="mudarAba('tab-inicio', this)">🏠 Página Inicial</button>
+        <button class="main-aba-tab" onclick="mudarAba('tab-planejamento', this)">📅 Cronograma Adaptado ao Internato</button>
+        <button class="main-aba-tab" onclick="mudarAba('tab-estudo', this)">✍️ Registro de Estudo</button>
+        <button class="main-aba-tab" onclick="mudarAba('tab-analytics', this)">📊 Métricas de Estudo</button>
+        <button class="main-aba-tab" onclick="mudarAba('tab-nerd', this)">🤓 Tempo Total de Estudo</button>
+        <button class="main-aba-tab" onclick="mudarAba('tab-caderno', this)">📚 Metas + Incidência de Assuntos + Caderno de Erros</button>
+        <button class="main-aba-tab" onclick="mudarAba('tab-config', this)">⚙️ Configuração</button>
+    </div>
+
+    <!-- ABA 1: PÁGINA INICIAL -->
+    <div id="tab-inicio" class="tab-content active">
+        <div class="pomodoro-box">
+            <div style="font-size:13px;">🔥 <strong>Sequência de Dias:</strong> <span id="streakCount">0</span> | 🎯 <strong>Metas:</strong> <span id="metaStatus">0/0</span> revisões.</div>
+            <div class="timer-display" id="timerDisplay">25:00</div>
+            <div style="display: flex; gap: 5px; width: auto;">
+                <button class="btn-acao" style="padding:10px; font-size:14px;" onclick="iniciarPomodoro()">▶️</button>
+                <button class="btn-acao" style="padding:10px; font-size:14px;" onclick="pausarPomodoro()">⏸️</button>
+                <button class="btn-acao" style="padding:10px; font-size:14px;" onclick="resetarPomodoro()">🔄</button>
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="stat-box"><h3 id="statHoje">0</h3><p>Para Hoje</p></div>
+            <div class="stat-box"><h3 id="statAtrasadas" style="color: var(--danger-color);">0</h3><p>Atrasadas</p></div>
+            <div class="stat-box"><h3 id="statPendentesTeoria" style="color: #f39c12;">0</h3><p>Aguardando Questões</p></div>
+            <div class="stat-box">
+                <h3 id="statCarga3Dias">0</h3><p>Carga Próx. 3 dias</p>
+                <div id="burnoutAlert" style="display:none; color:var(--danger-color); font-weight:bold; font-size:11px; margin-top:5px;">⚠️ Risco de Saturação!</div>
+            </div>
+        </div>
+
+        <!-- PAINEL DE RITMO PREDITIVO -->
+        <div class="card">
+            <h2 style="font-size: 16px; margin-bottom: 15px;">🎯 Meta Anual de Questões: Painel de Ritmo Preditivo</h2>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 13px; font-weight: bold;">
+                <span id="metaAnualProgressoText">0 / 10000 questões resolvidas</span>
+                <span id="metaAnualPercent">0%</span>
+            </div>
+            <div style="width: 100%; background: var(--border-color); border-radius: 5px; height: 12px; overflow: hidden; margin-bottom: 15px;">
+                <div id="metaAnualBar" style="height: 100%; width: 0%; background: var(--primary-color); transition: width 0.3s;"></div>
+            </div>
+            <div class="dashboard-grid" style="margin-bottom:0; gap:10px;">
+                <div class="stat-box" style="padding:10px;">
+                    <h4 style="margin:0; font-size:11px; color:#555;">RITMO ATUAL (Run Rate)</h4>
+                    <p id="metaRitmoAtual" style="font-size:16px; font-weight:bold; color:var(--accent-color); margin:5px 0;">0 qts/dia</p>
+                </div>
+                <div class="stat-box" style="padding:10px; border-left:3px solid #f39c12;">
+                    <h4 style="margin:0; font-size:11px; color:#555;">RITMO NECESSÁRIO</h4>
+                    <p id="metaRitmoNecessario" style="font-size:16px; font-weight:bold; color:#f39c12; margin:5px 0;">0 qts/dia</p>
+                    <small id="metaDiasRestantes" style="font-size:10px; opacity:0.8;">Até a prova principal</small>
+                </div>
+                <div class="stat-box" style="padding:10px; background:rgba(0,0,0,0.02);">
+                    <h4 style="margin:0; font-size:11px; color:#555;">STATUS PREDITIVO</h4>
+                    <p id="metaStatusRitmo" style="font-size:13px; font-weight:bold; margin:5px 0; margin-top:8px;">Aguardando dados</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:15px;">
+                <h2 style="margin:0;">Cronograma de Revisões</h2>
+                <div style="text-align: right;">
+                    <div>
+                        <button class="btn-acao" onclick="ativarSprint()" id="btnSprintConfig" style="background:#2c3e50;">⚡ Ativar Sprint</button>
+                        <button class="btn-acao" onclick="limparSprint()" style="background:var(--danger-color);">Limpar Sprint</button>
+                    </div>
+                    <div style="font-size: 11px; margin-top: 5px;">Status do Sprint: <span id="sprintStatusText" style="font-weight:bold; color:var(--danger-color);">Inativo</span></div>
+                </div>
+            </div>
+            
+            <div class="sub-nav-abas">
+                <button class="sub-aba-btn active" onclick="mudarFiltroTabela('todas', this)">Todas</button>
+                <button class="sub-aba-btn" onclick="mudarFiltroTabela('atrasadas', this)">Atrasadas 🔴</button>
+                <button class="sub-aba-btn" onclick="mudarFiltroTabela('hoje', this)">Para Hoje 🎯</button>
+            </div>
+            <table>
+                <thead><tr><th>Área / Tema</th><th>Fase / Próxima</th><th>Ações</th></tr></thead>
+                <tbody id="tabela-estudos"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ABA 2: CRONOGRAMA ADAPTADO AO INTERNATO -->
+    <div id="tab-planejamento" class="tab-content">
+        
+        <!-- DATA DE RODÍZIOS NO INTERNATO -->
+        <div class="card">
+            <h2>🏥 Data de Rodízios no Internato</h2>
+            <p style="font-size:12px; opacity:0.8;">Cadastre os blocos de rodízio do seu internato. O sistema calculará o número exato de semanas e montará o calendário completo.</p>
+            <form onsubmit="adicionarRodizio(event)" class="row-form">
+                <div class="col-form"><label>Início do Rodízio:</label><input type="date" id="rodInicio" required></div>
+                <div class="col-form"><label>Fim do Rodízio:</label><input type="date" id="rodFim" required></div>
+                <div class="col-form">
+                    <label>Macro-Área:</label>
+                    <select id="rodMacro" required></select>
+                </div>
+                <div><button type="submit" style="margin:0; padding:10px;">Adicionar Rodízio</button></div>
+            </form>
+            <div id="listaRodizios" style="margin-top:15px; font-size:13px;"></div>
+        </div>
+
+        <!-- CRONOGRAMA DE ESTUDOS PERSONALIZADO -->
+        <div class="card">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                <h2 style="margin:0;">📅 Cronograma de Estudos Personalizado</h2>
+                <button onclick="gerarTodoORodizio()" style="background:var(--primary-color); width:auto; padding:8px 15px; margin:0;">🚀 Gerar Todo o Cronograma do Rodízio</button>
+            </div>
+            <p style="font-size:12px; opacity:0.8; margin-top:5px;">Alterne entre as semanas abaixo. Altere turnos para <b>Ocupado</b> em imprevistos e recalcule estritamente aquela semana sem afetar as demais.</p>
+            
+            <div class="row-form" style="margin-bottom:15px; margin-top:15px;">
+                <div class="col-form">
+                    <label>Selecione a Semana:</label>
+                    <select id="seletorSemanaInternato" onchange="mudarSemanaAtiva(this.value)">
+                        <option value="">Cadastre um rodízio primeiro...</option>
+                    </select>
+                </div>
+                <div class="col-form" style="display:flex; align-items:flex-end;">
+                    <label style="display:flex; align-items:center; gap:8px; margin:0; cursor:pointer; height:38px;">
+                        <input type="checkbox" id="chkMisto" checked style="width:18px; height:18px; margin:0;">
+                        <span>Modo Misto (65% Rodízio / 35% Revisão Global)</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="semana-grid" id="gridSemanaSetup"></div>
+            
+            <div style="display:flex; gap:10px; margin-top:15px;">
+                <button onclick="gerarPlanoSemanaAtiva()" style="background:var(--accent-color); flex:2;">🔄 Recalcular Apenas Esta Semana (Efeito Local Isolado)</button>
+                <button onclick="salvarGradeTurnosSemana()" style="background:var(--header-bg); flex:1;">💾 Salvar Turnos Desta Semana</button>
+            </div>
+
+            <div id="resultadoInternato" style="margin-top:25px; display:none;"></div>
+        </div>
+
+        <!-- TEMAS ADIADOS -->
+        <div class="card">
+            <h2>📦 Temas Adiados</h2>
+            <p style="font-size:12px; opacity:0.8;">Temas que foram adiados por falta de tempo ou plantões de última hora. Resgate para a semana ativa quando tiver um turno livre!</p>
+            <div id="listaBacklogAdiados" style="max-height:220px; overflow-y:auto; font-size:13px;"></div>
+        </div>
+
+        <!-- CALENDÁRIO DE PROVAS -->
+        <div class="card">
+            <h2>🎯 Calendário de Provas</h2>
+            <p style="font-size:12px; opacity:0.8;">Cadastre suas provas. A "Prova Principal" ativará automaticamente o alerta e o bloqueio de revisão curta aos 45 dias.</p>
+            <form onsubmit="adicionarOuEditarProva(event)" class="row-form">
+                <input type="hidden" id="provaIdEdit">
+                <div class="col-form"><label>Nome da Prova:</label><input type="text" id="provaNome" placeholder="Ex: ENARE 2028" required></div>
+                <div class="col-form"><label>Data da Prova:</label><input type="date" id="provaData" required></div>
+                <div class="col-form">
+                    <label>Tipo:</label>
+                    <select id="provaTipo"><option value="principal">Alvo Principal (Reta Final 45d)</option><option value="secundaria">Secundária (Sprints)</option></select>
+                </div>
+                <div><button type="submit" id="btnSalvarProva" style="margin:0; padding:10px;">Adicionar Prova</button></div>
+            </form>
+            <ul id="listaProvas" style="font-size:13px; margin-top:15px; padding-left:20px;"></ul>
+        </div>
+    </div>
+
+    <!-- ABA 3: REGISTRO DE ESTUDO -->
+    <div id="tab-estudo" class="tab-content">
+        <div class="card">
+            <h2>Registro de Estudo</h2>
+            <form onsubmit="salvarNovoEstudo(event)" id="formEstudo">
+                
+                <div class="row-form">
+                    <div class="col-form">
+                        <label>1. Macro-Área:</label>
+                        <select id="reg_macro" onchange="popularEspecialidades('reg_macro', 'reg_esp', 'reg_subtema', false)" required></select>
+                    </div>
+                    <div class="col-form">
+                        <label>2. Especialidade:</label>
+                        <select id="reg_esp" onchange="popularSubtemas('reg_macro', 'reg_esp', 'reg_subtema', false)" required disabled><option value="">Aguarde...</option></select>
+                    </div>
+                </div>
+                <div style="margin-top:10px;">
+                    <label>3. Subtema:</label>
+                    <select id="reg_subtema" required disabled><option value="">Aguarde...</option></select>
+                </div>
+
+                <div style="display: flex; gap: 10px; margin-top:15px;">
+                    <div style="flex:1"><label>Data da Teoria:</label><input type="date" id="reg_data" required></div>
+                    <div style="flex:1"><label>Tempo Gasto (min):</label><input type="number" id="reg_tempo" placeholder="Ex: 45" required></div>
+                </div>
+
+                <div style="background: var(--bg-color); padding: 12px; border-radius: 6px; margin: 15px 0; border: 1px solid var(--border-color);">
+                    <label style="display:flex; align-items:center; gap:10px; margin:0; cursor:pointer;">
+                        <input type="checkbox" id="checkFezQuestoes" checked onchange="toggleQuestoesForm()" style="width:20px; height:20px; margin:0;">
+                        <span>Fiz a 1ª bateria de questões hoje.</span>
+                    </label>
+                </div>
+
+                <div id="boxQuestoesIniciais" style="display: flex; gap: 10px;">
+                    <div style="flex:1"><label>Questões Feitas:</label><input type="number" id="reg_feitas" placeholder="Ex: 25"></div>
+                    <div style="flex:1"><label>Acertos:</label><input type="number" id="reg_acertos" placeholder="Ex: 20"></div>
+                </div>
+
+                <div style="display: flex; gap: 10px;">
+                    <div style="flex:1"><label>Dificuldade da Aula/Teoria:</label><select id="reg_dificuldade" required><option value="medio">Médio</option><option value="facil">Fácil</option><option value="dificil">Difícil</option></select></div>
+                    <div style="flex:1"><label>Nível de Energia:</label><select id="reg_energia" required><option value="alta">⚡ Alta</option><option value="media" selected>🔋 Média</option><option value="baixa">🪫 Baixa</option></select></div>
+                </div>
+
+                <button type="submit">Salvar Estudo e Programar FSRS</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ABA 4: MÉTRICAS DE ESTUDO -->
+    <div id="tab-analytics" class="tab-content">
+        <div class="card">
+            <h2>Radar & Evolução de Acertos por Subtema</h2>
+            <div class="dashboard-grid">
+                <div class="stat-box">
+                    <h4 style="margin-bottom:10px;">Radar das 5 Macro-Áreas</h4>
+                    <div class="grafico-container" style="height:250px;"><canvas id="graficoRadar"></canvas></div>
+                </div>
+                <div class="stat-box" style="text-align: left;">
+                    <h4 style="text-align:center; margin-bottom:10px;">Evolução de Acertos por Subtema</h4>
+                    <div class="row-form" style="margin-bottom:15px; font-size:12px;">
+                        <div class="col-form">
+                            <select id="evo_macro" onchange="popularEspecialidades('evo_macro', 'evo_esp', 'evo_subtema', true)"></select>
+                        </div>
+                        <div class="col-form">
+                            <select id="evo_esp" onchange="popularSubtemas('evo_macro', 'evo_esp', 'evo_subtema', true)"><option value="todas">📌 Todas</option></select>
+                        </div>
+                        <div class="col-form">
+                            <select id="evo_subtema" onchange="atualizarGraficoEvolucao()"><option value="todas">📌 Todos</option></select>
+                        </div>
+                    </div>
+                    <div class="grafico-container" style="height:200px;"><canvas id="graficoEvolucao"></canvas></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Simulados: Registro e Desempenho</h2>
+            <form onsubmit="salvarSimulado(event)" style="display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end;">
+                <div style="flex:2; min-width:150px;"><label>Nome (Ex: ENARE #1):</label><input type="text" id="simNome" required></div>
+                <div style="flex:1; min-width:100px;"><label>Acertos:</label><input type="number" id="simAcertos" required></div>
+                <div style="flex:1; min-width:100px;"><label>Total:</label><input type="number" id="simTotal" required></div>
+                
+                <div style="width:100%; display:flex; gap:5px; margin-top:5px; flex-wrap:wrap;">
+                    <input type="number" id="simCM" placeholder="Acertos Clínica" style="flex:1; min-width:100px;">
+                    <input type="number" id="simCIR" placeholder="Acertos Cirurgia" style="flex:1; min-width:100px;">
+                    <input type="number" id="simGO" placeholder="Acertos GO" style="flex:1; min-width:100px;">
+                    <input type="number" id="simPED" placeholder="Acertos Pediatria" style="flex:1; min-width:100px;">
+                    <input type="number" id="simPREV" placeholder="Acertos Preventiva" style="flex:1; min-width:100px;">
+                </div>
+                <button type="submit" style="margin:0; width:auto; padding:10px 20px;">Lançar Simulado</button>
+            </form>
+            
+            <div style="margin-top: 30px; border-top: 1px solid var(--border-color); padding-top: 20px;">
+                <h4 style="text-align:center;">Espelho de Simulados</h4>
+                <div class="grafico-container" style="height:250px;"><canvas id="graficoSimulados"></canvas></div>
+                <div id="listaSimulados" style="margin-top: 15px; font-size:12px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ABA 5: TEMPO TOTAL DE ESTUDO -->
+    <div id="tab-nerd" class="tab-content">
+        <div class="card">
+            <h2>🤓 Tempo Total de Estudo</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                <div class="stat-box" style="border-left: 4px solid var(--primary-color);">
+                    <h4>HOJE</h4><h3 id="nerdTempoHoje">0h 0m</h3><p>Focado</p><hr><h3 id="nerdQtsHoje">0</h3><p>Questões</p>
+                </div>
+                <div class="stat-box" style="border-left: 4px solid var(--accent-color);">
+                    <h4>7 DIAS</h4><h3 id="nerdTempoSemana">0h 0m</h3><p>Focado</p><hr><h3 id="nerdQtsSemana">0</h3><p>Questões</p>
+                </div>
+                <div class="stat-box" style="border-left: 4px solid #8e44ad;">
+                    <h4>30 DIAS</h4><h3 id="nerdTempoMes">0h 0m</h3><p>Focado</p><hr><h3 id="nerdQtsMes">0</h3><p>Questões</p>
+                </div>
+            </div>
+            <h4 style="margin-top:20px;">🏆 Top 3 Áreas de Dedicação (Últimos 30 Dias)</h4>
+            <ul id="nerdTopAreas" style="font-size:14px; line-height:1.8; margin:0;"></ul>
+        </div>
+    </div>
+
+    <!-- ABA 6: METAS + INCIDÊNCIA DE ASSUNTOS + CADERNO DE ERROS -->
+    <div id="tab-caderno" class="tab-content">
+        <div class="card">
+            <h2>🎯 Metas de Questões por Subtema</h2>
+            <div class="row-form" style="margin-bottom:15px;">
+                <div class="col-form">
+                    <label>Macro-Área:</label>
+                    <select id="meta_macro" onchange="popularEspecialidades('meta_macro', 'meta_esp', null, true)"></select>
+                </div>
+                <div class="col-form">
+                    <label>Especialidade:</label>
+                    <select id="meta_esp" onchange="renderizarMetasSubtemas()"><option value="todas">📌 Selecione...</option></select>
+                </div>
+            </div>
+            <table>
+                <thead><tr><th>Subtema</th><th>Meta Sugerida</th><th>Feitas</th><th>Status</th></tr></thead>
+                <tbody id="tabela-metas-subtemas"></tbody>
+            </table>
+        </div>
+
+        <div class="card">
+            <h2>📋 Planilha de Incidência Focada</h2>
+            <div class="row-form" style="margin-bottom:15px;">
+                <div class="col-form">
+                    <label>Macro-Área:</label>
+                    <select id="plan_macro" onchange="popularEspecialidades('plan_macro', 'plan_esp', null, true)"></select>
+                </div>
+                <div class="col-form">
+                    <label>Especialidade:</label>
+                    <select id="plan_esp" onchange="renderizarPlanilha()"><option value="todas">📌 Selecione...</option></select>
+                </div>
+            </div>
+            <table>
+                <thead><tr><th style="width:30%">Subtema</th><th style="width:35%">O que focar (Texto)</th><th style="width:35%">Imagem (Cole o Link)</th></tr></thead>
+                <tbody id="tabela-planilha"></tbody>
+            </table>
+        </div>
+
+        <div class="card">
+            <h2>📚 Caderno de Erros</h2>
+            <input type="text" id="buscaErros" placeholder="Buscar por palavra-chave nos seus erros clínicos..." onkeyup="renderizarCadernoErros()">
+            <div id="listaCadernoErros" style="max-height: 200px; overflow-y: auto; margin-top: 10px;"></div>
+        </div>
+    </div>
+
+    <!-- ABA 7: CONFIGURAÇÃO -->
+    <div id="tab-config" class="tab-content">
+        <div class="card">
+            <h2>⚙️ Calibragem do Algoritmo FSRS (Pesos 1 a 5)</h2>
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap:10px; margin-top:10px;">
+                <div><label>Fator Peso 5:</label><input type="number" step="0.1" id="configPeso5" value="0.5"></div>
+                <div><label>Fator Peso 4:</label><input type="number" step="0.1" id="configPeso4" value="0.7"></div>
+                <div><label>Fator Peso 3:</label><input type="number" step="0.1" id="configPeso3" value="0.9"></div>
+                <div><label>Fator Peso 2:</label><input type="number" step="0.1" id="configPeso2" value="1.1"></div>
+                <div><label>Fator Peso 1:</label><input type="number" step="0.1" id="configPeso1" value="1.4"></div>
+            </div>
+            <label>Intervalos Base (Dias):</label>
+            <input type="text" id="configIntervalos" value="1, 7, 14, 30, 60, 90">
+            <label>Limite de Saturação (Aviso de Burnout em 3 Dias):</label>
+            <input type="number" id="configBurnout" value="15">
+            <button onclick="salvarConfiguracoes()">Salvar Configurações (Nuvem)</button>
+        </div>
+
+        <div class="card">
+            <h2>🎨 Tema & Meta Anual</h2>
+            <button class="sub-aba-btn" onclick="toggleDarkMode()" style="width:100%; padding:10px; margin-bottom:15px;">🌓 Alternar Tema Claro / Escuro</button>
+            
+            <label>Meta Anual de Questões:</label>
+            <input type="number" id="metaInputConfig" value="10000" onchange="atualizarMetaAnual()">
+
+            <h4 style="margin-top:15px; margin-bottom:5px;">Backup Manual (JSON)</h4>
+            <div style="display: flex; gap: 10px;">
+                <button class="sub-aba-btn" onclick="exportarBackup()" style="flex:1; background:var(--accent-color); color:white; padding:10px;">💾 Exportar JSON</button>
+                <button class="sub-aba-btn" onclick="document.getElementById('importFile').click()" style="flex:1; background:var(--primary-color); color:white; padding:10px;">📂 Importar JSON</button>
+            </div>
+            <input type="file" id="importFile" style="display:none" onchange="importarBackup(event)">
+        </div>
+    </div>
+
+    <!-- MODAL REVISÃO -->
+    <div class="modal" id="modalRevisao">
+        <div class="modal-content">
+            <form onsubmit="salvarRevisaoModal(event)">
+                <div id="modalBodyContent"></div>
+                <button type="submit">Salvar Revisão e Atualizar FSRS</button>
+                <button type="button" class="btn-excluir" style="width:100%; margin-top:5px; padding:10px; border:none; color:white; border-radius:4px; font-weight:bold; cursor:pointer;" onclick="fecharModal('modalRevisao')">Cancelar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL DETALHES -->
+    <div class="modal" id="modalDetalhes">
+        <div class="modal-content">
+            <div id="detalhesBodyContent"></div>
+            <button type="button" class="sub-aba-btn" style="width:100%; margin-top:15px; padding:10px;" onclick="fecharModal('modalDetalhes')">Fechar</button>
+        </div>
+    </div>
+
+    <!-- SCRIPT DE INFRAESTRUTURA FIREBASE -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+
+        // =======================================================================
+        // ATENÇÃO: COLOQUE SUAS CHAVES DO FIREBASE AQUI PARA A NUVEM FUNCIONAR!
+        // =======================================================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyDbggm0tW-E3NaeSYJ_d4_wje6ncE4gk3o",
+  authDomain: "aprovados-da44a.firebaseapp.com",
+  projectId: "aprovados-da44a",
+  storageBucket: "aprovados-da44a.firebasestorage.app",
+  messagingSenderId: "248559853817",
+  appId: "1:248559853817:web:f9b6e1f973b92254120228"
+
+        };
+
+        let app, auth, db;
+        try {
+            if (firebaseConfig.apiKey !== "COLE_SUA_API_KEY_AQUI") {
+                app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+                db = getFirestore(app);
+                document.getElementById('firebaseWarning').style.display = 'none';
+            }
+        } catch(e) {
+            console.error("Erro ao inicializar Firebase", e);
+        }
+
+        window.realizarLogin = async () => {
+            if(!auth) return alert("Configure as chaves do Firebase primeiro no HTML!");
+            const email = document.getElementById('loginEmail').value;
+            const pass = document.getElementById('loginPassword').value;
+            try {
+                await signInWithEmailAndPassword(auth, email, pass);
+            } catch(e) { document.getElementById('loginError').innerText = "Erro ao logar: " + e.message; }
+        };
+
+        window.realizarCadastro = async () => {
+            if(!auth) return alert("Configure as chaves do Firebase primeiro no HTML!");
+            const email = document.getElementById('loginEmail').value;
+            const pass = document.getElementById('loginPassword').value;
+            try {
+                await createUserWithEmailAndPassword(auth, email, pass);
+            } catch(e) { document.getElementById('loginError').innerText = "Erro ao criar: " + e.message; }
+        };
+
+        window.fazerLogout = async () => {
+            if(auth) await signOut(auth);
+        };
+
+        window.firebaseSaveData = async (uid, data) => {
+            if(!db) return;
+            try {
+                await setDoc(doc(db, "usuarios", uid), data);
+            } catch(e) { console.error("Erro ao salvar na nuvem:", e); }
+        };
+
+        if(auth) {
+            onAuthStateChanged(auth, async (user) => {
+                if(user) {
+                    window.currentUserUid = user.uid;
+                    document.getElementById('loginOverlay').style.display = 'none';
+                    document.getElementById('userInfoHeader').innerText = user.email;
+                    
+                    try {
+                        const docSnap = await getDoc(doc(db, "usuarios", user.uid));
+                        if(docSnap.exists()) {
+                            window.hydrateData(docSnap.data());
+                        } else {
+                            window.hydrateData({}); 
+                        }
+                    } catch(e) {
+                        console.error("Erro ao carregar dados", e);
+                        window.hydrateData({});
+                    }
+                } else {
+                    window.currentUserUid = null;
+                    document.getElementById('loginOverlay').style.display = 'flex';
+                }
+            });
+        } else {
+            // Fallback se não colocar chaves: inicia dados vazios e fecha o modal para usar offline
+            setTimeout(() => {
+                window.hydrateData({});
+                document.getElementById('loginOverlay').style.display = 'none';
+            }, 1000);
+        }
+    </script>
+
+    <!-- SCRIPT DE LÓGICA DA APLICAÇÃO -->
+    <script>
+        // ------------------------------------------------------------------
+        // TAXONOMIA 3 NÍVEIS OFICIAL (PESO VISÍVEL NO TEXTO)
+        // ------------------------------------------------------------------
+        const taxonomia = {
+            "Clínica Médica": {
+                "Cardiologia": [
+                    { n: "1. Parada Cardiorrespiratória (PCR) — Peso: 2", p: 2 },
+                    { n: "2. Bradicardias — Peso: 1", p: 1 },
+                    { n: "3. Taquiarritmias — Peso: 2", p: 2 },
+                    { n: "4. Fibrilação e Flutter Atrial — Peso: 2", p: 2 },
+                    { n: "5. Síncope — Peso: 1", p: 1 },
+                    { n: "6. Dislipidemia e Estratificação de Risco Cardiovascular — Peso: 3", p: 3 },
+                    { n: "7. Doença Arterial Coronariana Estável (DAC Estável) — Peso: 3", p: 3 },
+                    { n: "8. SCASSST - Síndrome Coronária Aguda Sem Supra do Segmento ST — Peso: 3", p: 3 },
+                    { n: "9. IAMCSST (Infarto Agudo do Miocárdio com Supradesnivelamento do ST) — Peso: 3", p: 3 },
+                    { n: "10. Síndromes Aórticas Agudas — Peso: 2", p: 2 },
+                    { n: "11. Hipertensão Arterial Sistêmica (Parte 1) Diagnóstico... — Peso: 5", p: 5 },
+                    { n: "12. Hipertensão Arterial Sistêmica (Parte 2) Tratamento — Peso: 5", p: 5 },
+                    { n: "13. Hipertensão Arterial Sistêmica (Parte 3) Secundária... — Peso: 5", p: 5 },
+                    { n: "14. Insuficiência Cardíaca (Parte 1) Classificação... — Peso: 3", p: 3 },
+                    { n: "15. Insuficiência Cardíaca (Parte 2) Tratamento — Peso: 3", p: 3 },
+                    { n: "16. Insuficiência Cardíaca Aguda — Peso: 3", p: 3 },
+                    { n: "17. Choque — Peso: 3", p: 3 },
+                    { n: "18. Semiologia Cardíaca — Peso: 3", p: 3 },
+                    { n: "19. Valvopatias — Peso: 2", p: 2 },
+                    { n: "20. Cardiomiopatias — Peso: 3", p: 3 },
+                    { n: "21. Pericardiopatias — Peso: 3", p: 3 },
+                    { n: "22. Eletrocardiograma — Peso: 2", p: 2 }
+                ],
+                "Endocrinologia": [
+                    { n: "1. Introdução ao Diabetes Mellitus — Peso: 5", p: 5 },
+                    { n: "2. Diabetes Mellitus Tipo 2 — Peso: 5", p: 5 },
+                    { n: "3. Diabetes Mellitus - Insulinoterapia e Cirurgia Metabólica — Peso: 5", p: 5 },
+                    { n: "4. Diabetes Mellitus - Complicações Agudas — Peso: 5", p: 5 },
+                    { n: "5. Diabetes Mellitus - Complicações Crônicas — Peso: 5", p: 5 },
+                    { n: "6. Diabetes Mellitus - Hiperglicemia Hospitalar — Peso: 5", p: 5 },
+                    { n: "7. Tireoide - Hipotireoidismo — Peso: 4", p: 4 },
+                    { n: "8. Tireoide - Tireotoxicose Diagnóstico, Etiologia, Tratamento — Peso: 4", p: 4 },
+                    { n: "9. Obesidade - Obesidade e Síndrome Metabólica — Peso: 2", p: 2 },
+                    { n: "10. Cirurgia Bariátrica e Metabólica — Peso: 2", p: 2 },
+                    { n: "11. Metabolismo Ósseo e Mineral - Princípios e Fisiologia — Peso: 2", p: 2 },
+                    { n: "12. Metabolismo Ósseo e Mineral - Hipercalcemia — Peso: 2", p: 2 },
+                    { n: "13. Metabolismo Ósseo e Mineral - Hipocalcemia — Peso: 2", p: 2 },
+                    { n: "14. Metabolismo Ósseo e Mineral - Magnésio e Fosfato — Peso: 2", p: 2 },
+                    { n: "15. Metabolismo Ósseo e Mineral - Vitamina D e Osteomalácia — Peso: 2", p: 2 },
+                    { n: "16. Raquitismo — Peso: 2", p: 2 },
+                    { n: "17. Metabolismo Ósseo e Mineral - Osteoporose e Paget — Peso: 2", p: 2 },
+                    { n: "18. Adrenal - Morfofisiologia Adrenal — Peso: 2", p: 2 },
+                    { n: "19. Adrenal - Hipocortisolismo (Insuficiência Adrenal) — Peso: 2", p: 2 },
+                    { n: "20. Adrenal - Hipercortisolismo (Síndrome de Cushing) — Peso: 3", p: 3 },
+                    { n: "21. Adrenal - Feocromocitoma e Hiperaldosteronismo — Peso: 2", p: 2 },
+                    { n: "22. Perioperatório - Controle Glicêmico e Glicocorticóides — Peso: 3", p: 3 },
+                    { n: "23. Hipófise - Fisiologia da Hipófise e Hipopituitarismo — Peso: 2", p: 2 },
+                    { n: "24. Hipófise - Acromegalia e Incidentaloma Hipofisário — Peso: 2", p: 2 },
+                    { n: "25. Hipófise - Hiperprolactinemia — Peso: 2", p: 2 },
+                    { n: "26. Neoplasias Endócrinas Múltiplas — Peso: 2", p: 2 },
+                    { n: "27. Hipoglicemia no Paciente não Diabético — Peso: 2", p: 2 },
+                    { n: "28. Doenças das Adrenais e Hipófise e Noções de Obesidade — Peso: 2", p: 2 },
+                    { n: "29. Incongruência de Gênero — Peso: 1", p: 1 }
+                ],
+                "Gastroenterologia": [
+                    { n: "1. Hemorragia Digestiva Alta Não Varicosa — Peso: 2", p: 2 },
+                    { n: "2. Hemorragia Digestiva Alta Varicosa — Peso: 2", p: 2 },
+                    { n: "3. Hemorragia Digestiva Baixa — Peso: 2", p: 2 },
+                    { n: "4. Doença do Refluxo Gastroesofágico e Esofagites — Peso: 4", p: 4 },
+                    { n: "5. Disfagia, Alterações Estruturais e Motilidade — Peso: 2", p: 2 },
+                    { n: "6. Anatomofisiologia Gástrica, Gastrites e Dispepsia — Peso: 4", p: 4 },
+                    { n: "7. Doença Ulcerosa Péptica e Inibidores de Bomba de Prótons — Peso: 4", p: 4 },
+                    { n: "8. Pancreatite Aguda e Crônica (Pancreatites) — Peso: 4", p: 4 },
+                    { n: "9. Anatomia/Fisiologia do Cólon e Síndrome do Intestino Irritável — Peso: 2", p: 2 },
+                    { n: "10. Doença Inflamatória Intestinal — Peso: 3", p: 3 },
+                    { n: "11. Distúrbios Disabsortivos — Peso: 3", p: 3 },
+                    { n: "12. Divertículos Colônicos e Divertículo de Meckel — Peso: 2", p: 2 },
+                    { n: "13. Polipose Intestinal e Câncer Colorretal — Peso: 4", p: 4 },
+                    { n: "14. Neoplasias de Estômago e Esôfago — Peso: 4", p: 4 },
+                    { n: "15. Anatomia e Fisiologia do Pâncreas e Neoplasias Pancreáticas — Peso: 2", p: 2 },
+                    { n: "16. Tumores Neuroendócrinos — Peso: 1", p: 1 }
+                ],
+                "Hematologia": [
+                    { n: "1. Introdução ao Estudo das Anemias — Peso: 4", p: 4 },
+                    { n: "2. Anemias Microcíticas — Peso: 4", p: 4 },
+                    { n: "3. Anemias Macrocíticas — Peso: 3", p: 3 },
+                    { n: "4. Anemias Hemolíticas — Peso: 3", p: 3 },
+                    { n: "5. Anemias Associadas a Condições Não Hematológicas — Peso: 4", p: 4 },
+                    { n: "6. Leucemias Agudas — Peso: 3", p: 3 },
+                    { n: "7. Leucemias Crônicas, Linfomas, Mielodisplasias — Peso: 3", p: 3 },
+                    { n: "8. Mieloma Múltiplo (Gamopatias Monoclonais) — Peso: 3", p: 3 },
+                    { n: "9. Hemostasia I - Conceitos Básicos e Anticoagulantes — Peso: 2", p: 2 },
+                    { n: "10. Hemostasia II - Doenças Hemostáticas — Peso: 2", p: 2 },
+                    { n: "11. Medicina Transfusional — Peso: 2", p: 2 }
+                ],
+                "Hepatologia": [
+                    { n: "1. Introdução à Hepatologia — Peso: 2", p: 2 },
+                    { n: "2. Hepatites Virais — Peso: 2", p: 2 },
+                    { n: "3. Hepatopatias Autoimunes — Peso: 1", p: 1 },
+                    { n: "4. Outras Causas de Hepatopatia Crônica — Peso: 2", p: 2 },
+                    { n: "5. Cirrose Hepática — Peso: 3", p: 3 },
+                    { n: "6. Complicações da Cirrose Hepática — Peso: 3", p: 3 },
+                    { n: "7. Síndrome Hepatorrenal e Síndrome Hepatopulmonar — Peso: 3", p: 3 },
+                    { n: "8. Tumores Hepáticos — Peso: 4", p: 4 },
+                    { n: "9. Transplante Hepático e Hepatite Fulminante — Peso: 1", p: 1 }
+                ],
+                "Infectologia": [
+                    { n: "1. Meningites (Infecções do SNC) — Peso: 3", p: 3 },
+                    { n: "2. Leptospirose — Peso: 2", p: 2 },
+                    { n: "3. Malária — Peso: 2", p: 2 },
+                    { n: "4. Animais Peçonhentos — Peso: 1", p: 1 },
+                    { n: "5. Gripe — Peso: 1", p: 1 },
+                    { n: "6. HIV — Peso: 2", p: 2 },
+                    { n: "7. Antibióticos — Peso: 2", p: 2 },
+                    { n: "8. Arboviroses (Dengue, Chikungunya e Zika) — Peso: 5", p: 5 },
+                    { n: "9. Micoses Invasivas — Peso: 2", p: 2 },
+                    { n: "10. Tuberculose — Peso: 4", p: 4 },
+                    { n: "11. Parasitoses — Peso: 2", p: 2 },
+                    { n: "12. Neutropenia Febril e Febre de Origem Indeterminada — Peso: 2", p: 2 },
+                    { n: "13. Endocardite Bacteriana - Endocardite Infecciosa — Peso: 2", p: 2 },
+                    { n: "14. Hepatoesplenomegalias Infecciosas — Peso: 2", p: 2 },
+                    { n: "15. Síndrome Febril Íctero-Hemorrágica — Peso: 2", p: 2 },
+                    { n: "16. Covid 19 — Peso: 1", p: 1 },
+                    { n: "17. Aula Bônus - Sífilis e Outras ISTs — Peso: 5", p: 5 },
+                    { n: "18. Pneumonias Bacterianas — Peso: 5", p: 5 }
+                ],
+                "Nefrologia": [
+                    { n: "1. Doenças Glomerulares — Peso: 3", p: 3 },
+                    { n: "2. Lesão Renal Aguda (LRA) — Peso: 3", p: 3 },
+                    { n: "3. Doença Renal Crônica (RDC) - Parte I — Peso: 2", p: 2 },
+                    { n: "4. Doença Renal Crônica (RDC) - Parte II — Peso: 2", p: 2 },
+                    { n: "5. Distúrbios Ácido-Básicos — Peso: 2", p: 2 },
+                    { n: "6. Análise da Gasometria Arterial — Peso: 2", p: 2 },
+                    { n: "7. Distúrbios do Sódio - Disnatremias — Peso: 2", p: 2 },
+                    { n: "8. Distúrbios do Potássio — Peso: 2", p: 2 },
+                    { n: "9. Túbulo-Interstício Renal — Peso: 1", p: 1 },
+                    { n: "10. ITU - Infecção do Trato Urinário — Peso: 4", p: 4 },
+                    { n: "11. Nefrolitíase — Peso: 2", p: 2 }
+                ],
+                "Neurologia": [
+                    { n: "1. Coma e Alterações da Consciência — Peso: 1", p: 1 },
+                    { n: "2. Anatomia, Fisiologia e Semiologia Neurológica — Peso: 1", p: 1 },
+                    { n: "3. Cefaleias — Peso: 2", p: 2 },
+                    { n: "4. Demências — Peso: 3", p: 3 },
+                    { n: "5. Epilepsias — Peso: 2", p: 2 },
+                    { n: "6. Acidentes Vasculares Cerebrais — Peso: 2", p: 2 },
+                    { n: "7. Doenças Neuromusculares — Peso: 1", p: 1 },
+                    { n: "8. Distúrbios do Movimento — Peso: 3", p: 3 },
+                    { n: "9. Traumatismo Cranioencefálico - TCE — Peso: 4", p: 4 },
+                    { n: "10. Distúrbios do Sono — Peso: 1", p: 1 },
+                    { n: "11. Doenças Desmielinizantes e Encefalites Autoimunes — Peso: 1", p: 1 },
+                    { n: "12. Tumores Intracranianos — Peso: 1", p: 1 }
+                ],
+                "Pneumologia": [
+                    { n: "1. Derrame Pleural — Peso: 4", p: 4 },
+                    { n: "2. Doença Pulmonar Obstrutiva Crônica (DPOC) — Peso: 3", p: 3 },
+                    { n: "3. Tromboembolismo Pulmonar (TEP) — Peso: 1", p: 1 },
+                    { n: "4. Introdução à Pneumologia — Peso: 1", p: 1 },
+                    { n: "5. Pneumologia Intensiva — Peso: 1", p: 1 },
+                    { n: "6. Asma — Peso: 2", p: 2 },
+                    { n: "7. Miscelânea (Interstício, Bronquiectasias...) — Peso: 1", p: 1 },
+                    { n: "8. Neoplasias Pulmonares — Peso: 4", p: 4 }
+                ],
+                "Psiquiatria": [
+                    { n: "1. Transtornos do Humor — Peso: 3", p: 3 },
+                    { n: "2. Transtornos de Ansiedade — Peso: 3", p: 3 },
+                    { n: "3. Transtornos Psicóticos — Peso: 1", p: 1 },
+                    { n: "4. Dependência Química — Peso: 3", p: 3 },
+                    { n: "5. TOC e Transtornos Relacionados ao Estresse — Peso: 1", p: 1 },
+                    { n: "6. Psiquiatria Infantil — Peso: 1", p: 1 },
+                    { n: "7. Transtornos de Personalidade — Peso: 1", p: 1 },
+                    { n: "8. Transtornos Alimentares — Peso: 4", p: 4 },
+                    { n: "9. Psicofarmacologia — Peso: 2", p: 2 },
+                    { n: "10. Psicopatologia — Peso: 1", p: 1 },
+                    { n: "11. Psiquiatria Social e Reforma Psiquiátrica — Peso: 1", p: 1 },
+                    { n: "12. Intoxicações Exógenas — Peso: 2", p: 2 }
+                ],
+                "Reumatologia": [
+                    { n: "1. Introdução à Reumatologia — Peso: 1", p: 1 },
+                    { n: "2. Doenças Autoimunes do Tecido Conjuntivo — Peso: 3", p: 3 },
+                    { n: "3. Doenças Inflamatórias do Tecido Conjuntivo II — Peso: 3", p: 3 },
+                    { n: "4. Artrite Reumatoide — Peso: 4", p: 4 },
+                    { n: "5. Espondiloartrites — Peso: 3", p: 3 },
+                    { n: "6. Vasculites — Peso: 2", p: 2 },
+                    { n: "7. Artrites Microcristalinas — Peso: 4", p: 4 },
+                    { n: "8. Síndromes Dolorosas Crônicas — Peso: 1", p: 1 },
+                    { n: "9. Doenças do Osso e da Cartilagem — Peso: 1", p: 1 },
+                    { n: "10. Artropatias Infecciosas — Peso: 1", p: 1 },
+                    { n: "11. Miscelânea — Peso: 1", p: 1 },
+                    { n: "12. Reumatologia Pediátrica — Peso: 1", p: 1 },
+                    { n: "13. Manifestações Reumatológicas e Doenças Sistêmicas — Peso: 1", p: 1 }
+                ],
+                "Dermatologia": [
+                    { n: "1. Histologia, Fisiologia da Pele e Lesões Elementares — Peso: 1", p: 1 },
+                    { n: "2. Hanseníase — Peso: 3", p: 3 },
+                    { n: "3. Oncologia Cutânea (Câncer de Pele) — Peso: 2", p: 2 },
+                    { n: "4. Dermatoses Infecciosas — Peso: 3", p: 3 },
+                    { n: "5. Dermatoses Eczematosas — Peso: 2", p: 2 },
+                    { n: "6. Farmacodermias — Peso: 2", p: 2 },
+                    { n: "7. Dermatoses Papuloescamosas — Peso: 2", p: 2 },
+                    { n: "8. Dermatoses Vesicobolhosas — Peso: 1", p: 1 },
+                    { n: "9. Miscelânea Dermatológica — Peso: 3", p: 3 },
+                    { n: "10. Síndromes Verrucosas — Peso: 3", p: 3 },
+                    { n: "11. Piodermites — Peso: 3", p: 3 }
+                ]
+            },
+            "Cirurgia": {
+                "Cirurgia Geral": [
+                    { n: "1. Trauma - Avaliação Inicial, Vias Aéreas e Trauma Torácico — Peso: 4", p: 4 },
+                    { n: "2. Trauma - Choque — Peso: 4", p: 4 },
+                    { n: "3. Trauma Abdominal e Pélvico — Peso: 4", p: 4 },
+                    { n: "4. Trauma de Face e Cervical — Peso: 4", p: 4 },
+                    { n: "5. Trauma Vascular de Extremidades e Musculoesquelético — Peso: 4", p: 4 },
+                    { n: "6. Trauma Populações Especiais (Pediátrico, Gestante e Idosos) — Peso: 4", p: 4 },
+                    { n: "7. Queimaduras e Traumas Elétricos — Peso: 1", p: 1 },
+                    { n: "8. Resposta Endócrino-Metabólica ao Trauma — Peso: 3", p: 3 },
+                    { n: "9. Urgências Abdominais - Abdome Agudo — Peso: 5", p: 5 },
+                    { n: "10. Abdome Agudo Inflamatório - Apendicite Aguda — Peso: 5", p: 5 },
+                    { n: "11. Abdome Agudo Inflamatório - Colecistite e Colangite Aguda — Peso: 5", p: 5 },
+                    { n: "12. Abdome Agudo Inflamatório - Diverticulite Aguda — Peso: 5", p: 5 },
+                    { n: "13. Abdômen Agudo Vascular — Peso: 5", p: 5 },
+                    { n: "14. Abdome Agudo Hemorrágico — Peso: 5", p: 5 },
+                    { n: "15. Abdome Agudo Perfurativo — Peso: 5", p: 5 },
+                    { n: "16. Abdome Agudo Obstrutivo — Peso: 4", p: 4 },
+                    { n: "17. Vesícula e Vias Biliares — Peso: 5", p: 5 },
+                    { n: "18. Complicações Pós-Operatórias — Peso: 2", p: 2 },
+                    { n: "19. Hérnias da Parede Abdominal — Peso: 4", p: 4 },
+                    { n: "20. Cirurgia Vascular — Peso: 1", p: 1 },
+                    { n: "21. Cirurgia Torácica — Peso: 1", p: 1 },
+                    { n: "22. Cirurgia Plástica — Peso: 2", p: 2 },
+                    { n: "23. Urologia — Peso: 3", p: 3 },
+                    { n: "24. Cirurgia Infantil - Parte I — Peso: 3", p: 3 },
+                    { n: "25. Cirurgia Infantil - Parte II — Peso: 3", p: 3 },
+                    { n: "26. Cirurgia Infantil - Parte III — Peso: 3", p: 3 },
+                    { n: "27. Proctologia — Peso: 3", p: 3 },
+                    { n: "28. Neoplasias do Apêndice Cecal — Peso: 4", p: 4 },
+                    { n: "29. Nutrição em Cirurgia e Aceleração da Recuperação... — Peso: 2", p: 2 },
+                    { n: "30. Cicatrização de Feridas — Peso: 3", p: 3 },
+                    { n: "31. Cirurgia Bariátrica e Metabólica — Peso: 2", p: 2 },
+                    { n: "32. Temas Gerais em Cirurgia — Peso: 3", p: 3 },
+                    { n: "33. Medicina Perioperatória — Peso: 5", p: 5 }
+                ],
+                "Oftalmologia": [
+                    { n: "1. Anatomia e Fisiologia do Aparelho Visual — Peso: 1", p: 1 },
+                    { n: "2. Córnea e Cristalino — Peso: 3", p: 3 },
+                    { n: "3. Glaucoma — Peso: 1", p: 1 },
+                    { n: "4. Distúrbios da Refração — Peso: 1", p: 1 },
+                    { n: "5. Neurooftalmologia — Peso: 1", p: 1 },
+                    { n: "6. Traumatismos Oculares — Peso: 1", p: 1 },
+                    { n: "7. Tumores Oculares Malignos — Peso: 3", p: 3 },
+                    { n: "8. Síndrome do Olho Vermelho — Peso: 1", p: 1 },
+                    { n: "9. Doenças do Polo Posterior — Peso: 1", p: 1 }
+                ],
+                "Ortopedia": [
+                    { n: "1. Quadril Pediátrico — Peso: 3", p: 3 },
+                    { n: "2. Politraumatismo Ortopédico — Peso: 3", p: 3 },
+                    { n: "3. Doenças da Coluna Vertebral — Peso: 3", p: 3 },
+                    { n: "4. Complicações do Trauma Ortopédico — Peso: 3", p: 3 },
+                    { n: "5. Maus Tratos — Peso: 1", p: 1 },
+                    { n: "6. Oncologia Ortopédica e Osteomielite — Peso: 3", p: 3 },
+                    { n: "7. Fraturas e Luxações — Peso: 3", p: 3 },
+                    { n: "8. Fratura Exposta — Peso: 3", p: 3 },
+                    { n: "9. Ombro e Joelho Pediátrico — Peso: 3", p: 3 },
+                    { n: "10. Conceitos Básicos do Trauma Ortopédico — Peso: 3", p: 3 },
+                    { n: "11. Conceitos Básicos de Anatomia e Semiologia — Peso: 3", p: 3 },
+                    { n: "12. Desenvolvimento Ortopédico da Criança — Peso: 3", p: 3 },
+                    { n: "13. Doenças do Ombro e Cotovelo — Peso: 3", p: 3 },
+                    { n: "14. Doenças da Mão e Síndromes Compressivas — Peso: 3", p: 3 },
+                    { n: "15. Coluna Pediátrica — Peso: 3", p: 3 },
+                    { n: "16. Doenças Neuromusculares Pediátricas — Peso: 1", p: 1 },
+                    { n: "17. Doenças de Partes Moles — Peso: 1", p: 1 },
+                    { n: "18. Miscelânea Ortopédica — Peso: 1", p: 1 }
+                ],
+                "Otorrinolaringologia": [
+                    { n: "1. Infecções de Vias Aéreas Superiores - Parte I — Peso: 4", p: 4 },
+                    { n: "2. Infecções das Vias Aéreas Superiores - Parte II — Peso: 4", p: 4 },
+                    { n: "3. Infecções de Vias Aéreas Superiores - Parte III — Peso: 4", p: 4 },
+                    { n: "4. Otoneurologia, Vertigens e Audiologia — Peso: 1", p: 1 },
+                    { n: "5. Cirurgia de Cabeça e Pescoço - Laringologia e Apneia — Peso: 1", p: 1 },
+                    { n: "6. Cirurgia de Cabeça e Pescoço - Nódulos de Tireoide... — Peso: 2", p: 2 },
+                    { n: "7. Cirurgia de Cabeça e Pescoço - Neoplasias Benignas e Malignas... — Peso: 2", p: 2 }
+                ]
+            },
+            "Ginecologia e Obstetrícia": {
+                "Ginecologia": [
+                    { n: "1. Ciclo Menstrual — Peso: 3", p: 3 },
+                    { n: "2. Planejamento Familiar — Peso: 4", p: 4 },
+                    { n: "3. Amenorreia — Peso: 4", p: 4 },
+                    { n: "4. Síndrome dos Ovários Policísticos (SOP) — Peso: 2", p: 2 },
+                    { n: "5. Endometriose — Peso: 2", p: 2 },
+                    { n: "6. Adenomiose — Peso: 1", p: 1 },
+                    { n: "7. Pólipos Uterinos — Peso: 1", p: 1 },
+                    { n: "8. Rastreamento do Câncer de Mama — Peso: 4", p: 4 },
+                    { n: "9. Sangramento Uterino Anormal (SUA) — Peso: 5", p: 5 },
+                    { n: "10. Doenças Benignas da Mama — Peso: 3", p: 3 },
+                    { n: "11. Incontinência Urinária — Peso: 2", p: 2 },
+                    { n: "12. Câncer de Mama — Peso: 4", p: 4 },
+                    { n: "13. Câncer do Corpo do Útero — Peso: 5", p: 5 },
+                    { n: "14. Tumores Anexiais e Câncer de Ovário — Peso: 4", p: 4 },
+                    { n: "15. Doenças da Vulva e Vagina — Peso: 5", p: 5 },
+                    { n: "16. Vulvovaginites — Peso: 5", p: 5 },
+                    { n: "17. Cervicites — Peso: 5", p: 5 },
+                    { n: "18. Doença Inflamatória Pélvica (DIP) — Peso: 5", p: 5 },
+                    { n: "19. Úlceras Genitais — Peso: 5", p: 5 },
+                    { n: "20. Assistência à Vítima de Violência Sexual — Peso: 5", p: 5 },
+                    { n: "21. Rastreamento do Câncer de Colo Úterino — Peso: 5", p: 5 },
+                    { n: "22. Câncer de Colo do Útero — Peso: 5", p: 5 },
+                    { n: "23. Climatério e Terapia Hormonal — Peso: 3", p: 3 },
+                    { n: "24. Miomatose Uterina — Peso: 1", p: 1 },
+                    { n: "25. Prolapsos de Órgãos Pélvicos — Peso: 2", p: 2 },
+                    { n: "26. Anatomia e Embriologia do Trato Genital Feminino — Peso: 1", p: 1 },
+                    { n: "27. Infertilidade Conjugal — Peso: 1", p: 1 },
+                    { n: "28. Dor Pélvica Crônica e Dismenorreia — Peso: 1", p: 1 },
+                    { n: "29. Sexualidade — Peso: 1", p: 1 },
+                    { n: "30. Síndrome Pré-Menstrual — Peso: 1", p: 1 },
+                    { n: "31. Abdome Agudo em Ginecologia — Peso: 1", p: 1 }
+                ],
+                "Obstetrícia": [
+                    { n: "1. TPP - Prematuridade e Trabalho de Parto Prematuro — Peso: 4", p: 4 },
+                    { n: "2. Rotura Prematura de Membranas (RPM) — Peso: 3", p: 3 },
+                    { n: "3. HPP – Hemorragia Pós-Parto — Peso: 3", p: 3 },
+                    { n: "4. Gestação Múltipla — Peso: 2", p: 2 },
+                    { n: "5. Partograma e Distocias — Peso: 5", p: 5 },
+                    { n: "6. Bacia Obstétrica, Pelvimetria e Estática Fetal — Peso: 5", p: 5 },
+                    { n: "7. Infecção Puerperal — Peso: 3", p: 3 },
+                    { n: "8. Sífilis na Gestação e Sífilis Congênitas — Peso: 4", p: 4 },
+                    { n: "9. Infecções Congênitas na Gestação — Peso: 4", p: 4 },
+                    { n: "10. Aloimunização Materna e Doença Hemolítica Perinatal — Peso: 2", p: 2 },
+                    { n: "11. Alteração do volume de líquido amniótico — Peso: 2", p: 2 },
+                    { n: "12. Modificações Fisiológicas da Gestação — Peso: 3", p: 3 },
+                    { n: "13. Abortamento de Repetição — Peso: 5", p: 5 },
+                    { n: "14. Síndromes Hipertensivas da Gestação — Peso: 5", p: 5 },
+                    { n: "15. Vitalidade Fetal — Peso: 4", p: 4 },
+                    { n: "16. Assistência ao Parto — Peso: 5", p: 5 },
+                    { n: "17. Parto Vaginal Operatório — Peso: 5", p: 5 },
+                    { n: "18. Mecanismo de Parto e Fases Clínicas do Parto — Peso: 5", p: 5 },
+                    { n: "19. Indução do Parto e Pós-Datismo — Peso: 5", p: 5 },
+                    { n: "20. Restrição de Crescimento Fetal e Óbito Fetal — Peso: 5", p: 5 },
+                    { n: "21. Pré-natal — Peso: 5", p: 5 },
+                    { n: "22. Ultrassom em Obstetrícia — Peso: 2", p: 2 },
+                    { n: "23. Diabetes Mellitus na Gestação — Peso: 3", p: 3 },
+                    { n: "24. Sangramento da Primeira Metade — Peso: 4", p: 4 },
+                    { n: "25. Sangramento da Segunda Metade — Peso: 2", p: 2 }
+                ]
+            },
+            "Pediatria": {
+                "Pediatria": [
+                    { n: "1. Puberdade — Peso: 3", p: 3 },
+                    { n: "2. BRUE SMSL — Peso: 1", p: 1 },
+                    { n: "3. Infecção de Trato Urinário em Pediatria (ITU) — Peso: 3", p: 3 },
+                    { n: "4. Alergia Alimentar — Peso: 1", p: 1 },
+                    { n: "5. Obesidade Infantil e na Adolescência — Peso: 1", p: 1 },
+                    { n: "6. Outros distúrbios do período neonatal — Peso: 3", p: 3 },
+                    { n: "7. Anafilaxia e Urticária — Peso: 1", p: 1 },
+                    { n: "8. Crescimento — Peso: 3", p: 3 },
+                    { n: "9. Constipação Intestinal — Peso: 1", p: 1 },
+                    { n: "10. Hiperplasia Adrenal Congênita — Peso: 1", p: 1 },
+                    { n: "11. Distúrbios Respiratórios do Período Neonatal — Peso: 2", p: 2 },
+                    { n: "12. Febre Reumática — Peso: 1", p: 1 },
+                    { n: "13. Síndromes Genéticas, Erros Inatos do Metabolismo — Peso: 1", p: 1 },
+                    { n: "14. Enurese Noturna — Peso: 1", p: 1 },
+                    { n: "15. Infecções Congênitas — Peso: 3", p: 3 },
+                    { n: "16. Hipotireoidismo Congênito — Peso: 1", p: 1 },
+                    { n: "17. Aleitamento Materno — Peso: 4", p: 4 },
+                    { n: "18. Pneumonias na Infância — Peso: 5", p: 5 },
+                    { n: "19. Desnutrição na Infância — Peso: 1", p: 1 },
+                    { n: "20. Imunizações — Peso: 5", p: 5 },
+                    { n: "21. Asma em Pediatria — Peso: 2", p: 2 },
+                    { n: "22. Sífilis na Gestação e Sífilis Congênitas — Peso: 3", p: 3 },
+                    { n: "23. Cuidados Neonatais — Peso: 3", p: 3 },
+                    { n: "24. Choque em Pediatria — Peso: 3", p: 3 },
+                    { n: "25. Deficiências Vitamínicas e Profilaxias — Peso: 1", p: 1 },
+                    { n: "26. Convulsão Febril — Peso: 1", p: 1 },
+                    { n: "27. Reanimação Neonatal — Peso: 2", p: 2 },
+                    { n: "28. Doença de Kawasaki — Peso: 1", p: 1 },
+                    { n: "29. Hipertensão Arterial na Criança e Adolescente — Peso: 1", p: 1 },
+                    { n: "30. Púrpura de Hennoch Schonlein-Vasculite por IGA — Peso: 1", p: 1 },
+                    { n: "31. Doenças Exantemáticas — Peso: 4", p: 4 },
+                    { n: "32. Cardiopatias Congênitas — Peso: 2", p: 2 },
+                    { n: "33. Doença Celíaca em Pediatria — Peso: 3", p: 3 },
+                    { n: "34. Icterícia e Sepse Neonatal — Peso: 3", p: 3 },
+                    { n: "35. Diagnóstico Nutricional — Peso: 1", p: 1 },
+                    { n: "36. Coqueluche — Peso: 1", p: 1 },
+                    { n: "37. Cefaleias na Infância — Peso: 1", p: 1 },
+                    { n: "38. Febre na Pediatria — Peso: 1", p: 1 },
+                    { n: "39. Segurança em Pediatria — Peso: 3", p: 3 },
+                    { n: "40. Desenvolvimento Neuropsicomotor (DNPM) — Peso: 3", p: 3 },
+                    { n: "41. Doença do Refluxo Gastroesofágico em Pediatria — Peso: 3", p: 3 },
+                    { n: "42. Bronquiolite — Peso: 4", p: 4 },
+                    { n: "43. Emergências Pediátricas — Peso: 3", p: 3 },
+                    { n: "44. Tópicos em Pediatria — Peso: 1", p: 1 },
+                    { n: "45. Tuberculose na Infância — Peso: 1", p: 1 },
+                    { n: "46. Fibrose Cística — Peso: 4", p: 4 },
+                    { n: "47. Artrite Idiopática Juvenil (AIJ) — Peso: 1", p: 1 },
+                    { n: "48. Diarreia — Peso: 4", p: 4 }
+                ]
+            },
+            "Preventiva": {
+                "Medicina Preventiva": [
+                    { n: "1. Sistemas de Informação em Saúde — Peso: 4", p: 4 },
+                    { n: "2. Ética Médica — Peso: 5", p: 5 },
+                    { n: "3. Princípios e Diretrizes do SUS — Peso: 4", p: 4 },
+                    { n: "4. Bases de Saúde do Trabalhador e Normas Regulamentadoras — Peso: 3", p: 3 },
+                    { n: "5. Medidas de Saúde Coletiva - Parte I Indicadores de Morbidade — Peso: 3", p: 3 },
+                    { n: "6. Medidas de Saúde Coletiva - Parte II Indicadores de Mortalidade — Peso: 3", p: 3 },
+                    { n: "7. Medidas de Saúde Coletiva - Parte III Indicadores Demográficos... — Peso: 3", p: 3 },
+                    { n: "8. Processos Epidêmicos e Epidemiologia das Doenças Infecciosas — Peso: 1", p: 1 },
+                    { n: "9. Processo Saúde-Doença — Peso: 3", p: 3 },
+                    { n: "10. Vigilância em Saúde — Peso: 4", p: 4 },
+                    { n: "11. Estatística Médica — Peso: 5", p: 5 },
+                    { n: "12. Pesquisa Epidemiológica e Medidas de Associação — Peso: 3", p: 3 },
+                    { n: "13. Testes Diagnósticos — Peso: 2", p: 2 },
+                    { n: "14. História do SUS — Peso: 4", p: 4 },
+                    { n: "15. Processos de Descentralização e Regionalização do SUS — Peso: 1", p: 1 },
+                    { n: "16. Atenção Primária à Saúde — Peso: 5", p: 5 },
+                    { n: "17. Políticas de Saúde — Peso: 5", p: 5 },
+                    { n: "18. Medicina de Família e Comunidade — Peso: 5", p: 5 },
+                    { n: "19. Saúde do Idoso — Peso: 2", p: 2 }
+                ]
+            }
+        };
+
+        // ------------------------------------------------------------------
+        // GLOBALS
+        // ------------------------------------------------------------------
+        let listaEstudos = [];
+        let configAlgoritmo = { intervalos: [1, 7, 14, 30, 60, 90], p5: 0.5, p4: 0.7, p3: 0.9, p2: 1.1, p1: 1.4, burnout: 15 };
+        let agendaProvas = [];
+        let cronogramaInternato = [];
+        let gradesSemanaisStore = {};
+        let cronogramaSemanasStore = {};
+        let backlogAdiados = [];
+        let pomodoroDiario = {};
+        let notasIncidencia = {};
+        let listaSimulados = [];
+        let pomodoroTemas = { foco: 25, pausa: 5 };
+        let metaAnual = 10000;
+        let streak = 0;
+        
+        let isSobrevivencia = false;
+        let sprintAtivo = false;
+        let semanaAtivaId = "";
+
+        const diasSemanaArr = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
+        const turnosArr = ['m', 't', 'n'];
+
+        // ------------------------------------------------------------------
+        // INICIALIZAÇÃO FIREBASE (HYDRATION)
+        // ------------------------------------------------------------------
+        window.hydrateData = function(d) {
+            listaEstudos = d.estudos || [];
+            configAlgoritmo = d.config || { intervalos: [1, 7, 14, 30, 60, 90], p5: 0.5, p4: 0.7, p3: 0.9, p2: 1.1, p1: 1.4, burnout: 15 };
+            agendaProvas = d.provas || [];
+            cronogramaInternato = d.internato || [];
+            gradesSemanaisStore = d.grades_semanais || {};
+            cronogramaSemanasStore = d.crono_semanas || {};
+            backlogAdiados = d.backlog || [];
+            pomodoroDiario = d.pomodoro || {};
+            notasIncidencia = d.notas || {};
+            listaSimulados = d.simulados || [];
+            if(d.pomodoroTemas) pomodoroTemas = d.pomodoroTemas;
+            if(d.metaAnual) metaAnual = d.metaAnual;
+            if(d.streak) streak = d.streak;
+            
+            initApp();
+        };
+
+        function initApp() {
+            document.getElementById('reg_data').valueAsDate = new Date();
+            popularSelectsMacros();
+            atualizarSeletorSemanasPorRodizios();
+            renderizarListasPlanejamento();
+            renderizarBacklogAdiados();
+            
+            document.getElementById("configIntervalos").value = configAlgoritmo.intervalos.join(', ');
+            [1,2,3,4,5].forEach(n => document.getElementById(`configPeso${n}`).value = configAlgoritmo[`p${n}`]);
+            document.getElementById("configBurnout").value = configAlgoritmo.burnout || 15;
+            document.getElementById("metaInputConfig").value = metaAnual;
+            
+            renderizarTabela(); 
+            atualizarRadar(); 
+            atualizarGraficoSimulados(); 
+            renderizarMetasSubtemas(); 
+            renderizarPlanilha(); 
+            renderizarCadernoErros(); 
+            atualizarEstatisticasNerds();
+        }
+
+        // Função de Sincronização
+        window.syncToCloud = function() {
+            const dataToSave = {
+                estudos: listaEstudos,
+                config: configAlgoritmo,
+                provas: agendaProvas,
+                internato: cronogramaInternato,
+                grades_semanais: gradesSemanaisStore,
+                crono_semanas: cronogramaSemanasStore,
+                backlog: backlogAdiados,
+                pomodoro: pomodoroDiario,
+                notas: notasIncidencia,
+                simulados: listaSimulados,
+                pomodoroTemas: pomodoroTemas,
+                metaAnual: metaAnual,
+                streak: streak
+            };
+            if(window.firebaseSaveData && window.currentUserUid) {
+                window.firebaseSaveData(window.currentUserUid, dataToSave);
+            }
+        };
+
+        // ------------------------------------------------------------------
+        // CASCATAS DINÂMICAS
+        // ------------------------------------------------------------------
+        function popularSelectsMacros() {
+            let optionsReg = '<option value="">1. Selecione a Macro-Área...</option>';
+            let optionsRod = '<option value="">Selecione a Macro-Área...</option>';
+            let optionsFiltro = '<option value="todas">🌐 Todas as Macro-Áreas</option>';
+            
+            Object.keys(taxonomia).forEach(m => {
+                let opt = `<option value="${m}">${m}</option>`;
+                optionsReg += opt; optionsRod += opt; optionsFiltro += opt;
+            });
+            
+            document.getElementById("reg_macro").innerHTML = optionsReg;
+            document.getElementById("rodMacro").innerHTML = optionsRod;
+            let evo = document.getElementById("evo_macro"); if(evo) evo.innerHTML = optionsFiltro;
+            let meta = document.getElementById("meta_macro"); if(meta) meta.innerHTML = optionsFiltro;
+            let plan = document.getElementById("plan_macro"); if(plan) plan.innerHTML = optionsFiltro;
+        }
+
+        function popularEspecialidades(idMacro, idEsp, idSub, isFiltro) {
+            let m = document.getElementById(idMacro).value;
+            let sE = document.getElementById(idEsp);
+            if(!sE) return;
+            sE.innerHTML = isFiltro ? '<option value="todas">📌 Todas as Especialidades</option>' : '<option value="">2. Selecione a Especialidade...</option>';
+            if(idSub) document.getElementById(idSub).innerHTML = isFiltro ? '<option value="todas">📌 Todos os Subtemas</option>' : '<option value="">3. Aguardando...</option>';
+            
+            if(!m || m === 'todas') { 
+                sE.disabled = true; if(idSub) document.getElementById(idSub).disabled = true; 
+            } else {
+                sE.disabled = false;
+                Object.keys(taxonomia[m]).forEach(e => sE.innerHTML += `<option value="${e}">${e}</option>`);
+            }
+            if(isFiltro) {
+                if(idMacro === 'evo_macro') atualizarGraficoEvolucao();
+                if(idMacro === 'meta_macro') renderizarMetasSubtemas();
+                if(idMacro === 'plan_macro') renderizarPlanilha();
+            }
+        }
+
+        function popularSubtemas(idMacro, idEsp, idSub, isFiltro) {
+            let m = document.getElementById(idMacro).value;
+            let e = document.getElementById(idEsp).value;
+            let sS = document.getElementById(idSub);
+            if(!sS) return;
+            sS.innerHTML = isFiltro ? '<option value="todas">📌 Todos os Subtemas</option>' : '<option value="">3. Selecione o Subtema...</option>';
+            
+            if(!e || e === 'todas') { sS.disabled = true; } 
+            else {
+                sS.disabled = false;
+                taxonomia[m][e].forEach(sub => {
+                    sS.innerHTML += `<option value="${sub.n}" data-peso="${sub.p}">${sub.n}</option>`;
+                });
+            }
+            if(isFiltro && idMacro === 'evo_macro') atualizarGraficoEvolucao();
+        }
+
+        // ------------------------------------------------------------------
+        // POMODORO & FOCO
+        // ------------------------------------------------------------------
+        let timeLeft = pomodoroTemas.foco * 60;
+        let timerInterval = null, isRunning = false;
+        atualizarDisplayTimer();
+
+        function iniciarPomodoro() {
+            if (isRunning) return; isRunning = true;
+            timerInterval = setInterval(() => {
+                if (timeLeft > 0) { 
+                    timeLeft--; atualizarDisplayTimer(); 
+                    if(timeLeft % 60 === 0) {
+                        let hj = new Date().toISOString().split('T')[0];
+                        pomodoroDiario[hj] = (pomodoroDiario[hj] || 0) + 1;
+                        window.syncToCloud();
+                        atualizarEstatisticasNerds();
+                    }
+                } else { pausarPomodoro(); alert("Pomodoro Finalizado!"); timeLeft = pomodoroTemas.pausa * 60; atualizarDisplayTimer(); }
+            }, 1000);
+        }
+        function pausarPomodoro() { isRunning = false; clearInterval(timerInterval); }
+        function resetarPomodoro() { pausarPomodoro(); timeLeft = pomodoroTemas.foco * 60; atualizarDisplayTimer(); }
+        function atualizarDisplayTimer() {
+            let m = Math.floor(timeLeft/60), s = timeLeft%60; let str = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+            document.getElementById("timerDisplay").innerText = str; document.getElementById("focusTimerDisplay").innerText = str;
+        }
+        function toggleDarkMode() { document.body.classList.toggle('dark-mode'); }
+        function toggleFocusMode() { document.body.classList.toggle('focus-mode'); atualizarEstatisticasNerds(); }
+
+        function mudarAba(tabId, btn) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.main-nav-abas .main-aba-tab').forEach(b => b.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active'); btn.classList.add('active');
+            if (tabId === 'tab-analytics') { atualizarRadar(); atualizarGraficoEvolucao(); atualizarGraficoSimulados(); }
+            if (tabId === 'tab-planejamento') { renderizarListasPlanejamento(); atualizarSeletorSemanasPorRodizios(); renderizarKanbanSemanaAtiva(); }
+            if (tabId === 'tab-nerd') atualizarEstatisticasNerds();
+        }
+
+        // ------------------------------------------------------------------
+        // REGISTRO DE ESTUDO & FSRS
+        // ------------------------------------------------------------------
+        function toggleQuestoesForm() {
+            document.getElementById("boxQuestoesIniciais").style.display = document.getElementById("checkFezQuestoes").checked ? "flex" : "none";
+        }
+
+        function salvarNovoEstudo(e) {
+            e.preventDefault();
+            let macro = document.getElementById("reg_macro").value;
+            let esp = document.getElementById("reg_esp").value;
+            let selSub = document.getElementById("reg_subtema");
+            let temaNome = selSub.value;
+            let peso = parseInt(selSub.options[selSub.selectedIndex].getAttribute("data-peso"));
+            let dataEstudo = document.getElementById("reg_data").value;
+            let tempo = parseInt(document.getElementById("reg_tempo").value);
+            let percepcao = document.getElementById("reg_dificuldade").value;
+            let energia = document.getElementById("reg_energia").value;
+            let fezQ = document.getElementById("checkFezQuestoes").checked;
+
+            let item = { id: Date.now(), macroArea: macro, especialidade: esp, tema: temaNome, peso: peso, easeFactor: 2.5, fase: 1, historico: [] };
+
+            if (fezQ) {
+                let feitas = parseInt(document.getElementById("reg_feitas").value) || 0;
+                let acertos = parseInt(document.getElementById("reg_acertos").value) || 0;
+                item.proximaData = calcularNovaData(dataEstudo, peso, percepcao, 1, 2.5, feitas, acertos);
+                item.historico.push({ fase: "Teoria + Questões", tempo, feitas, acertos, percepcao, energia, data: dataEstudo });
+            } else {
+                item.fase = 0.5;
+                let d = new Date(dataEstudo + 'T00:00:00');
+                d.setDate(d.getDate() + 1);
+                item.proximaData = d.toISOString().split('T')[0];
+                item.historico.push({ fase: "Apenas Teoria", tempo, feitas: 0, acertos: 0, percepcao, energia, data: dataEstudo });
+            }
+
+            listaEstudos.push(item);
+            streak++; 
+            salvarEAtualizar(); 
+            document.getElementById("formEstudo").reset(); 
+            document.getElementById('reg_data').valueAsDate = new Date();
+            document.getElementById("checkFezQuestoes").checked = true; toggleQuestoesForm();
+            
+            document.getElementById("reg_esp").innerHTML = '<option value="">Selecione Macro...</option>';
+            document.getElementById("reg_esp").disabled = true;
+            document.getElementById("reg_subtema").innerHTML = '<option value="">Selecione Especialidade...</option>';
+            document.getElementById("reg_subtema").disabled = true;
+
+            mudarAba('tab-inicio', document.querySelectorAll('.main-nav-abas .main-aba-tab')[0]);
+            alert("Estudo Registrado com Sucesso!");
+        }
+
+        function getFatorPeso(peso) {
+            if (peso === 5) return configAlgoritmo.p5; if (peso === 4) return configAlgoritmo.p4; if (peso === 3) return configAlgoritmo.p3;
+            if (peso === 2) return configAlgoritmo.p2; if (peso === 1) return configAlgoritmo.p1; return 1.0;
+        }
+
+        function calcularNovaData(dataBaseStr, peso, percepcao, faseDestino, easeFactor, feitas, acertos) {
+            let baseDias = (faseDestino <= 1) ? 1 : configAlgoritmo.intervalos[Math.min(faseDestino - 1, 5)];
+            let fp = getFatorPeso(peso);
+            let fd = (percepcao === 'dificil') ? 0.6 : (percepcao === 'facil') ? 1.3 : 1.0;
+            let fDes = 1.0;
+            if (faseDestino > 1 && feitas > 0) { let tx = (acertos / feitas) * 100; fDes = tx < 50 ? 0.5 : tx < 70 ? 0.8 : 1.3; }
+            let fEase = easeFactor / 2.5;
+
+            let dias = Math.max(1, Math.round(baseDias * fp * fDes * fd * fEase));
+            
+            let pp = agendaProvas.find(p => p.tipo === "principal");
+            if (pp) {
+                let dP = new Date(pp.data + 'T00:00:00'); let dH = new Date(); let diff = Math.ceil((dP - dH) / (1000 * 60 * 60 * 24));
+                if (diff <= 45 && dH < dP) dias = Math.min(dias, 10);
+            }
+
+            let nD = new Date(dataBaseStr + 'T00:00:00');
+            nD.setDate(nD.getDate() + dias);
+            return nD.toISOString().split('T')[0];
+        }
+
+        // ------------------------------------------------------------------
+        // DASHBOARD & CRONOGRAMA DE REVISÕES
+        // ------------------------------------------------------------------
+        let filtroTab = 'todas';
+        function mudarFiltroTabela(f, btn) {
+            filtroTab = f;
+            document.querySelectorAll('#tab-inicio .sub-nav-abas .sub-aba-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active'); renderizarTabela();
+        }
+
+        function toggleSobrevivencia() {
+            isSobrevivencia = !isSobrevivencia; document.body.classList.toggle('modo-sobrevivencia');
+            document.getElementById("btnSobrevivencia").style.background = isSobrevivencia ? "var(--sobrevivencia-bg)" : "var(--bg-color)";
+            document.getElementById("btnSobrevivencia").style.color = isSobrevivencia ? "white" : "var(--text-color)";
+            document.getElementById("sobrevivenciaAlert").style.display = isSobrevivencia ? "block" : "none";
+            renderizarTabela();
+        }
+
+        function ativarSprint() { 
+            sprintAtivo = true; 
+            document.getElementById("sprintAlert").style.display = "block"; 
+            let sts = document.getElementById("sprintStatusText");
+            sts.innerText = "Ativo"; sts.style.color = "var(--primary-color)";
+            renderizarTabela(); 
+        }
+        function limparSprint() { 
+            sprintAtivo = false; 
+            document.getElementById("sprintAlert").style.display = "none"; 
+            let sts = document.getElementById("sprintStatusText");
+            sts.innerText = "Inativo"; sts.style.color = "var(--danger-color)";
+            renderizarTabela(); 
+        }
+
+        function renderizarTabela() {
+            let tbody = document.getElementById("tabela-estudos"); tbody.innerHTML = "";
+            let hj = new Date().toISOString().split('T')[0];
+
+            atualizarDashboard();
+
+            let filtrados = listaEstudos.filter(i => {
+                if (i.fase > 6) return false;
+                if (isSobrevivencia && i.proximaData > hj) return false;
+                if (sprintAtivo && i.peso < 4) return false;
+                if (filtroTab === 'atrasadas') return i.proximaData < hj;
+                if (filtroTab === 'hoje') return i.proximaData === hj;
+                if (filtroTab === 'futuras') return i.proximaData > hj;
+                return true;
+            });
+
+            if (filtrados.length === 0) { tbody.innerHTML = `<tr><td colspan="3" style="text-align:center;">Nada pendente.</td></tr>`; return; }
+
+            filtrados.forEach(item => {
+                let rIdx = listaEstudos.indexOf(item); let atrasado = item.proximaData < hj;
+                let tr = document.createElement("tr"); if (atrasado) tr.classList.add('atrasado');
+                let fText = item.fase === 0.5 ? "Anki (Teoria)" : item.fase === 1 ? "1ª Rev (Anki)" : `${Math.floor(item.fase)}ª Rev (Questões)`;
+                
+                let bColor = item.macroArea === 'Clínica Médica' ? '#3498db' : item.macroArea === 'Cirurgia' ? '#e67e22' : item.macroArea === 'Pediatria' ? '#e74c3c' : '#2ecc71';
+
+                tr.innerHTML = `
+                    <td><div class="badge badge-macro" style="background:${bColor}">${item.macroArea.substring(0,8)}</div><br><small style="opacity:0.7">${item.especialidade}</small><br><strong>${item.tema}</strong></td>
+                    <td>${fText}<br><small>${item.proximaData} ${atrasado ? '🔴' : ''}</small></td>
+                    <td>
+                        <button class="btn-acao" onclick="abrirModal(${rIdx})">Executar</button>
+                        <button class="btn-acao" style="background:#8e44ad;" onclick="abrirDetalhes(${rIdx})">Ver</button>
+                        <button class="btn-acao btn-excluir" onclick="excluirEstudo(${rIdx})">X</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function atualizarDashboard() {
+            let hj = new Date().toISOString().split('T')[0]; let h=0, a=0, p=0, cg=0;
+            let d3 = new Date(); d3.setDate(d3.getDate() + 3); let d3S = d3.toISOString().split('T')[0];
+
+            let pp = agendaProvas.find(x => x.tipo === "principal");
+            let alertBar = document.getElementById("retaFinalAlert");
+            if (pp) {
+                let dP = new Date(pp.data + 'T00:00:00');
+                let dH = new Date();
+                let diff = Math.ceil((dP - dH) / (1000 * 60 * 60 * 24));
+                if (diff <= 45 && diff >= 0) {
+                    alertBar.style.display = "block";
+                    alertBar.innerText = `🔥 RETA FINAL ATIVA: Faltam ${diff} dias para a Prova Principal! O FSRS assumiu teto máximo de 10 dias.`;
+                } else {
+                    alertBar.style.display = "none";
+                }
+            } else {
+                alertBar.style.display = "none";
+            }
+
+            listaEstudos.forEach(i => {
+                if (i.fase <= 6) {
+                    if (i.proximaData === hj) h++;
+                    if (i.proximaData < hj) a++;
+                    if (i.fase === 0.5) p++;
+                    if (i.proximaData >= hj && i.proximaData <= d3S) cg++;
+                }
+            });
+
+            document.getElementById("statHoje").innerText = h; document.getElementById("statAtrasadas").innerText = a;
+            document.getElementById("statPendentesTeoria").innerText = p; document.getElementById("statCarga3Dias").innerText = cg;
+            document.getElementById("burnoutAlert").style.display = cg >= configAlgoritmo.burnout ? "block" : "none";
+            document.getElementById("streakCount").innerText = streak; document.getElementById("focusStreak").innerText = streak;
+            document.getElementById("metaStatus").innerText = `${h}/${Math.max(1, h)}`; document.getElementById("focusMetaStatus").innerText = `${h}/${Math.max(1, h)}`;
+            
+            atualizarMetaAnualPainel();
+        }
+
+        function atualizarMetaAnualPainel() {
+            let totalFeitas = 0;
+            listaEstudos.forEach(i => i.historico.forEach(h => { if(h.feitas) totalFeitas += h.feitas; }));
+            
+            let meta = parseInt(document.getElementById("metaInputConfig").value) || metaAnual;
+            let progresso = Math.min(100, (totalFeitas / meta) * 100).toFixed(1);
+            
+            document.getElementById("metaAnualProgressoText").innerText = `${totalFeitas} / ${meta} questões resolvidas`;
+            document.getElementById("metaAnualPercent").innerText = `${progresso}%`;
+            document.getElementById("metaAnualBar").style.width = `${progresso}%`;
+            
+            let hoje = new Date();
+            let inicioAno = new Date(hoje.getFullYear(), 0, 1);
+            let diasCorridos = Math.max(1, Math.ceil((hoje - inicioAno) / (1000 * 60 * 60 * 24)));
+            let ritmoAtual = (totalFeitas / diasCorridos).toFixed(1);
+            document.getElementById("metaRitmoAtual").innerText = `${ritmoAtual} qts/dia`;
+            
+            let pp = agendaProvas.find(x => x.tipo === "principal");
+            let dAlvo = pp ? new Date(pp.data + 'T00:00:00') : new Date(hoje.getFullYear(), 11, 31);
+            let diffDias = Math.ceil((dAlvo - hoje) / (1000 * 60 * 60 * 24));
+            
+            let statusEl = document.getElementById("metaStatusRitmo");
+            if (diffDias > 0) {
+                let restantes = Math.max(0, meta - totalFeitas);
+                let ritmoNecessario = (restantes / diffDias).toFixed(1);
+                document.getElementById("metaRitmoNecessario").innerText = `${ritmoNecessario} qts/dia`;
+                document.getElementById("metaDiasRestantes").innerText = `Até ${pp ? pp.nome : 'o fim do ano'} (${diffDias} dias)`;
+                
+                if (restantes === 0) {
+                    statusEl.innerText = "🎉 Meta Batida!";
+                    statusEl.style.color = "var(--primary-color)";
+                } else if (parseFloat(ritmoAtual) >= parseFloat(ritmoNecessario)) {
+                    statusEl.innerText = "🟢 Adiantado / No Ritmo";
+                    statusEl.style.color = "var(--primary-color)";
+                } else {
+                    statusEl.innerText = "🔴 Abaixo do Ritmo";
+                    statusEl.style.color = "var(--danger-color)";
+                }
+            } else {
+                document.getElementById("metaRitmoNecessario").innerText = "-";
+                document.getElementById("metaDiasRestantes").innerText = "Data alvo expirada";
+                statusEl.innerText = "-";
+                statusEl.style.color = "inherit";
+            }
+        }
+
+        // ------------------------------------------------------------------
+        // MODAIS DE EXECUÇÃO
+        // ------------------------------------------------------------------
+        let idxModal = null;
+        function abrirModal(idx) {
+            idxModal = idx; let item = listaEstudos[idx]; let m = document.getElementById("modalBodyContent");
+            if (item.fase <= 1) {
+                m.innerHTML = `<h3>${item.fase === 0.5 ? "Anki Pós-Teoria" : "1ª Rev (Anki)"}: ${item.tema}</h3>
+                <label><input type="checkbox" id="modAnki" required> Fiz os flashcards hoje.</label>
+                <label>Percepção:</label><select id="modPerc" required><option value="medio">Médio</option><option value="facil">Fácil</option><option value="dificil">Difícil</option></select>`;
+            } else {
+                m.innerHTML = `<h3>${Math.floor(item.fase)}ª Rev: ${item.tema}</h3>
+                <label>Tempo (min):</label><input type="number" id="modTempo" value="15" required>
+                <label>Feitas:</label><input type="number" id="modFeitas" required>
+                <label>Acertos:</label><input type="number" id="modAcertos" required>
+                <label>Dificuldade:</label><select id="modPerc" required><option value="medio">Médio</option><option value="facil">Fácil</option><option value="dificil">Difícil</option></select>
+                <label>Caderno de Erros:</label><textarea id="modErro" placeholder="O que pegou?"></textarea>`;
+            }
+            document.getElementById("modalRevisao").style.display = "flex";
+        }
+
+        function salvarRevisaoModal(e) {
+            e.preventDefault(); let item = listaEstudos[idxModal]; let hoje = new Date().toISOString().split('T')[0];
+            if (!item.easeFactor) item.easeFactor = 2.5;
+
+            if (item.fase <= 1) {
+                if (!document.getElementById("modAnki").checked) return alert("Confirme o Anki!");
+                let p = document.getElementById("modPerc").value;
+                if (item.fase === 0.5) {
+                    let d = (p === 'dificil') ? 3 : (p === 'facil') ? 7 : 5;
+                    let nD = new Date(hoje + 'T00:00:00'); nD.setDate(nD.getDate() + d); item.proximaData = nD.toISOString().split('T')[0];
+                } else {
+                    let r = item.historico[0] || { feitas: 20, acertos: 16 };
+                    item.proximaData = calcularNovaData(hoje, item.peso, p, 2, item.easeFactor, r.feitas, r.acertos);
+                }
+                item.historico.push({ fase: "Anki", percepcao: p, data: hoje }); item.fase = 2;
+            } else {
+                let tmp = parseInt(document.getElementById("modTempo").value); let f = parseInt(document.getElementById("modFeitas").value);
+                let a = parseInt(document.getElementById("modAcertos").value); let p = document.getElementById("modPerc").value;
+                let tx = (a / f) * 100;
+                if (tx < 50) item.easeFactor = Math.max(1.3, item.easeFactor - 0.2); else if (tx >= 85) item.easeFactor += 0.15;
+                item.proximaData = calcularNovaData(hoje, item.peso, p, item.fase + 1, item.easeFactor, f, a);
+                item.historico.push({ fase: `${Math.floor(item.fase)}ª Rev`, tempo: tmp, feitas: f, acertos: a, percepcao: p, notaErro: document.getElementById("modErro").value, data: hoje });
+                item.fase += 1;
+            }
+            salvarEAtualizar(); fecharModal('modalRevisao');
+        }
+
+        function abrirDetalhes(idx) {
+            let item = listaEstudos[idx]; if (!item.easeFactor) item.easeFactor = 2.5;
+            let html = `<h3>${item.tema}</h3><p style="font-size:12px;opacity:0.8;">Fator FSRS: <b>${item.easeFactor.toFixed(2)}</b> | Peso: <b>${item.peso}</b></p><ul>`;
+            item.historico.forEach(h => html += `<li><b>${h.fase}</b> (${h.data}) ${h.feitas ? `- Acertos: ${h.acertos}/${h.feitas}` : ''} ${h.notaErro ? `<br><i>Erro: ${h.notaErro}</i>` : ''}</li>`);
+            html += `</ul><h4>🔮 Previsão (Fim de Ciclo):</h4><ul>`;
+            let tF = Math.max(2, Math.floor(item.fase)); let tD = item.proximaData || new Date().toISOString().split('T')[0];
+            let last = item.historico.filter(h => h.feitas > 0).pop() || { feitas: 20, acertos: 16, percepcao: 'medio' };
+            for (let i = tF; i <= 6; i++) { html += `<li><b>${i}ª Rev.:</b> ${tD}</li>`; tD = calcularNovaData(tD, item.peso, last.percepcao, i + 1, item.easeFactor, last.feitas, last.acertos); }
+            html += `<p style="color:var(--primary-color);font-weight:bold;margin-top:10px;">Estimativa de Alta: ${tD}</p>`;
+            document.getElementById("detalhesBodyContent").innerHTML = html + "</ul>"; document.getElementById("modalDetalhes").style.display = "flex";
+        }
+
+        function excluirEstudo(idx) { if (confirm("Excluir este estudo?")) { listaEstudos.splice(idx, 1); salvarEAtualizar(); } }
+        function fecharModal(id) { document.getElementById(id).style.display = "none"; }
+
+        // ------------------------------------------------------------------
+        // KANBAN BASEADO EM RODÍZIOS COM DATAS EXATAS E ISOLAMENTO
+        // ------------------------------------------------------------------
+        function atualizarSeletorSemanasPorRodizios() {
+            let sel = document.getElementById("seletorSemanaInternato");
+            sel.innerHTML = "";
+            
+            if(cronogramaInternato.length === 0) {
+                sel.innerHTML = `<option value="">Cadastre um rodízio primeiro...</option>`;
+                document.getElementById("gridSemanaSetup").innerHTML = "<p style='font-size:12px;opacity:0.8;'>Cadastre um rodízio na Data de Rodízios no Internato para habilitar o Kanban.</p>";
+                document.getElementById("resultadoInternato").style.display = "none";
+                return;
+            }
+
+            let primeiraValida = "";
+            cronogramaInternato.forEach((rod, rIdx) => {
+                let dIni = new Date(rod.inicio + 'T00:00:00');
+                let dFim = new Date(rod.fim + 'T00:00:00');
+                let diffDias = Math.ceil((dFim - dIni) / (1000 * 60 * 60 * 24)) + 1;
+                let numSemanasRod = Math.max(1, Math.ceil(diffDias / 7));
+
+                for(let s=1; s<=numSemanasRod; s++) {
+                    let sId = `rod_${rIdx}_sem_${s}`;
+                    if(!primeiraValida) primeiraValida = sId;
+                    let dtIniSem = new Date(dIni);
+                    dtIniSem.setDate(dIni.getDate() + (s-1)*7);
+                    let dtFimSem = new Date(dtIniSem);
+                    dtFimSem.setDate(dtIniSem.getDate() + 6);
+                    let fD = d => `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}`;
+
+                    let labelText = `${rod.macro} — Sem. ${s} (${fD(dtIniSem)} a ${fD(dtFimSem)})`;
+                    sel.innerHTML += `<option value="${sId}">${labelText}</option>`;
+                }
+            });
+
+            if(!semanaAtivaId || !document.querySelector(`#seletorSemanaInternato option[value="${semanaAtivaId}"]`)) {
+                semanaAtivaId = primeiraValida;
+            }
+            sel.value = semanaAtivaId;
+            mudarSemanaAtiva(semanaAtivaId);
+        }
+
+        function mudarSemanaAtiva(idSemana) {
+            if(!idSemana) return;
+            semanaAtivaId = idSemana;
+            gerarGridSemanaAtiva();
+            renderizarKanbanSemanaAtiva();
+        }
+
+        function calcularDataExataRodizio(semanaId, diaIndex) {
+            let partes = semanaId.split('_');
+            let rIdx = parseInt(partes[1]);
+            let numSemana = parseInt(partes[3]);
+            let rod = cronogramaInternato[rIdx];
+            if(!rod) return "00/00";
+
+            let dIni = new Date(rod.inicio + 'T00:00:00');
+            let dAlvo = new Date(dIni);
+            dAlvo.setDate(dIni.getDate() + ((numSemana - 1) * 7) + diaIndex);
+
+            let dd = String(dAlvo.getDate()).padStart(2, '0');
+            let mm = String(dAlvo.getMonth() + 1).padStart(2, '0');
+            return `${dd}/${mm}`;
+        }
+
+        function gerarGridSemanaAtiva() {
+            let g = document.getElementById("gridSemanaSetup"); g.innerHTML = "";
+            if(!semanaAtivaId) return;
+
+            let gradeAtual = gradesSemanaisStore[semanaAtivaId] || { 
+                Seg:{m:'ocupado',t:'ocupado',n:'ocupado'}, Ter:{m:'ocupado',t:'ocupado',n:'ocupado'}, 
+                Qua:{m:'ocupado',t:'ocupado',n:'ocupado'}, Qui:{m:'ocupado',t:'ocupado',n:'ocupado'}, 
+                Sex:{m:'ocupado',t:'ocupado',n:'ocupado'}, Sáb:{m:'ocupado',t:'ocupado',n:'ocupado'}, 
+                Dom:{m:'descanso',t:'descanso',n:'descanso'} 
+            };
+
+            diasSemanaArr.forEach((d, idx) => {
+                let trns = gradeAtual[d] || { m: 'ocupado', t: 'ocupado', n: 'ocupado' };
+                let dtExata = calcularDataExataRodizio(semanaAtivaId, idx);
+                let renderSel = (trn, v) => `
+                    <select class="sel-turno" data-dia="${d}" data-trn="${trn}" onchange="salvarGradeTurnosSemanaSilencioso()">
+                        <option value="ocupado" ${v==='ocupado'?'selected':''}>🏥 Ocupado</option>
+                        <option value="estudo" ${v==='estudo'?'selected':''}>📘 Estudo</option>
+                        <option value="descanso" ${v==='descanso'?'selected':''}>🌿 Descanso</option>
+                    </select>
+                `;
+                g.innerHTML += `<div class="dia-col"><h4>${d}<br><small style="font-size:9px; font-weight:normal;">(${dtExata})</small></h4>
+                <div style="font-size:10px;">Manhã</div>${renderSel('m', trns.m)}
+                <div style="font-size:10px;">Tarde</div>${renderSel('t', trns.t)}
+                <div style="font-size:10px;">Noite</div>${renderSel('n', trns.n)}</div>`;
+            });
+        }
+
+        function salvarGradeTurnosSemanaSilencioso() {
+            if(!gradesSemanaisStore[semanaAtivaId]) gradesSemanaisStore[semanaAtivaId] = {};
+            document.querySelectorAll('.sel-turno').forEach(sel => {
+                let d = sel.dataset.dia; let t = sel.dataset.trn;
+                if(!gradesSemanaisStore[semanaAtivaId][d]) gradesSemanaisStore[semanaAtivaId][d] = {};
+                gradesSemanaisStore[semanaAtivaId][d][t] = sel.value;
+            });
+            window.syncToCloud();
+        }
+
+        function salvarGradeTurnosSemana() {
+            salvarGradeTurnosSemanaSilencioso();
+            alert("Grade de turnos salva com sucesso!");
+        }
+
+        function gerarTodoORodizio() {
+            if(cronogramaInternato.length === 0) return alert("Cadastre pelo menos um rodízio!");
+            salvarGradeTurnosSemanaSilencioso();
+            
+            let rIdx = parseInt(semanaAtivaId.split('_')[1]);
+            let rod = cronogramaInternato[rIdx];
+            if(!rod) return alert("Selecione um rodízio válido!");
+
+            let dIni = new Date(rod.inicio + 'T00:00:00');
+            let dFim = new Date(rod.fim + 'T00:00:00');
+            let diffDias = Math.ceil((dFim - dIni) / (1000 * 60 * 60 * 24)) + 1;
+            let numSemanasRod = Math.max(1, Math.ceil(diffDias / 7));
+            let misto = document.getElementById("chkMisto").checked;
+
+            let pool = [];
+            backlogAdiados.forEach(item => { if(item.macro === rod.macro) pool.push(item); });
+            backlogAdiados = backlogAdiados.filter(item => item.macro !== rod.macro);
+
+            if(taxonomia[rod.macro]) {
+                Object.keys(taxonomia[rod.macro]).forEach(esp => {
+                    taxonomia[rod.macro][esp].forEach(sub => {
+                        let jaFez = listaEstudos.some(e => e.tema === sub.n);
+                        let jaNoPool = pool.some(p => p.tema === sub.n);
+                        if(!jaFez && !jaNoPool) pool.push({ macro: rod.macro, esp: esp, tema: sub.n, peso: sub.p });
+                    });
+                });
+            }
+            pool.sort((a,b) => b.peso - a.peso);
+
+            for(let s=1; s<=numSemanasRod; s++) {
+                let sId = `rod_${rIdx}_sem_${s}`;
+                let grade = gradesSemanaisStore[sId] || { 
+                    Seg:{m:'ocupado',t:'ocupado',n:'estudo'}, Ter:{m:'ocupado',t:'ocupado',n:'estudo'}, 
+                    Qua:{m:'ocupado',t:'ocupado',n:'estudo'}, Qui:{m:'ocupado',t:'ocupado',n:'estudo'}, 
+                    Sex:{m:'ocupado',t:'ocupado',n:'estudo'}, Sáb:{m:'estudo',t:'estudo',n:'descanso'}, 
+                    Dom:{m:'descanso',t:'descanso',n:'descanso'} 
+                };
+                gradesSemanaisStore[sId] = grade;
+
+                let slotsEstudo = [];
+                diasSemanaArr.forEach(d => { turnosArr.forEach(t => { if(grade[d] && grade[d][t] === 'estudo') slotsEstudo.push({d, t}); }); });
+
+                let qTeoria = misto ? Math.round(slotsEstudo.length * 0.65) : slotsEstudo.length;
+                let cronoSemanal = {};
+                diasSemanaArr.forEach(d => {
+                    cronoSemanal[d] = {};
+                    turnosArr.forEach(t => cronoSemanal[d][t] = { tipo: grade[d] ? grade[d][t] : 'ocupado' });
+                });
+
+                let count = 0;
+                slotsEstudo.forEach(slot => {
+                    if(count < qTeoria && pool.length > 0) {
+                        let t = pool.shift();
+                        cronoSemanal[slot.d][slot.t] = { tipo: 'teoria', macro: t.macro, esp: t.esp, tema: t.tema, peso: t.peso };
+                        count++;
+                    } else {
+                        cronoSemanal[slot.d][slot.t] = { tipo: 'revisao' };
+                    }
+                });
+
+                cronogramaSemanasStore[sId] = cronoSemanal;
+            }
+
+            window.syncToCloud();
+            renderizarKanbanSemanaAtiva();
+            renderizarBacklogAdiados();
+            alert(`Todo o rodízio de ${rod.macro} (${numSemanasRod} semanas) foi planejado com sucesso!`);
+        }
+
+        function gerarPlanoSemanaAtiva() {
+            salvarGradeTurnosSemanaSilencioso();
+            let misto = document.getElementById("chkMisto").checked;
+            let gradeAtual = gradesSemanaisStore[semanaAtivaId];
+            if(!gradeAtual) return alert("Salve a grade de turnos primeiro!");
+
+            let rIdx = parseInt(semanaAtivaId.split('_')[1]);
+            let rod = cronogramaInternato[rIdx];
+            let macroRod = rod ? rod.macro : "Clínica Médica";
+
+            let slotsEstudo = [];
+            diasSemanaArr.forEach(d => { turnosArr.forEach(t => { if(gradeAtual[d] && gradeAtual[d][t] === 'estudo') slotsEstudo.push({d, t}); }); });
+            
+            if(slotsEstudo.length === 0) return alert("Defina pelo menos um turno como '📘 Estudo' nesta semana!");
+
+            let qTeoria = misto ? Math.round(slotsEstudo.length * 0.65) : slotsEstudo.length;
+
+            let poolTemas = [];
+            let antigoCrono = cronogramaSemanasStore[semanaAtivaId];
+            if(antigoCrono) {
+                diasSemanaArr.forEach(d => {
+                    turnosArr.forEach(t => {
+                        if(antigoCrono[d] && antigoCrono[d][t] && antigoCrono[d][t].tipo === 'teoria') {
+                            poolTemas.push(antigoCrono[d][t]);
+                        }
+                    });
+                });
+            }
+
+            while(poolTemas.length < qTeoria && backlogAdiados.length > 0) {
+                poolTemas.push(backlogAdiados.shift());
+            }
+
+            if(poolTemas.length < qTeoria && taxonomia[macroRod]) {
+                Object.keys(taxonomia[macroRod]).forEach(esp => {
+                    taxonomia[macroRod][esp].forEach(sub => {
+                        let jaFez = listaEstudos.some(e => e.tema === sub.n);
+                        let jaNoPool = poolTemas.some(p => p.tema === sub.n);
+                        if(!jaFez && !jaNoPool) poolTemas.push({ macro: macroRod, esp: esp, tema: sub.n, peso: sub.p });
+                    });
+                });
+                poolTemas.sort((a,b) => b.peso - a.peso);
+            }
+
+            let novoCrono = {};
+            diasSemanaArr.forEach(d => {
+                novoCrono[d] = {};
+                turnosArr.forEach(t => novoCrono[d][t] = { tipo: gradeAtual[d] ? gradeAtual[d][t] : 'ocupado' });
+            });
+
+            let count = 0;
+            slotsEstudo.forEach(slot => {
+                if(count < qTeoria && poolTemas.length > 0) {
+                    let topico = poolTemas.shift();
+                    novoCrono[slot.d][slot.t] = { tipo: 'teoria', macro: topico.macro, esp: topico.esp, tema: topico.tema, peso: topico.peso };
+                    count++;
+                } else {
+                    novoCrono[slot.d][slot.t] = { tipo: 'revisao' };
+                }
+            });
+
+            if(poolTemas.length > 0) {
+                poolTemas.forEach(sobra => {
+                    backlogAdiados.push({
+                        macro: sobra.macro, esp: sobra.esp, tema: sobra.tema, peso: sobra.peso,
+                        dataAdiado: calcularDataExataRodizio(semanaAtivaId, 0),
+                        motivo: "Sem espaço livre após recalcular a semana"
+                    });
+                });
+            }
+
+            cronogramaSemanasStore[semanaAtivaId] = novoCrono;
+            window.syncToCloud();
+
+            renderizarKanbanSemanaAtiva();
+            renderizarBacklogAdiados();
+            alert("Esta semana foi recalculada isoladamente sem afetar as outras!");
+        }
+
+        function renderizarKanbanSemanaAtiva() {
+            let cg = cronogramaSemanasStore[semanaAtivaId];
+            let res = document.getElementById("resultadoInternato");
+            
+            if(!cg) { res.style.display = "none"; return; }
+
+            let html = `<div style="display:grid; grid-template-columns: repeat(7, 1fr); gap:6px; margin-top:10px;">`;
+            
+            diasSemanaArr.forEach((d, idx) => {
+                let dtExata = calcularDataExataRodizio(semanaAtivaId, idx);
+                html += `<div style="background:var(--bg-color); border:1px solid var(--border-color); border-radius:6px; padding:6px;">
+                            <h4 style="text-align:center; margin-top:0; border-bottom:1px solid var(--border-color); padding-bottom:4px; font-size:11px;">${d}<br><small style="font-size:9px;">${dtExata}</small></h4>`;
+                turnosArr.forEach(t => {
+                    let b = cg[d] && cg[d][t] ? cg[d][t] : {tipo: 'ocupado'};
+                    let label = t==='m'?'Manhã':t==='t'?'Tarde':'Noite';
+                    let bg, cont;
+
+                    if(b.tipo === 'ocupado') {
+                        bg = 'var(--border-color)'; cont = `<div style="font-size:9px; color:#555; text-align:center;">🏥 Ocupado</div>`;
+                    } else if(b.tipo === 'descanso') {
+                        bg = '#2ecc71'; cont = `<div style="font-size:9px; color:white; text-align:center;">🌿 Descanso</div>`;
+                    } else if(b.tipo === 'teoria') {
+                        bg = '#3498db';
+                        cont = `<div style="font-size:9px; color:white;"><b>📘 Teoria</b><br>${b.tema.substring(0,30)}...
+                                  <div style="display:flex; gap:2px; margin-top:4px;">
+                                      <button style="padding:2px; font-size:8px; margin:0;" onclick="iniciarTeoriaKanban('${b.macro}', '${b.esp}', '${b.tema}')">✔️ Estudar</button>
+                                      <button style="padding:2px; font-size:8px; margin:0; background:#f39c12;" onclick="adiarTemaParaBacklog('${d}', '${t}', '${dtExata}')">📦 Adiar</button>
+                                  </div></div>`;
+                    } else if(b.tipo === 'revisao') {
+                        bg = '#e67e22';
+                        cont = `<div style="font-size:9px; color:white; text-align:center;"><b>🔁 FSRS</b><br>Revisões</div>`;
+                    }
+
+                    html += `<div style="background:${bg}; padding:5px; border-radius:4px; margin-bottom:5px; min-height:50px;">
+                                <div style="font-size:8px; opacity:0.8; margin-bottom:2px; color:${b.tipo==='ocupado'?'#333':'white'};">${label}</div>
+                                ${cont}
+                             </div>`;
+                });
+                html += `</div>`;
+            });
+            res.innerHTML = html + "</div>";
+            res.style.display = "block";
+        }
+
+        function adiarTemaParaBacklog(d, t, dtExata) {
+            let cg = cronogramaSemanasStore[semanaAtivaId];
+            if(cg && cg[d] && cg[d][t] && cg[d][t].tipo === 'teoria') {
+                let topico = cg[d][t];
+                let motivoPrompt = prompt("Qual o motivo do adiamento? (Ex: Plantão extra, Cansaço)", "Plantão no internato");
+                if(motivoPrompt === null) return;
+
+                let realocado = false;
+                diasSemanaArr.forEach(diaKey => {
+                    turnosArr.forEach(trnKey => {
+                        if(!realocado && cg[diaKey] && cg[diaKey][trnKey] && cg[diaKey][trnKey].tipo === 'revisao') {
+                            cg[diaKey][trnKey] = { tipo: 'teoria', macro: topico.macro, esp: topico.esp, tema: topico.tema, peso: topico.peso };
+                            cg[d][t] = { tipo: 'revisao' };
+                            realocado = true;
+                            alert(`Tema realocado localmente para ${diaKey} (${trnKey === 'm' ? 'Manhã' : trnKey === 't' ? 'Tarde' : 'Noite'})!`);
+                        }
+                    });
+                });
+
+                if(!realocado) {
+                    cg[d][t] = { tipo: 'revisao' };
+                    backlogAdiados.push({ 
+                        macro: topico.macro, esp: topico.esp, tema: topico.tema, peso: topico.peso,
+                        dataAdiado: dtExata, motivo: motivoPrompt || "Sem turnos livres na semana"
+                    });
+                    alert("Sem turnos livres nesta semana. Tema enviado para Temas Adiados!");
+                }
+
+                cronogramaSemanasStore[semanaAtivaId] = cg;
+                window.syncToCloud();
+                
+                renderizarKanbanSemanaAtiva();
+                renderizarBacklogAdiados();
+            }
+        }
+
+        function renderizarBacklogAdiados() {
+            let div = document.getElementById("listaBacklogAdiados"); div.innerHTML = "";
+            if(backlogAdiados.length === 0) { div.innerHTML = "<p style='opacity:0.7; font-size:12px;'>Nenhum tema na fila de adiados.</p>"; return; }
+            backlogAdiados.forEach((item, idx) => {
+                div.innerHTML += `<div style="padding:6px; border-bottom:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center; font-size:12px;">
+                    <span><b>${item.tema}</b> — Adiado de ${item.dataAdiado} — <em>Motivo: ${item.motivo}</em></span>
+                    <button class="btn-acao" style="margin:0; padding:4px 8px; font-size:10px;" onclick="abrirModalResgate(${idx})">📥 Resgatar</button>
+                </div>`;
+            });
+        }
+
+        function abrirModalResgate(idx) {
+            let item = backlogAdiados[idx];
+            let cg = cronogramaSemanasStore[semanaAtivaId];
+            if(!cg) return alert("Gere o cronograma da semana ativa primeiro!");
+
+            let slotsLivres = [];
+            diasSemanaArr.forEach((d, dIdx) => {
+                turnosArr.forEach(t => {
+                    if(cg[d] && cg[d][t] && (cg[d][t].tipo === 'revisao' || cg[d][t].tipo === 'descanso')) {
+                        let labelT = t==='m'?'Manhã':t==='t'?'Tarde':'Noite';
+                        let dt = calcularDataExataRodizio(semanaAtivaId, dIdx);
+                        slotsLivres.push({ d, t, desc: `${d} (${dt}) - ${labelT}` });
+                    }
+                });
+            });
+
+            if(slotsLivres.length === 0) return alert("Não há turnos de revisão ou descanso disponíveis na semana ativa para resgate!");
+
+            let msg = `Escolha o turno para encaixar:
+` + slotsLivres.map((s, i) => `${i+1}. ${s.desc}`).join('
+');
+            let esc = prompt(msg, "1");
+            if(esc === null) return;
+            let num = parseInt(esc) - 1;
+            if(isNaN(num) || num < 0 || num >= slotsLivres.length) return alert("Opção inválida!");
+
+            let destino = slotsLivres[num];
+            cg[destino.d][destino.t] = { tipo: 'teoria', macro: item.macro, esp: item.esp, tema: item.tema, peso: item.peso };
+            
+            backlogAdiados.splice(idx, 1);
+            cronogramaSemanasStore[semanaAtivaId] = cg;
+            window.syncToCloud();
+
+            renderizarKanbanSemanaAtiva();
+            renderizarBacklogAdiados();
+            alert("Tema resgatado com sucesso para o turno escolhido!");
+        }
+
+        function iniciarTeoriaKanban(macro, esp, tema) {
+            mudarAba('tab-estudo', document.querySelectorAll('.main-nav-abas .main-aba-tab')[2]);
+            document.getElementById('reg_macro').value = macro;
+            popularEspecialidades('reg_macro', 'reg_esp', 'reg_subtema', false);
+            document.getElementById('reg_esp').value = esp;
+            popularSubtemas('reg_macro', 'reg_esp', 'reg_subtema', false);
+            document.getElementById('reg_subtema').value = tema;
+        }
+
+        // ------------------------------------------------------------------
+        // PROVAS E LINHA DO TEMPO
+        // ------------------------------------------------------------------
+        function adicionarOuEditarProva(e) {
+            e.preventDefault();
+            let pObj = { nome: document.getElementById("provaNome").value, data: document.getElementById("provaData").value, tipo: document.getElementById("provaTipo").value };
+            let editId = document.getElementById("provaIdEdit").value;
+            if (editId !== "") agendaProvas[parseInt(editId)] = pObj; else agendaProvas.push(pObj);
+            
+            document.getElementById("provaIdEdit").value = ""; e.target.reset(); document.getElementById("btnSalvarProva").innerText = "Adicionar Prova";
+            salvarEAtualizar();
+            renderizarListasPlanejamento(); 
+        }
+
+        function editarProva(idx) {
+            let p = agendaProvas[idx];
+            document.getElementById("provaNome").value = p.nome; document.getElementById("provaData").value = p.data;
+            document.getElementById("provaTipo").value = p.tipo; document.getElementById("provaIdEdit").value = idx;
+            document.getElementById("btnSalvarProva").innerText = "Salvar Alterações";
+        }
+
+        function adicionarRodizio(e) {
+            e.preventDefault();
+            cronogramaInternato.push({ inicio: document.getElementById("rodInicio").value, fim: document.getElementById("rodFim").value, macro: document.getElementById("rodMacro").value });
+            cronogramaInternato.sort((a, b) => new Date(a.inicio + 'T00:00:00') - new Date(b.inicio + 'T00:00:00'));
+            e.target.reset(); 
+            window.syncToCloud();
+            renderizarListasPlanejamento();
+            atualizarSeletorSemanasPorRodizios();
+        }
+
+        function renderizarListasPlanejamento() {
+            let ulP = document.getElementById("listaProvas"); ulP.innerHTML = "";
+            agendaProvas.forEach((p, i) => ulP.innerHTML += `<li><b>${p.nome}</b> (${p.data}) - [${p.tipo}] <button class="btn-acao btn-edit" onclick="editarProva(${i})">Editar</button> <span style="color:red;cursor:pointer;" onclick="agendaProvas.splice(${i},1); window.syncToCloud(); renderizarListasPlanejamento();">[Excluir]</span></li>`);
+            
+            let divR = document.getElementById("listaRodizios"); divR.innerHTML = "";
+            let hj = new Date().toISOString().split('T')[0];
+            cronogramaInternato.forEach((r, i) => {
+                let isActive = (r.inicio <= hj && r.fim >= hj);
+                divR.innerHTML += `<div style="padding:6px; border-bottom:1px solid var(--border-color); ${isActive ? 'background:rgba(39, 174, 96, 0.1); font-weight:bold; border-left:4px solid var(--primary-color);' : ''}">${isActive ? '🟢 [ATUAL] ' : ''}<b>${r.macro}</b>: ${r.inicio} até ${r.fim} <span style="color:red;cursor:pointer;float:right;" onclick="cronogramaInternato.splice(${i},1); window.syncToCloud(); renderizarListasPlanejamento(); atualizarSeletorSemanasPorRodizios();">[Excluir]</span></div>`;
+            });
+        }
+
+        // ------------------------------------------------------------------
+        // ESTATÍSTICAS NERDS E METAS
+        // ------------------------------------------------------------------
+        function atualizarEstatisticasNerds() {
+            let hj = new Date().toISOString().split('T')[0];
+            let d7 = new Date(); d7.setDate(d7.getDate() - 7); let s7 = d7.toISOString().split('T')[0];
+            let d30 = new Date(); d30.setDate(d30.getDate() - 30); let s30 = d30.toISOString().split('T')[0];
+            let tH=0, qH=0, tS=0, qS=0, tM=0, qM=0; let aTop = {};
+
+            listaEstudos.forEach(i => {
+                i.historico.forEach(h => {
+                    let d = h.data; let t = h.tempo || 0; let q = h.feitas || 0;
+                    if(d === hj) { tH += t; qH += q; }
+                    if(d >= s7) { tS += t; qS += q; }
+                    if(d >= s30) { tM += t; qM += q; aTop[i.macroArea] = (aTop[i.macroArea] || 0) + t; }
+                });
+            });
+
+            Object.keys(pomodoroDiario).forEach(k => {
+                let val = pomodoroDiario[k] || 0;
+                if(k === hj) tH += val; if(k >= s7) tS += val; if(k >= s30) tM += val;
+            });
+
+            let fT = m => `${Math.floor(m / 60)}h ${m % 60}m`;
+            document.getElementById("nerdTempoHoje").innerText = fT(tH); document.getElementById("nerdQtsHoje").innerText = qH;
+            document.getElementById("nerdTempoSemana").innerText = fT(tS); document.getElementById("nerdQtsSemana").innerText = qS;
+            document.getElementById("nerdTempoMes").innerText = fT(tM); document.getElementById("nerdQtsMes").innerText = qM;
+            document.getElementById("focusTotalTime").innerText = tH;
+
+            let top = Object.entries(aTop).sort((a, b) => b[1] - a[1]).slice(0, 3);
+            let ul = document.getElementById("nerdTopAreas"); ul.innerHTML = "";
+            if(top.length === 0) ul.innerHTML = "<li>Sem registros no mês.</li>";
+            top.forEach((x, i) => ul.innerHTML += `<li>${i === 0 ? '🥇' : i === 1 ? '🥈' : '🥉'} <b>${x[0]}</b>: ${fT(x[1])}</li>`);
+        }
+
+        function renderizarMetasSubtemas() {
+            let m = document.getElementById("meta_macro").value; let e = document.getElementById("meta_esp").value;
+            let tbody = document.getElementById("tabela-metas-subtemas"); tbody.innerHTML = "";
+            if (!m || m === 'todas') return;
+            
+            let esps = (e === 'todas') ? Object.keys(taxonomia[m]) : [e];
+            esps.forEach(esp => {
+                if(!taxonomia[m][esp]) return;
+                taxonomia[m][esp].forEach(sub => {
+                    let meta = sub.p === 5 ? 120 : sub.p === 4 ? 80 : sub.p === 3 ? 50 : sub.p === 2 ? 30 : 15;
+                    let ft = 0; listaEstudos.forEach(i => { if (i.tema === sub.n) i.historico.forEach(h => ft += (h.feitas || 0)); });
+                    let pct = (ft / meta) * 100;
+                    let bg = pct >= 100 ? "#27ae60" : pct >= 75 ? "#2980b9" : pct >= 50 ? "#e67e22" : "#c0392b";
+                    tbody.innerHTML += `<tr><td><small style="opacity:0.7">${esp}</small><br><strong>${sub.n}</strong></td><td>${meta} qts</td><td>${ft}</td><td><span class="badge" style="background:${bg};">${pct.toFixed(0)}%</span></td></tr>`;
+                });
+            });
+        }
+
+        function renderizarPlanilha() {
+            let m = document.getElementById("plan_macro").value; let e = document.getElementById("plan_esp").value;
+            let tbody = document.getElementById("tabela-planilha"); tbody.innerHTML = "";
+            if (!m || m === 'todas' || !e || e === 'todas') { tbody.innerHTML = `<tr><td colspan='3' style='text-align:center;'>Selecione a Especialidade!</td></tr>`; return; }
+            
+            taxonomia[m][e].forEach(sub => {
+                if (!notasIncidencia[sub.n]) notasIncidencia[sub.n] = { text: "", img: "" }; let nota = notasIncidencia[sub.n];
+                tbody.innerHTML += `<tr><td><strong>${sub.n}</strong></td>
+                <td><input type="text" value="${nota.text}" placeholder="O que mais cai..." onchange="sNI('${sub.n}', 'text', this.value)" style="margin:0;"></td>
+                <td><input type="url" value="${nota.img}" placeholder="URL Imagem" onchange="sNI('${sub.n}', 'img', this.value)" style="margin:0;">${nota.img ? `<br><img src="${nota.img}" style="max-width:100%;border-radius:4px;margin-top:5px;">` : ''}</td></tr>`;
+            });
+        }
+        function sNI(tema, tipo, val) { if (!notasIncidencia[tema]) notasIncidencia[tema] = {}; notasIncidencia[tema][tipo] = val; window.syncToCloud(); renderizarPlanilha(); }
+
+        function renderizarCadernoErros() {
+            let f = document.getElementById("buscaErros").value.toLowerCase(); let d = document.getElementById("listaCadernoErros"); d.innerHTML = ""; let c = 0;
+            listaEstudos.forEach(i => i.historico.forEach(h => { if (h.notaErro && h.notaErro.toLowerCase().includes(f)) { c++; d.innerHTML += `<div style="padding:6px 0; border-bottom:1px solid var(--border-color); font-size:13px;"><b>${i.tema}</b> (${h.fase}): ${h.notaErro}</div>`; }}));
+            if (c === 0) d.innerHTML = "<p style='opacity:0.7; font-size:13px;'>Nenhum erro encontrado.</p>";
+        }
+
+        // ------------------------------------------------------------------
+        // MÉTRICAS DE ESTUDO & SIMULADOS
+        // ------------------------------------------------------------------
+        function salvarSimulado(e) {
+            e.preventDefault();
+            listaSimulados.push({ id: Date.now(), data: new Date().toISOString().split('T')[0], nome: document.getElementById("simNome").value, acertos: parseInt(document.getElementById("simAcertos").value), total: parseInt(document.getElementById("simTotal").value), areas: { CM: document.getElementById("simCM").value, CIR: document.getElementById("simCIR").value, GO: document.getElementById("simGO").value, PED: document.getElementById("simPED").value, PREV: document.getElementById("simPREV").value } });
+            e.target.reset(); salvarEAtualizar();
+        }
+
+        let chartRadar = null, chartSim = null, chartEvo = null;
+        function atualizarRadar() {
+            let ctx = document.getElementById('graficoRadar').getContext('2d'); if (chartRadar) chartRadar.destroy();
+            let macros = ["Clínica Médica", "Cirurgia", "Ginecologia e Obstetrícia", "Pediatria", "Preventiva"];
+            let counts = [0, 0, 0, 0, 0]; let totals = [0, 0, 0, 0, 0];
+
+            Object.keys(taxonomia).forEach(m => {
+                let idx = macros.indexOf(m);
+                if (idx !== -1) { Object.values(taxonomia[m]).forEach(arr => totals[idx] += arr.length); }
+            });
+            listaEstudos.forEach(i => { let idx = macros.indexOf(i.macroArea); if (idx !== -1) counts[idx]++; });
+            let data = counts.map((c, idx) => Math.min(100, Math.round((c / totals[idx]) * 100) || 0));
+
+            chartRadar = new Chart(ctx, { type: 'radar', data: { labels: ["Clínica", "Cirurgia", "GO", "Pediatria", "Preventiva"], datasets: [{ label: '% Cobertura', data: data, backgroundColor: 'rgba(41, 128, 185, 0.2)', borderColor: '#2980b9' }] }, options: { scales: { r: { max: 100, min: 0 } } } });
+        }
+
+        function atualizarGraficoSimulados() {
+            let ctx = document.getElementById('graficoSimulados').getContext('2d'); if (chartSim) chartSim.destroy();
+            chartSim = new Chart(ctx, { type: 'line', data: { labels: listaSimulados.map(x => x.nome), datasets: [{ label: '% Acertos', data: listaSimulados.map(x => Math.round((x.acertos / x.total) * 100)), borderColor: '#e74c3c', tension: 0.2 }] }, options: { scales: { y: { max: 100, min: 0 } } } });
+
+            let div = document.getElementById("listaSimulados"); div.innerHTML = "";
+            listaSimulados.forEach(x => {
+                let st = Object.entries(x.areas).filter(y => y[1]).map(y => `${y[0]}: ${y[1]}`).join(' | ');
+                div.innerHTML += `<div style="padding:5px 0; border-bottom:1px solid var(--border-color); font-size:12px;"><b>${x.nome}</b>: ${x.acertos}/${x.total} (${Math.round((x.acertos/x.total)*100)}%) <small style="opacity:0.8;">${st ? `[${st}]` : ''}</small></div>`;
+            });
+        }
+
+        function atualizarGraficoEvolucao() {
+            let ctx = document.getElementById('graficoEvolucao').getContext('2d'); if (chartEvo) chartEvo.destroy();
+            let m = document.getElementById("evo_macro").value; let e = document.getElementById("evo_esp").value; let s = document.getElementById("evo_subtema").value;
+            let hist = [];
+            listaEstudos.forEach(i => {
+                if (m !== 'todas' && i.macroArea !== m) return;
+                if (e !== 'todas' && i.especialidade !== e) return;
+                if (s !== 'todas' && i.tema !== s) return;
+                i.historico.forEach(h => { if (h.feitas > 0) hist.push({ d: h.data, n: i.tema.substring(0, 10), t: (h.acertos / h.feitas) * 100 }); });
+            });
+            hist.sort((x, y) => new Date(x.d) - new Date(y.d));
+            chartEvo = new Chart(ctx, { type: 'line', data: { labels: hist.map(x => x.n), datasets: [{ label: '% Acertos', data: hist.map(x => x.t), borderColor: '#27ae60', tension: 0.2 }] }, options: { scales: { y: { max: 100, min: 0 } } } });
+        }
+
+        // ------------------------------------------------------------------
+        // CONFIGURAÇÕES & BACKUP
+        // ------------------------------------------------------------------
+        function salvarConfiguracoes() {
+            let intStr = document.getElementById("configIntervalos").value;
+            configAlgoritmo = {
+                intervalos: intStr.split(',').map(n => parseInt(n.trim())).filter(n => !isNaN(n)),
+                p5: parseFloat(document.getElementById("configPeso5").value),
+                p4: parseFloat(document.getElementById("configPeso4").value),
+                p3: parseFloat(document.getElementById("configPeso3").value),
+                p2: parseFloat(document.getElementById("configPeso2").value),
+                p1: parseFloat(document.getElementById("configPeso1").value),
+                burnout: parseInt(document.getElementById("configBurnout").value)
+            };
+            window.syncToCloud();
+            alert("Configurações salvas!"); atualizarDashboard();
+        }
+
+        function atualizarMetaAnual() {
+            metaAnual = parseInt(document.getElementById("metaInputConfig").value) || 10000;
+            salvarEAtualizar();
+        }
+
+        function exportarBackup() {
+            let dados = { 
+                estudos: listaEstudos, notas: notasIncidencia, simulados: listaSimulados, config: configAlgoritmo, 
+                provas: agendaProvas, internato: cronogramaInternato, 
+                grades_semanais: gradesSemanaisStore,
+                crono_semanas: cronogramaSemanasStore, backlog: backlogAdiados,
+                pomodoro: pomodoroDiario, streak: streak 
+            };
+            let blob = new Blob([JSON.stringify(dados, null, 2)], { type: 'json' }); let url = URL.createObjectURL(blob); let a = document.createElement('a'); a.href = url; a.download = `backup_residencia_${new Date().toISOString().split('T')[0]}.json`; a.click();
+        }
+
+        function importarBackup(e) {
+            let file = e.target.files[0]; if (!file) return;
+            let reader = new FileReader();
+            reader.onload = function(evt) {
+                try {
+                    let d = JSON.parse(evt.target.result);
+                    window.hydrateData(d); // reaplica globais e renderiza
+                    window.syncToCloud(); // joga pro firebase logo após importar
+                    alert("Backup restaurado!");
+                } catch(err) { alert("Arquivo JSON inválido."); }
+            }; reader.readAsText(file);
+        }
+
+        function salvarEAtualizar() {
+            window.syncToCloud(); // Salva estado atual na nuvem
+            renderizarTabela(); 
+            atualizarRadar(); 
+            atualizarGraficoSimulados(); 
+            renderizarMetasSubtemas(); 
+            renderizarPlanilha(); 
+            renderizarCadernoErros(); 
+            atualizarEstatisticasNerds();
+        }
+    </script>
+</body>
+</html>
