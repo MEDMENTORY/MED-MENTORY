@@ -104,7 +104,7 @@
     <!-- TELA DE LOGIN FIREBASE (OPCIONAL) -->
     <div id="loginOverlay">
         <div class="login-box">
-            <h2>🧠 MED MENTORY CLOUD</h2>
+            <h2>🧠 APROVA-MED CLOUD</h2>
             <p style="font-size:12px; margin-bottom:20px;">Sincronização em Nuvem Opcional</p>
             <input type="email" id="loginEmail" placeholder="Seu E-mail">
             <input type="password" id="loginPassword" placeholder="Sua Senha">
@@ -142,7 +142,7 @@
     <!-- CABEÇALHO -->
     <header>
         <div>
-            <h1>🧠 MED MENTORY</h1>
+            <h1>🧠 APROVA-MED BETA</h1>
             <p style="margin:0; font-size:12px; opacity:0.8;">Sistema Preditivo de Estudos • Repetição Espaçada • Foco na Residência Médica</p>
         </div>
         <div style="display: flex; gap: 5px; align-items:center;">
@@ -217,27 +217,10 @@
             </div>
         </div>
 
+        <!-- WIDGET DE PROVAS -->
         <div class="card">
-            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:15px;">
-                <h2 style="margin:0;">Cronograma de Revisões</h2>
-                <div style="text-align: right;">
-                    <div>
-                        <button class="btn-acao" onclick="ativarSprint()" id="btnSprintConfig" style="background:#2c3e50;">⚡ Ativar Sprint</button>
-                        <button class="btn-acao" onclick="limparSprint()" style="background:var(--danger-color);">Limpar Sprint</button>
-                    </div>
-                    <div style="font-size: 11px; margin-top: 5px;">Status do Sprint: <span id="sprintStatusText" style="font-weight:bold; color:var(--danger-color);">Inativo</span></div>
-                </div>
-            </div>
-            
-            <div class="sub-nav-abas">
-                <button class="sub-aba-btn active" onclick="mudarFiltroTabela('todas', this)">Todas</button>
-                <button class="sub-aba-btn" onclick="mudarFiltroTabela('atrasadas', this)">Atrasadas 🔴</button>
-                <button class="sub-aba-btn" onclick="mudarFiltroTabela('hoje', this)">Para Hoje 🎯</button>
-            </div>
-            <table>
-                <thead><tr><th>Área / Tema</th><th>Fase / Próxima</th><th>Ações</th></tr></thead>
-                <tbody id="tabela-estudos"></tbody>
-            </table>
+            <h2 style="font-size: 16px; margin-bottom: 15px;">🎯 Contagem Regressiva</h2>
+            <div id="widgetProvasContainer"></div>
         </div>
     </div>
 
@@ -299,23 +282,6 @@
             <p style="font-size:12px; opacity:0.8;">Temas que foram adiados por falta de tempo ou plantões de última hora. Resgate para a semana ativa quando tiver um turno livre!</p>
             <div id="listaBacklogAdiados" style="max-height:220px; overflow-y:auto; font-size:13px;"></div>
         </div>
-
-        <!-- CALENDÁRIO DE PROVAS -->
-        <div class="card">
-            <h2>🎯 Calendário de Provas</h2>
-            <p style="font-size:12px; opacity:0.8;">Cadastre suas provas. A "Prova Principal" ativará automaticamente o alerta e o bloqueio de revisão curta aos 45 dias.</p>
-            <form onsubmit="adicionarOuEditarProva(event)" class="row-form">
-                <input type="hidden" id="provaIdEdit">
-                <div class="col-form"><label>Nome da Prova:</label><input type="text" id="provaNome" placeholder="Ex: ENARE 2028" required></div>
-                <div class="col-form"><label>Data da Prova:</label><input type="date" id="provaData" required></div>
-                <div class="col-form">
-                    <label>Tipo:</label>
-                    <select id="provaTipo"><option value="principal">Alvo Principal (Reta Final 45d)</option><option value="secundaria">Secundária (Sprints)</option></select>
-                </div>
-                <div><button type="submit" id="btnSalvarProva" style="margin:0; padding:10px;">Adicionar Prova</button></div>
-            </form>
-            <ul id="listaProvas" style="font-size:13px; margin-top:15px; padding-left:20px;"></ul>
-        </div>
     </div>
 
     <!-- ABA 3: REGISTRO DE ESTUDO -->
@@ -363,6 +329,29 @@
 
                 <button type="submit">Salvar Estudo e Programar FSRS</button>
             </form>
+        </div>
+
+        <div class="card">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:15px;">
+                <h2 style="margin:0;">Cronograma de Revisões</h2>
+                <div style="text-align: right;">
+                    <div>
+                        <button class="btn-acao" onclick="ativarSprint()" id="btnSprintConfig" style="background:#2c3e50;">⚡ Ativar Sprint</button>
+                        <button class="btn-acao" onclick="limparSprint()" style="background:var(--danger-color);">Limpar Sprint</button>
+                    </div>
+                    <div style="font-size: 11px; margin-top: 5px;">Status do Sprint: <span id="sprintStatusText" style="font-weight:bold; color:var(--danger-color);">Inativo</span></div>
+                </div>
+            </div>
+            
+            <div class="sub-nav-abas">
+                <button class="sub-aba-btn active" onclick="mudarFiltroTabela('todas', this)">Todas</button>
+                <button class="sub-aba-btn" onclick="mudarFiltroTabela('atrasadas', this)">Atrasadas 🔴</button>
+                <button class="sub-aba-btn" onclick="mudarFiltroTabela('hoje', this)">Para Hoje 🎯</button>
+            </div>
+            <table>
+                <thead><tr><th>Área / Tema</th><th>Fase / Próxima</th><th>Ações</th></tr></thead>
+                <tbody id="tabela-estudos"></tbody>
+            </table>
         </div>
     </div>
 
@@ -485,6 +474,23 @@
 
     <!-- ABA 7: CONFIGURAÇÃO -->
     <div id="tab-config" class="tab-content">
+        <!-- CALENDÁRIO DE PROVAS -->
+        <div class="card">
+            <h2>🎯 Calendário de Provas</h2>
+            <p style="font-size:12px; opacity:0.8;">Cadastre suas provas. A "Prova Principal" ativará automaticamente o alerta e o bloqueio de revisão curta aos 45 dias.</p>
+            <form onsubmit="adicionarOuEditarProva(event)" class="row-form">
+                <input type="hidden" id="provaIdEdit">
+                <div class="col-form"><label>Nome da Prova:</label><input type="text" id="provaNome" placeholder="Ex: ENARE 2028" required></div>
+                <div class="col-form"><label>Data da Prova:</label><input type="date" id="provaData" required></div>
+                <div class="col-form">
+                    <label>Tipo:</label>
+                    <select id="provaTipo"><option value="principal">Alvo Principal (Reta Final 45d)</option><option value="secundaria">Secundária (Sprints)</option></select>
+                </div>
+                <div><button type="submit" id="btnSalvarProva" style="margin:0; padding:10px;">Adicionar Prova</button></div>
+            </form>
+            <ul id="listaProvas" style="font-size:13px; margin-top:15px; padding-left:20px;"></ul>
+        </div>
+
         <div class="card">
             <h2>⚙️ Calibragem do Algoritmo FSRS (Pesos 1 a 5)</h2>
             <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap:10px; margin-top:10px;">
@@ -498,7 +504,7 @@
             <input type="text" id="configIntervalos" value="1, 7, 14, 30, 60, 90">
             <label>Limite de Saturação (Aviso de Burnout em 3 Dias):</label>
             <input type="number" id="configBurnout" value="15">
-            <button onclick="salvarConfiguracoes()">Salvar Configurações</button>
+            <button onclick="salvarConfiguracoes()">Salvar Configurações (Nuvem)</button>
         </div>
 
         <div class="card">
@@ -542,28 +548,31 @@
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
+        // =======================================================================
+        // ATENÇÃO: COLOQUE SUAS CHAVES DO FIREBASE AQUI PARA A NUVEM FUNCIONAR!
+        // =======================================================================
         const firebaseConfig = {
             apiKey: "AIzaSyDbggm0tW-E3NaeSYJ_d4_wje6ncE4gk3o",
-  authDomain: "aprovados-da44a.firebaseapp.com",
-  projectId: "aprovados-da44a",
-  storageBucket: "aprovados-da44a.firebasestorage.app",
-  messagingSenderId: "248559853817",
-  appId: "1:248559853817:web:f9b6e1f973b92254120228"
+            authDomain: "aprovados-da44a.firebaseapp.com",
+            projectId: "aprovados-da44a",
+            storageBucket: "aprovados-da44a.firebasestorage.app",
+            messagingSenderId: "248559853817",
+            appId: "1:248559853817:web:f9b6e1f973b92254120228"
         };
 
         let app, auth, db;
         try {
-            if (firebaseConfig.apiKey !== "COLE_SUA_API_KEY_AQUI") {
-                app = initializeApp(firebaseConfig);
-                auth = getAuth(app);
-                db = getFirestore(app);
-            }
+            app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            db = getFirestore(app);
+            let fw = document.getElementById('firebaseWarning');
+            if(fw) fw.style.display = 'none';
         } catch(e) {
-            console.error("Firebase init error", e);
+            console.error("Erro ao inicializar Firebase", e);
         }
 
         window.realizarLogin = async () => {
-            if(!auth) return alert("Configure as chaves do Firebase primeiro!");
+            if(!auth) return alert("Configure as chaves do Firebase primeiro no HTML!");
             const email = document.getElementById('loginEmail').value;
             const pass = document.getElementById('loginPassword').value;
             try {
@@ -572,7 +581,7 @@
         };
 
         window.realizarCadastro = async () => {
-            if(!auth) return alert("Configure as chaves do Firebase primeiro!");
+            if(!auth) return alert("Configure as chaves do Firebase primeiro no HTML!");
             const email = document.getElementById('loginEmail').value;
             const pass = document.getElementById('loginPassword').value;
             try {
@@ -635,6 +644,9 @@
 
     <!-- SCRIPT DE LÓGICA DA APLICAÇÃO -->
     <script>
+        // ------------------------------------------------------------------
+        // TAXONOMIA 3 NÍVEIS OFICIAL (PESO VISÍVEL NO TEXTO)
+        // ------------------------------------------------------------------
         const taxonomia = {
             "Clínica Médica": {
                 "Cardiologia": [
@@ -1336,7 +1348,7 @@
         let filtroTab = 'todas';
         function mudarFiltroTabela(f, btn) {
             filtroTab = f;
-            document.querySelectorAll('#tab-inicio .sub-nav-abas .sub-aba-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('#tab-estudo .sub-nav-abas .sub-aba-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active'); renderizarTabela();
         }
 
@@ -1352,19 +1364,20 @@
             sprintAtivo = true; 
             document.getElementById("sprintAlert").style.display = "block"; 
             let sts = document.getElementById("sprintStatusText");
-            sts.innerText = "Ativo"; sts.style.color = "var(--primary-color)";
+            if(sts) { sts.innerText = "Ativo"; sts.style.color = "var(--primary-color)"; }
             renderizarTabela(); 
         }
         function limparSprint() { 
             sprintAtivo = false; 
             document.getElementById("sprintAlert").style.display = "none"; 
             let sts = document.getElementById("sprintStatusText");
-            sts.innerText = "Inativo"; sts.style.color = "var(--danger-color)";
+            if(sts) { sts.innerText = "Inativo"; sts.style.color = "var(--danger-color)"; }
             renderizarTabela(); 
         }
 
         function renderizarTabela() {
-            let tbody = document.getElementById("tabela-estudos"); tbody.innerHTML = "";
+            let tbody = document.getElementById("tabela-estudos"); if(!tbody) return;
+            tbody.innerHTML = "";
             let hj = new Date().toISOString().split('T')[0];
 
             atualizarDashboard();
@@ -1913,7 +1926,7 @@
 
             if(slotsLivres.length === 0) return alert("Não há turnos de revisão ou descanso disponíveis na semana ativa para resgate!");
 
-            let msg = "Escolha o turno para encaixar:\n" + slotsLivres.map((s, i) => `${i+1}. ${s.desc}`).join('\n');
+            let msg = `Escolha o turno para encaixar:\n` + slotsLivres.map((s, i) => `${i+1}. ${s.desc}`).join('\n');
             let esc = prompt(msg, "1");
             if(esc === null) return;
             let num = parseInt(esc) - 1;
@@ -1971,6 +1984,59 @@
             atualizarSeletorSemanasPorRodizios();
         }
 
+        
+        function renderizarWidgetProvas() {
+            let div = document.getElementById("widgetProvasContainer");
+            if (!div) return;
+            div.innerHTML = "";
+            
+            let pp = agendaProvas.find(x => x.tipo === "principal");
+            let hj = new Date(); hj.setHours(0,0,0,0);
+
+            let html = "";
+            if (pp) {
+                let dP = new Date(pp.data + 'T00:00:00');
+                let diff = Math.ceil((dP - hj) / (1000 * 60 * 60 * 24));
+                if(diff > 0) {
+                    html += `<div style="text-align:center; padding: 20px; background: rgba(41, 128, 185, 0.1); border: 1px solid var(--accent-color); border-radius: 8px; margin-bottom:15px;">
+                                <h3 style="margin:0; color:var(--accent-color); font-size:24px;">⏳ Faltam ${diff} dias</h3>
+                                <p style="margin:5px 0 0; font-size:14px; font-weight:bold;">Para o ${pp.nome} (${pp.data.split('-').reverse().join('/')})</p>
+                             </div>`;
+                } else if (diff === 0) {
+                    html += `<div style="text-align:center; padding: 20px; background: rgba(39, 174, 96, 0.1); border: 1px solid var(--primary-color); border-radius: 8px; margin-bottom:15px;">
+                                <h3 style="margin:0; color:var(--primary-color); font-size:24px;">🎉 É Hoje!</h3>
+                                <p style="margin:5px 0 0; font-size:14px; font-weight:bold;">Boa prova no ${pp.nome}!</p>
+                             </div>`;
+                } else {
+                     html += `<div style="text-align:center; padding: 20px; border: 1px solid var(--border-color); border-radius: 8px; margin-bottom:15px; opacity: 0.6;">
+                                <h3 style="margin:0; color:#7f8c8d; font-size:18px;">Prova Concluída</h3>
+                                <p style="margin:5px 0 0; font-size:14px; font-weight:bold;">${pp.nome}</p>
+                             </div>`;
+                }
+            } else {
+                html += `<div style="text-align:center; padding: 20px; border: 1px dashed var(--border-color); border-radius: 8px; margin-bottom:15px; opacity:0.7;">
+                            <p style="margin:0; font-size:14px;">Nenhuma Prova Principal cadastrada.</p>
+                         </div>`;
+            }
+
+            let secundarias = agendaProvas.filter(x => x.tipo === "secundaria");
+            if (secundarias.length > 0) {
+                html += `<div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center;">`;
+                secundarias.forEach(sec => {
+                    let dS = new Date(sec.data + 'T00:00:00');
+                    let diffS = Math.ceil((dS - hj) / (1000 * 60 * 60 * 24));
+                    if(diffS >= 0) {
+                        html += `<div style="background:var(--bg-color); border:1px solid var(--border-color); padding:8px 12px; border-radius:6px; font-size:12px; text-align:center; flex:1; min-width:120px;">
+                                    <b>${sec.nome}</b><br><span style="color:var(--accent-color); font-weight:bold;">${diffS} dias</span>
+                                 </div>`;
+                    }
+                });
+                html += `</div>`;
+            }
+            div.innerHTML = html;
+        }
+
+
         function renderizarListasPlanejamento() {
             let ulP = document.getElementById("listaProvas"); ulP.innerHTML = "";
             agendaProvas.forEach((p, i) => ulP.innerHTML += `<li><b>${p.nome}</b> (${p.data}) - [${p.tipo}] <button class="btn-acao btn-edit" onclick="editarProva(${i})">Editar</button> <span style="color:red;cursor:pointer;" onclick="agendaProvas.splice(${i},1); window.syncToCloud(); renderizarListasPlanejamento();">[Excluir]</span></li>`);
@@ -1981,6 +2047,7 @@
                 let isActive = (r.inicio <= hj && r.fim >= hj);
                 divR.innerHTML += `<div style="padding:6px; border-bottom:1px solid var(--border-color); ${isActive ? 'background:rgba(39, 174, 96, 0.1); font-weight:bold; border-left:4px solid var(--primary-color);' : ''}">${isActive ? '🟢 [ATUAL] ' : ''}<b>${r.macro}</b>: ${r.inicio} até ${r.fim} <span style="color:red;cursor:pointer;float:right;" onclick="cronogramaInternato.splice(${i},1); window.syncToCloud(); renderizarListasPlanejamento(); atualizarSeletorSemanasPorRodizios();">[Excluir]</span></div>`;
             });
+            renderizarWidgetProvas();
         }
 
         // ------------------------------------------------------------------
@@ -2146,15 +2213,15 @@
             reader.onload = function(evt) {
                 try {
                     let d = JSON.parse(evt.target.result);
-                    window.hydrateData(d);
-                    window.syncToCloud();
+                    window.hydrateData(d); // reaplica globais e renderiza
+                    window.syncToCloud(); // joga pro firebase logo após importar
                     alert("Backup restaurado!");
                 } catch(err) { alert("Arquivo JSON inválido."); }
             }; reader.readAsText(file);
         }
 
         function salvarEAtualizar() {
-            window.syncToCloud(); 
+            window.syncToCloud(); // Salva estado atual na nuvem
             renderizarTabela(); 
             atualizarRadar(); 
             atualizarGraficoSimulados(); 
