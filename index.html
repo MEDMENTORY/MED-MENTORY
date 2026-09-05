@@ -3,116 +3,208 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MED MENTORY</title>
+    <title>APROVA-MED BETA</title>
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            --bg-color: #f4f6f9; --card-bg: #ffffff; --text-color: #333333;
-            --header-bg: #2c3e50; --border-color: #ddd;
-            --primary-color: #27ae60; --primary-hover: #219653;
-            --accent-color: #2980b9; --danger-color: #c0392b;
-            --warning-bg: #f39c12; --sobrevivencia-bg: #8e44ad;
+            --bg-color: #f4f7f6; 
+            --card-bg: #ffffff; 
+            --text-color: #2c3e50;
+            --header-bg: #ffffff; 
+            --border-color: #e2e8f0;
+            --primary-color: #2ecc71; 
+            --primary-hover: #27ae60;
+            --accent-color: #3498db; 
+            --danger-color: #e74c3c;
+            --warning-bg: #f39c12; 
+            --sobrevivencia-bg: #8e44ad;
+            --sidebar-bg: #ffffff;
+            --shadow-soft: 0 10px 30px -10px rgba(0,0,0,0.08);
+            --shadow-btn: 0 4px 6px rgba(0,0,0,0.06);
         }
 
         .dark-mode {
-            --bg-color: #121212; --card-bg: #1e1e1e; --text-color: #e0e0e0;
-            --header-bg: #1f2c34; --border-color: #333333;
-            --primary-color: #2ecc71; --primary-hover: #27ae60;
-            --accent-color: #3498db; --danger-color: #e74c3c;
+            --bg-color: #121418; 
+            --card-bg: #1e2228; 
+            --text-color: #e2e8f0;
+            --header-bg: #1e2228; 
+            --border-color: #2d3748;
+            --primary-color: #2ecc71; 
+            --sidebar-bg: #1a1d24;
+            --shadow-soft: 0 10px 30px -10px rgba(0,0,0,0.4);
+            --shadow-btn: 0 4px 6px rgba(0,0,0,0.2);
         }
 
-        body { font-family: Arial, sans-serif; max-width: 1150px; margin: 0 auto 30px auto; padding: 15px; background-color: var(--bg-color); color: var(--text-color); transition: background 0.3s; }
+        body { 
+            font-family: 'Segoe UI', system-ui, sans-serif; 
+            margin: 0; padding: 0; 
+            background-color: var(--bg-color); 
+            color: var(--text-color); 
+            transition: background 0.3s; 
+            height: 100vh; 
+            overflow: hidden; 
+        }
 
-        /* MODO FOCO */
-        body.focus-mode header, body.focus-mode .main-nav-abas, body.focus-mode .tab-content, body.focus-mode #backupAlert { display: none !important; }
-        .focus-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-color); z-index: 9999; flex-direction: column; justify-content: center; align-items: center; gap: 20px; }
+        /* ESTRUTURA GLOBAL (SIDEBAR + MAIN) */
+        .app-container { display: flex; height: 100vh; width: 100%; }
+
+        .sidebar { 
+            width: 280px; 
+            background: var(--sidebar-bg); 
+            border-right: 1px solid var(--border-color); 
+            display: flex; flex-direction: column; 
+            padding: 25px 20px; 
+            box-sizing: border-box; 
+            z-index: 10; 
+            box-shadow: 2px 0 15px rgba(0,0,0,0.02); 
+        }
+        
+        .sidebar-logo { margin-bottom: 30px; padding: 0 10px; }
+        .sidebar-logo h1 { font-size: 20px; margin: 0; color: var(--accent-color); font-weight: 800; display:flex; align-items:center; gap:8px;}
+        .sidebar-logo p { margin: 5px 0 0; font-size: 11px; opacity: 0.6; line-height: 1.3;}
+
+        .sidebar-nav { display: flex; flex-direction: column; gap: 8px; flex: 1; }
+        
+        .sidebar-btn { 
+            background: transparent; color: var(--text-color); 
+            border: none; padding: 14px 15px; border-radius: 10px; 
+            text-align: left; font-size: 14px; font-weight: 600; 
+            cursor: pointer; transition: 0.2s; 
+        }
+        .sidebar-btn:hover { background: var(--bg-color); }
+        .sidebar-btn.active { 
+            background: var(--primary-color); color: white; 
+            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3); 
+        }
+
+        .main-content { 
+            flex: 1; display: flex; flex-direction: column; 
+            height: 100vh; overflow-y: auto; padding: 25px 40px; 
+            box-sizing: border-box; scroll-behavior: smooth; 
+        }
+
+        /* CABEÇALHO DO MAIN */
+        header { 
+            display: flex; justify-content: space-between; align-items: center; 
+            margin-bottom: 25px; padding-bottom: 15px; 
+            border-bottom: 1px solid var(--border-color); 
+        }
+        
+        /* MODO FOCO E ALERTAS */
+        .focus-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-color); z-index: 99999; flex-direction: column; justify-content: center; align-items: center; gap: 20px; }
         body.focus-mode .focus-overlay { display: flex; }
-        .focus-dashboard { display: flex; gap: 20px; background: var(--card-bg); padding: 15px 30px; border-radius: 8px; border: 1px solid var(--border-color); text-align: center; }
+        body.focus-mode .app-container { display: none !important; }
+        .focus-dashboard { display: flex; gap: 20px; background: var(--card-bg); padding: 15px 30px; border-radius: 12px; border: 1px solid var(--border-color); text-align: center; box-shadow: var(--shadow-soft); }
 
-        /* MODO LOGIN FIREBASE */
-        #loginOverlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 10000; flex-direction: column; justify-content: center; align-items: center; }
-        .login-box { background: var(--card-bg); padding: 30px; border-radius: 8px; width: 90%; max-width: 400px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        #loginOverlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 100000; flex-direction: column; justify-content: center; align-items: center; }
+        .login-box { background: var(--card-bg); padding: 40px; border-radius: 16px; width: 90%; max-width: 420px; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
         .login-box h2 { color: var(--accent-color); margin-top: 0; }
-        .login-box input { width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid var(--border-color); border-radius: 4px; box-sizing: border-box; }
         
-        #firebaseWarning { display: none; background-color: var(--warning-bg); color: white; padding: 10px; text-align: center; font-weight: bold; border-radius: 6px; margin-bottom: 12px; }
+        .alert-bar { background-color: var(--danger-color); color: white; padding: 12px; text-align: center; font-weight: bold; border-radius: 8px; margin-bottom: 20px; box-shadow: var(--shadow-btn);}
 
-        /* ALERTAS */
-        #backupAlert { display: none; background-color: #f39c12; color: white; padding: 10px; text-align: center; font-weight: bold; cursor: pointer; border-radius: 6px; margin-bottom: 12px; }
-        .alert-bar { background-color: var(--danger-color); color: white; padding: 10px; text-align: center; font-weight: bold; border-radius: 6px; margin-bottom: 15px; }
-
-        /* CABEÇALHO E CARDS */
-        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; background: var(--card-bg); padding: 12px 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); flex-wrap: wrap; gap: 10px; }
-        h1, h2, h3, h4 { color: var(--text-color); margin-top: 0; }
-        .card { background: var(--card-bg); padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; border: 1px solid var(--border-color); }
+        /* CARDS (SOFT UI) */
+        .card { 
+            background: var(--card-bg); padding: 25px; 
+            border-radius: 16px; box-shadow: var(--shadow-soft); 
+            margin-bottom: 25px; border: 1px solid var(--border-color); 
+        }
+        h2 { font-size: 18px; margin-top:0; color: var(--text-color); }
+        h3, h4 { color: var(--text-color); }
         
-        label { font-weight: bold; display: block; margin-top: 10px; font-size: 14px; }
-        select, input, textarea { width: 100%; padding: 8px; margin-top: 5px; margin-bottom: 10px; border: 1px solid var(--border-color); border-radius: 4px; background: var(--card-bg); color: var(--text-color); box-sizing: border-box; }
-        button { background-color: var(--primary-color); color: white; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; width: 100%; margin-top: 10px; font-weight: bold; transition: 0.2s; }
-        button:hover { filter: brightness(1.1); }
-        .btn-acao { background-color: var(--accent-color); width: auto; padding: 6px 12px; font-size: 12px; margin: 2px; }
+        /* INPUTS E BOTOES */
+        label { font-weight: 600; display: block; margin-top: 10px; font-size: 13px; color: var(--text-color); opacity: 0.9;}
+        select, input, textarea { 
+            width: 100%; padding: 10px 12px; margin-top: 6px; margin-bottom: 12px; 
+            border: 1px solid var(--border-color); border-radius: 8px; 
+            background: var(--bg-color); color: var(--text-color); 
+            box-sizing: border-box; font-family: inherit; font-size: 14px;
+            transition: 0.2s;
+        }
+        select:focus, input:focus { outline: none; border-color: var(--accent-color); box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.15); }
+        
+        button { 
+            background-color: var(--primary-color); color: white; 
+            padding: 12px 18px; border: none; border-radius: 8px; 
+            cursor: pointer; font-size: 14px; width: 100%; margin-top: 10px; 
+            font-weight: bold; transition: 0.2s; box-shadow: var(--shadow-btn);
+        }
+        button:hover { transform: translateY(-1px); box-shadow: 0 6px 12px rgba(0,0,0,0.1); filter: brightness(1.05); }
+        
+        .btn-acao { background-color: var(--accent-color); width: auto; padding: 8px 14px; font-size: 12px; margin: 2px; }
         .btn-excluir { background-color: var(--danger-color); }
         .btn-edit { background-color: #f39c12; }
 
-        /* NAVEGAÇÃO */
-        .main-nav-abas { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
-        .main-aba-tab { background: var(--card-bg); color: var(--text-color); border: 1px solid var(--border-color); padding: 10px 14px; cursor: pointer; border-radius: 6px; font-weight: bold; font-size: 13px; }
-        .main-aba-tab.active { background: var(--accent-color); color: white; border-color: var(--accent-color); }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-        .sub-nav-abas { display: flex; gap: 5px; margin-bottom: 10px; flex-wrap: wrap; }
-        .sub-aba-btn { background: var(--border-color); color: var(--text-color); border: none; padding: 7px 12px; cursor: pointer; border-radius: 4px; font-weight: bold; width: auto; font-size: 13px; }
-        .sub-aba-btn.active { background: var(--accent-color); color: white; }
+        .sub-nav-abas { display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; }
+        .sub-aba-btn { 
+            background: var(--bg-color); color: var(--text-color); border: 1px solid var(--border-color); 
+            padding: 8px 14px; cursor: pointer; border-radius: 6px; font-weight: 600; width: auto; font-size: 13px; margin:0; box-shadow:none;
+        }
+        .sub-aba-btn.active { background: var(--accent-color); color: white; border-color:var(--accent-color); box-shadow: var(--shadow-btn);}
 
         /* TABELAS */
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { border: 1px solid var(--border-color); padding: 9px; text-align: left; font-size: 13px; }
-        th { background-color: var(--header-bg); color: white; }
-        tr.atrasado { background-color: rgba(231, 76, 60, 0.1); border-left: 3px solid var(--danger-color); }
-        .badge { padding: 4px 8px; border-radius: 4px; color: white; font-weight: bold; font-size: 11px; display: inline-block; }
-        .badge-macro { background-color: var(--header-bg); margin-bottom: 3px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
+        th, td { border-bottom: 1px solid var(--border-color); padding: 12px 10px; text-align: left; }
+        th { background-color: var(--bg-color); color: var(--text-color); font-weight: bold; border-top: 1px solid var(--border-color); }
+        tr:hover { background-color: rgba(0,0,0,0.01); }
+        tr.atrasado { background-color: rgba(231, 76, 60, 0.05); border-left: 3px solid var(--danger-color); }
+        
+        .badge { padding: 4px 8px; border-radius: 6px; color: white; font-weight: bold; font-size: 11px; display: inline-block; }
+        .badge-macro { background-color: var(--header-bg); margin-bottom: 5px; }
 
         /* DASHBOARD GRID */
-        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin-bottom: 20px; }
-        .stat-box { background: var(--card-bg); padding: 15px; border-radius: 8px; border: 1px solid var(--border-color); text-align: center; }
-        .stat-box h3 { margin: 0; font-size: 22px; color: var(--accent-color); }
-        .stat-box p { margin: 5px 0 0; font-size: 12px; opacity: 0.8; }
+        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 25px; }
+        .stat-box { background: var(--card-bg); padding: 20px; border-radius: 12px; border: 1px solid var(--border-color); text-align: center; box-shadow: var(--shadow-soft);}
+        .stat-box h3 { margin: 0; font-size: 26px; color: var(--accent-color); }
+        .stat-box p { margin: 5px 0 0; font-size: 13px; opacity: 0.7; font-weight:600;}
 
-        /* POMODORO */
-        .pomodoro-box { display: flex; align-items: center; justify-content: space-between; background: var(--card-bg); padding: 12px 20px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
-        .timer-display { font-size: 22px; font-weight: bold; font-family: monospace; color: var(--accent-color); }
-        body.modo-sobrevivencia .pomodoro-box { border: 2px solid var(--sobrevivencia-bg); box-shadow: 0 0 15px rgba(142, 68, 173, 0.4); }
+        /* POMODORO & KANBAN */
+        .pomodoro-box { display: flex; align-items: center; justify-content: space-between; background: var(--bg-color); padding: 15px 25px; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 25px; flex-wrap: wrap; gap: 10px; }
+        .timer-display { font-size: 26px; font-weight: bold; font-family: monospace; color: var(--accent-color); }
+        body.modo-sobrevivencia .pomodoro-box { border: 2px solid var(--sobrevivencia-bg); box-shadow: 0 0 15px rgba(142, 68, 173, 0.2); }
 
-        /* KANBAN INTERNATO */
-        .semana-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin-top: 10px; }
-        .dia-col { background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 4px; padding: 5px; text-align: center; }
-        .dia-col h4 { font-size: 11px; margin: 0 0 5px 0; background: var(--header-bg); color: white; padding: 4px; border-radius: 3px; }
-        .sel-turno { font-size: 10px; padding: 2px; width: 100%; border-radius: 3px; border: 1px solid #ccc; margin-bottom: 4px; }
+        .semana-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-top: 15px; }
+        .dia-col { background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 8px; text-align: center; }
+        .dia-col h4 { font-size: 12px; margin: 0 0 8px 0; background: var(--card-bg); color: var(--text-color); padding: 6px; border-radius: 6px; border: 1px solid var(--border-color);}
+        .sel-turno { font-size: 11px; padding: 4px; width: 100%; border-radius: 6px; border: 1px solid var(--border-color); margin-bottom: 6px; }
+
+        /* MAPA DO RODÍZIO */
+        .accordion-header { background: var(--bg-color); color: var(--text-color); padding: 12px 18px; cursor: pointer; border-radius: 8px; margin-top: 10px; display: flex; justify-content: space-between; align-items: center; font-weight: bold; font-size: 14px; border: 1px solid var(--border-color); transition: 0.2s; }
+        .accordion-header:hover { border-color: var(--accent-color); }
+        .accordion-content { display: none; padding: 15px; border: 1px solid var(--border-color); border-top: none; border-radius: 0 0 8px 8px; background: var(--card-bg); overflow-x: auto; margin-top: -4px;}
+        .accordion-content.active { display: block; }
+        .progress-bar-bg { width: 100%; background: var(--border-color); border-radius: 6px; height: 12px; overflow: hidden; margin-top: 8px; }
+        .progress-bar-fill { height: 100%; background: var(--primary-color); transition: width 0.4s ease; }
 
         /* MODAL */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); justify-content: center; align-items: center; z-index: 1000; }
-        .modal-content { background: var(--card-bg); padding: 20px; border-radius: 8px; width: 90%; max-width: 550px; max-height: 85vh; overflow-y: auto; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); justify-content: center; align-items: center; z-index: 10000; backdrop-filter: blur(3px); }
+        .modal-content { background: var(--card-bg); padding: 30px; border-radius: 16px; width: 90%; max-width: 550px; max-height: 85vh; overflow-y: auto; box-shadow: 0 20px 50px rgba(0,0,0,0.3); }
         .grafico-container { position: relative; height: 300px; width: 100%; }
         
-        .row-form { display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end; }
+        .row-form { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; }
         .col-form { flex: 1; min-width: 150px; }
+
+        /* Abas Content */
+        .tab-content { display: none; animation: fadeIn 0.3s ease; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
     </style>
 </head>
 <body>
 
-    <!-- TELA DE LOGIN FIREBASE (OPCIONAL) -->
+    <!-- TELA DE LOGIN FIREBASE -->
     <div id="loginOverlay">
         <div class="login-box">
-            <h2>🧠 MED MENTORY CLOUD</h2>
-            <p style="font-size:12px; margin-bottom:20px;">Sincronização em Nuvem Opcional</p>
+            <h2>🧠 APROVA-MED CLOUD</h2>
+            <p style="font-size:13px; margin-bottom:25px; opacity:0.8;">Sincronização em Nuvem Ativa</p>
             <input type="email" id="loginEmail" placeholder="Seu E-mail">
             <input type="password" id="loginPassword" placeholder="Sua Senha">
             <div style="display: flex; gap:10px;">
                 <button onclick="realizarLogin()" style="background-color: var(--accent-color);">Entrar</button>
-                <button onclick="realizarCadastro()" style="background-color: var(--header-bg);">Criar Conta</button>
+                <button onclick="realizarCadastro()" style="background-color: var(--text-color);">Criar Conta</button>
             </div>
-            <button onclick="pularLoginOffline()" style="background-color: #7f8c8d; margin-top: 10px;">Continuar Offline (Usar Local)</button>
+            <button onclick="pularLoginOffline()" style="background-color: transparent; border:1px solid #7f8c8d; color:#7f8c8d; box-shadow:none; margin-top: 15px;">Continuar Offline (Usar Local)</button>
             <p id="loginError" style="color:var(--danger-color); font-size:12px; margin-top:10px;"></p>
         </div>
     </div>
@@ -120,408 +212,487 @@
     <!-- MODO FOCO -->
     <div class="focus-overlay">
         <h2>🎯 MODO FOCO ATIVO</h2>
-        <div class="timer-display" id="focusTimerDisplay" style="font-size: 60px;">25:00</div>
-        <div style="display: flex; gap: 10px; margin-bottom: 10px;">
-            <button class="main-aba-tab active" onclick="iniciarPomodoro()">▶️ Iniciar</button>
-            <button class="main-aba-tab" onclick="pausarPomodoro()">⏸️ Pausar</button>
-            <button class="main-aba-tab" onclick="resetarPomodoro()">🔄 Reiniciar</button>
+        <div class="timer-display" id="focusTimerDisplay" style="font-size: 72px;">25:00</div>
+        <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+            <button class="sub-aba-btn active" onclick="iniciarPomodoro()">▶️ Iniciar</button>
+            <button class="sub-aba-btn" onclick="pausarPomodoro()">⏸️ Pausar</button>
+            <button class="sub-aba-btn" onclick="resetarPomodoro()">🔄 Reiniciar</button>
         </div>
         <div class="focus-dashboard">
-            <div><span style="font-size: 24px; font-weight: bold; color: var(--accent-color);" id="focusTotalTime">0</span><br><span style="font-size: 12px;">Minutos Hoje</span></div>
-            <div><span style="font-size: 24px; font-weight: bold; color: var(--primary-color);" id="focusMetaStatus">0/0</span><br><span style="font-size: 12px;">Revisões Feitas</span></div>
-            <div><span style="font-size: 24px; font-weight: bold; color: #f39c12;" id="focusStreak">0</span><br><span style="font-size: 12px;">Dias Seguidos</span></div>
+            <div><span style="font-size: 28px; font-weight: bold; color: var(--accent-color);" id="focusTotalTime">0</span><br><span style="font-size: 13px;">Minutos Hoje</span></div>
+            <div><span style="font-size: 28px; font-weight: bold; color: var(--primary-color);" id="focusMetaStatus">0/0</span><br><span style="font-size: 13px;">Revisões Feitas</span></div>
+            <div><span style="font-size: 28px; font-weight: bold; color: #f39c12;" id="focusStreak">0</span><br><span style="font-size: 13px;">Dias Seguidos</span></div>
         </div>
-        <div style="display: flex; gap: 15px; margin-top: 20px;">
-            <button onclick="toggleDarkMode()" style="background: var(--header-bg); width: auto; padding: 10px 20px;">🌓 Luz</button>
-            <button onclick="toggleFocusMode()" style="background: var(--danger-color); width: auto; padding: 10px 25px;">Sair do Foco</button>
-        </div>
-    </div>
-
-    <div id="firebaseWarning">⚠️ ATENÇÃO: Para habilitar a nuvem, insira as chaves do Firebase no script. Caso contrário, o app roda 100% local.</div>
-
-    <!-- CABEÇALHO -->
-    <header>
-        <div>
-            <h1>🧠 MED MENTORY </h1>
-            <p style="margin:0; font-size:12px; opacity:0.8;">Sistema Preditivo de Estudos • Repetição Espaçada • Foco na Residência Médica</p>
-        </div>
-        <div style="display: flex; gap: 5px; align-items:center;">
-            <span id="userInfoHeader" style="font-size:11px; margin-right:10px; font-weight:bold;">Offline (Local)</span>
-            <button class="main-aba-tab" onclick="toggleSobrevivencia()" id="btnSobrevivencia" style="background:var(--bg-color); color:var(--text-color);">🛡️ Sobrevivência</button>
-            <button class="main-aba-tab" onclick="toggleFocusMode()" style="background:var(--primary-color); color:white;">🎯 Foco</button>
-            <button class="main-aba-tab" onclick="fazerLogout()" style="background:var(--danger-color); color:white; display:none;" id="btnLogout">Sair</button>
-        </div>
-    </header>
-
-    <div id="retaFinalAlert" class="alert-bar" style="display:none;"></div>
-    <div id="sobrevivenciaAlert" class="alert-bar" style="display:none; background:var(--sobrevivencia-bg);">🛡️ MODO SOBREVIVÊNCIA ATIVO: Exibindo estritamente revisões para hoje e atrasadas.</div>
-    <div id="sprintAlert" class="alert-bar" style="display:none; background:var(--accent-color);">⚡ SPRINT ATIVO: Exibindo estritamente temas com Pesos 4 e 5 para reta final.</div>
-
-    <!-- NAVEGAÇÃO PRINCIPAL -->
-    <div class="main-nav-abas">
-        <button class="main-aba-tab active" onclick="mudarAba('tab-inicio', this)">🏠 Página Inicial</button>
-        <button class="main-aba-tab" onclick="mudarAba('tab-planejamento', this)">📅 Cronograma Adaptado ao Internato</button>
-        <button class="main-aba-tab" onclick="mudarAba('tab-estudo', this)">✍️ Registro de Estudo</button>
-        <button class="main-aba-tab" onclick="mudarAba('tab-analytics', this)">📊 Métricas de Estudo</button>
-        <button class="main-aba-tab" onclick="mudarAba('tab-nerd', this)">🤓 Tempo Total de Estudo</button>
-        <button class="main-aba-tab" onclick="mudarAba('tab-caderno', this)">📚 Metas + Incidência de Assuntos + Caderno de Erros</button>
-        <button class="main-aba-tab" onclick="mudarAba('tab-config', this)">⚙️ Configuração</button>
-    </div>
-
-    <!-- ABA 1: PÁGINA INICIAL -->
-    <div id="tab-inicio" class="tab-content active">
-        <div class="pomodoro-box">
-            <div style="font-size:13px;">🔥 <strong>Sequência de Dias:</strong> <span id="streakCount">0</span> | 🎯 <strong>Metas:</strong> <span id="metaStatus">0/0</span> revisões.</div>
-            <div class="timer-display" id="timerDisplay">25:00</div>
-            <div style="display: flex; gap: 5px; width: auto;">
-                <button class="btn-acao" style="padding:10px; font-size:14px;" onclick="iniciarPomodoro()">▶️</button>
-                <button class="btn-acao" style="padding:10px; font-size:14px;" onclick="pausarPomodoro()">⏸️</button>
-                <button class="btn-acao" style="padding:10px; font-size:14px;" onclick="resetarPomodoro()">🔄</button>
-            </div>
-        </div>
-
-        <div class="dashboard-grid">
-            <div class="stat-box"><h3 id="statHoje">0</h3><p>Para Hoje</p></div>
-            <div class="stat-box"><h3 id="statAtrasadas" style="color: var(--danger-color);">0</h3><p>Atrasadas</p></div>
-            <div class="stat-box"><h3 id="statPendentesTeoria" style="color: #f39c12;">0</h3><p>Aguardando Questões</p></div>
-            <div class="stat-box">
-                <h3 id="statCarga3Dias">0</h3><p>Carga Próx. 3 dias</p>
-                <div id="burnoutAlert" style="display:none; color:var(--danger-color); font-weight:bold; font-size:11px; margin-top:5px;">⚠️ Risco de Saturação!</div>
-            </div>
-        </div>
-
-        <!-- PAINEL DE RITMO PREDITIVO -->
-        <div class="card">
-            <h2 style="font-size: 16px; margin-bottom: 15px;">🎯 Meta Anual de Questões: Painel de Ritmo Preditivo</h2>
-            <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 13px; font-weight: bold;">
-                <span id="metaAnualProgressoText">0 / 10000 questões resolvidas</span>
-                <span id="metaAnualPercent">0%</span>
-            </div>
-            <div style="width: 100%; background: var(--border-color); border-radius: 5px; height: 12px; overflow: hidden; margin-bottom: 15px;">
-                <div id="metaAnualBar" style="height: 100%; width: 0%; background: var(--primary-color); transition: width 0.3s;"></div>
-            </div>
-            <div class="dashboard-grid" style="margin-bottom:0; gap:10px;">
-                <div class="stat-box" style="padding:10px;">
-                    <h4 style="margin:0; font-size:11px; color:#555;">RITMO ATUAL (Run Rate)</h4>
-                    <p id="metaRitmoAtual" style="font-size:16px; font-weight:bold; color:var(--accent-color); margin:5px 0;">0 qts/dia</p>
-                </div>
-                <div class="stat-box" style="padding:10px; border-left:3px solid #f39c12;">
-                    <h4 style="margin:0; font-size:11px; color:#555;">RITMO NECESSÁRIO</h4>
-                    <p id="metaRitmoNecessario" style="font-size:16px; font-weight:bold; color:#f39c12; margin:5px 0;">0 qts/dia</p>
-                    <small id="metaDiasRestantes" style="font-size:10px; opacity:0.8;">Até a prova principal</small>
-                </div>
-                <div class="stat-box" style="padding:10px; background:rgba(0,0,0,0.02);">
-                    <h4 style="margin:0; font-size:11px; color:#555;">STATUS PREDITIVO</h4>
-                    <p id="metaStatusRitmo" style="font-size:13px; font-weight:bold; margin:5px 0; margin-top:8px;">Aguardando dados</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- WIDGET DE PROVAS -->
-        <div class="card">
-            <h2 style="font-size: 16px; margin-bottom: 15px;">🎯 Contagem Regressiva</h2>
-            <div id="widgetProvasContainer"></div>
+        <div style="display: flex; gap: 15px; margin-top: 30px;">
+            <button onclick="toggleDarkMode()" style="background: var(--bg-color); color:var(--text-color); border:1px solid var(--border-color); width: auto; padding: 12px 25px; box-shadow:none;">🌓 Modo Escuro</button>
+            <button onclick="toggleFocusMode()" style="background: var(--danger-color); width: auto; padding: 12px 30px;">Sair do Foco</button>
         </div>
     </div>
 
-    <!-- ABA 2: CRONOGRAMA ADAPTADO AO INTERNATO -->
-    <div id="tab-planejamento" class="tab-content">
+    <div class="app-container">
         
-        <!-- DATA DE RODÍZIOS NO INTERNATO -->
-        <div class="card">
-            <h2>🏥 Data de Rodízios no Internato</h2>
-            <p style="font-size:12px; opacity:0.8;">Cadastre os blocos de rodízio do seu internato. O sistema calculará o número exato de semanas e montará o calendário completo.</p>
-            <form onsubmit="adicionarRodizio(event)" class="row-form">
-                <div class="col-form"><label>Início do Rodízio:</label><input type="date" id="rodInicio" required></div>
-                <div class="col-form"><label>Fim do Rodízio:</label><input type="date" id="rodFim" required></div>
-                <div class="col-form">
-                    <label>Macro-Área:</label>
-                    <select id="rodMacro" required></select>
-                </div>
-                <div><button type="submit" style="margin:0; padding:10px;">Adicionar Rodízio</button></div>
-            </form>
-            <div id="listaRodizios" style="margin-top:15px; font-size:13px;"></div>
-        </div>
-
-        <!-- CRONOGRAMA DE ESTUDOS PERSONALIZADO -->
-        <div class="card">
-            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
-                <h2 style="margin:0;">📅 Cronograma de Estudos Personalizado</h2>
-                <button onclick="gerarTodoORodizio()" style="background:var(--primary-color); width:auto; padding:8px 15px; margin:0;">🚀 Gerar Todo o Cronograma do Rodízio</button>
+        <!-- SIDEBAR DE NAVEGAÇÃO -->
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <h1>🧠 APROVA-MED</h1>
+                <p>Sistema Preditivo para Residência</p>
             </div>
-            <p style="font-size:12px; opacity:0.8; margin-top:5px;">Alterne entre as semanas abaixo. Altere turnos para <b>Ocupado</b> em imprevistos e recalcule estritamente aquela semana sem afetar as demais.</p>
             
-            <div class="row-form" style="margin-bottom:15px; margin-top:15px;">
-                <div class="col-form">
-                    <label>Selecione a Semana:</label>
-                    <select id="seletorSemanaInternato" onchange="mudarSemanaAtiva(this.value)">
-                        <option value="">Cadastre um rodízio primeiro...</option>
-                    </select>
-                </div>
-                <div class="col-form" style="display:flex; align-items:flex-end;">
-                    <label style="display:flex; align-items:center; gap:8px; margin:0; cursor:pointer; height:38px;">
-                        <input type="checkbox" id="chkMisto" checked style="width:18px; height:18px; margin:0;">
-                        <span>Modo Misto (65% Rodízio / 35% Revisão Global)</span>
-                    </label>
-                </div>
-            </div>
+            <nav class="sidebar-nav">
+                <button class="sidebar-btn active" onclick="mudarAba('tab-inicio', this)">🏠 Dashboard Inicial</button>
+                <button class="sidebar-btn" onclick="mudarAba('tab-planejamento', this)">📅 Internato & Kanban</button>
+                <button class="sidebar-btn" onclick="mudarAba('tab-estudo', this)">✍️ Registro & FSRS</button>
+                <button class="sidebar-btn" onclick="mudarAba('tab-analytics', this)">📊 Radar e Simulados</button>
+                <button class="sidebar-btn" onclick="mudarAba('tab-nerd', this)">🤓 Carga de Estudo</button>
+                <button class="sidebar-btn" onclick="mudarAba('tab-caderno', this)">📚 Metas & Cadernos</button>
+                <button class="sidebar-btn" onclick="mudarAba('tab-config', this)">⚙️ Configurações</button>
+            </nav>
 
-            <div class="semana-grid" id="gridSemanaSetup"></div>
+            <div style="margin-top:auto; padding-top:15px; font-size:11px; opacity:0.5; text-align:center;">
+                APROVA-MED BETA v5.1
+            </div>
+        </aside>
+
+        <!-- CONTEÚDO PRINCIPAL -->
+        <main class="main-content">
             
-            <div style="display:flex; gap:10px; margin-top:15px;">
-                <button onclick="gerarPlanoSemanaAtiva()" style="background:var(--accent-color); flex:2;">🔄 Recalcular Apenas Esta Semana (Efeito Local Isolado)</button>
-                <button onclick="salvarGradeTurnosSemana()" style="background:var(--header-bg); flex:1;">💾 Salvar Turnos Desta Semana</button>
+            <!-- CABEÇALHO DO MAIN -->
+            <header>
+                <div>
+                    <h2 id="headerAbaTitulo" style="margin:0; font-size:22px; font-weight:700;">🏠 Dashboard Inicial</h2>
+                </div>
+                <div style="display: flex; gap: 8px; align-items:center;">
+                    <span id="userInfoHeader" style="font-size:12px; margin-right:15px; font-weight:bold; background:var(--bg-color); padding:6px 12px; border-radius:20px;">Offline (Local)</span>
+                    <button class="sub-aba-btn" onclick="toggleSobrevivencia()" id="btnSobrevivencia" style="margin:0;">🛡️ Sobrevivência</button>
+                    <button class="sub-aba-btn active" onclick="toggleFocusMode()" style="margin:0;">🎯 Foco</button>
+                    <button class="sub-aba-btn" onclick="fazerLogout()" style="background:var(--danger-color); color:white; border-color:var(--danger-color); display:none; margin:0;" id="btnLogout">Sair</button>
+                </div>
+            </header>
+
+            <div id="retaFinalAlert" class="alert-bar" style="display:none;"></div>
+            <div id="sobrevivenciaAlert" class="alert-bar" style="display:none; background:var(--sobrevivencia-bg);">🛡️ MODO SOBREVIVÊNCIA ATIVO: Exibindo estritamente revisões para hoje e atrasadas.</div>
+            <div id="sprintAlert" class="alert-bar" style="display:none; background:var(--accent-color);">⚡ SPRINT ATIVO: Exibindo estritamente temas com Pesos 4 e 5 para reta final.</div>
+
+            <!-- ABA 1: PÁGINA INICIAL -->
+            <div id="tab-inicio" class="tab-content active">
+                <div class="pomodoro-box">
+                    <div style="font-size:14px;">🔥 <strong>Sequência:</strong> <span id="streakCount">0</span> dias | 🎯 <strong>Metas FSRS:</strong> <span id="metaStatus">0/0</span> concluídas.</div>
+                    <div class="timer-display" id="timerDisplay">25:00</div>
+                    <div style="display: flex; gap: 8px; width: auto;">
+                        <button class="btn-acao" style="padding:10px 15px; font-size:14px; margin:0; border-radius:8px;" onclick="iniciarPomodoro()">▶️</button>
+                        <button class="btn-acao" style="padding:10px 15px; font-size:14px; margin:0; border-radius:8px; background:var(--text-color);" onclick="pausarPomodoro()">⏸️</button>
+                        <button class="btn-acao" style="padding:10px 15px; font-size:14px; margin:0; border-radius:8px; background:var(--border-color); color:var(--text-color);" onclick="resetarPomodoro()">🔄</button>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid">
+                    <div class="stat-box"><h3 id="statHoje">0</h3><p>Para Hoje</p></div>
+                    <div class="stat-box"><h3 id="statAtrasadas" style="color: var(--danger-color);">0</h3><p>Atrasadas</p></div>
+                    <div class="stat-box"><h3 id="statPendentesTeoria" style="color: #f39c12;">0</h3><p>Aguardando Questões</p></div>
+                    <div class="stat-box">
+                        <h3 id="statCarga3Dias">0</h3><p>Carga Próx. 3 dias</p>
+                        <div id="burnoutAlert" style="display:none; color:var(--danger-color); font-weight:bold; font-size:12px; margin-top:8px;">⚠️ Risco de Saturação!</div>
+                    </div>
+                </div>
+
+                <!-- PAINEL DE RITMO PREDITIVO -->
+                <div class="card">
+                    <h2 style="font-size: 16px; margin-bottom: 15px;">🎯 Meta Anual de Questões: Painel de Ritmo Preditivo</h2>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px; font-weight: bold;">
+                        <span id="metaAnualProgressoText">0 / 10000 questões resolvidas</span>
+                        <span id="metaAnualPercent">0%</span>
+                    </div>
+                    <div class="progress-bar-bg" style="margin-bottom: 20px;">
+                        <div id="metaAnualBar" class="progress-bar-fill" style="width: 0%;"></div>
+                    </div>
+                    <div class="dashboard-grid" style="margin-bottom:0; gap:15px;">
+                        <div class="stat-box" style="padding:15px; box-shadow:none; background:var(--bg-color);">
+                            <h4 style="margin:0; font-size:11px; opacity:0.6; text-transform:uppercase;">RITMO ATUAL</h4>
+                            <p id="metaRitmoAtual" style="font-size:18px; font-weight:bold; color:var(--accent-color); margin:8px 0;">0 qts/dia</p>
+                        </div>
+                        <div class="stat-box" style="padding:15px; border-left:4px solid #f39c12; box-shadow:none; background:var(--bg-color);">
+                            <h4 style="margin:0; font-size:11px; opacity:0.6; text-transform:uppercase;">RITMO NECESSÁRIO</h4>
+                            <p id="metaRitmoNecessario" style="font-size:18px; font-weight:bold; color:#f39c12; margin:8px 0;">0 qts/dia</p>
+                            <small id="metaDiasRestantes" style="font-size:11px; opacity:0.8;">Até a prova principal</small>
+                        </div>
+                        <div class="stat-box" style="padding:15px; box-shadow:none; background:var(--bg-color);">
+                            <h4 style="margin:0; font-size:11px; opacity:0.6; text-transform:uppercase;">STATUS PREDITIVO</h4>
+                            <p id="metaStatusRitmo" style="font-size:14px; font-weight:bold; margin:10px 0;">Aguardando dados</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- WIDGET DE PROVAS -->
+                <div class="card">
+                    <h2 style="font-size: 16px; margin-bottom: 15px;">⏳ Contagem Regressiva</h2>
+                    <div id="widgetProvasContainer"></div>
+                </div>
             </div>
 
-            <div id="resultadoInternato" style="margin-top:25px; display:none;"></div>
-        </div>
-
-        <!-- TEMAS ADIADOS -->
-        <div class="card">
-            <h2>📦 Temas Adiados</h2>
-            <p style="font-size:12px; opacity:0.8;">Temas que foram adiados por falta de tempo ou plantões de última hora. Resgate para a semana ativa quando tiver um turno livre!</p>
-            <div id="listaBacklogAdiados" style="max-height:220px; overflow-y:auto; font-size:13px;"></div>
-        </div>
-    </div>
-
-    <!-- ABA 3: REGISTRO DE ESTUDO -->
-    <div id="tab-estudo" class="tab-content">
-        <div class="card">
-            <h2>Registro de Estudo</h2>
-            <form onsubmit="salvarNovoEstudo(event)" id="formEstudo">
+            <!-- ABA 2: CRONOGRAMA ADAPTADO AO INTERNATO -->
+            <div id="tab-planejamento" class="tab-content">
                 
-                <div class="row-form">
-                    <div class="col-form">
-                        <label>1. Macro-Área:</label>
-                        <select id="reg_macro" onchange="popularEspecialidades('reg_macro', 'reg_esp', 'reg_subtema', false)" required></select>
-                    </div>
-                    <div class="col-form">
-                        <label>2. Especialidade:</label>
-                        <select id="reg_esp" onchange="popularSubtemas('reg_macro', 'reg_esp', 'reg_subtema', false)" required disabled><option value="">Aguarde...</option></select>
-                    </div>
-                </div>
-                <div style="margin-top:10px;">
-                    <label>3. Subtema:</label>
-                    <select id="reg_subtema" required disabled><option value="">Aguarde...</option></select>
-                </div>
-
-                <div style="display: flex; gap: 10px; margin-top:15px;">
-                    <div style="flex:1"><label>Data da Teoria:</label><input type="date" id="reg_data" required></div>
-                    <div style="flex:1"><label>Tempo Gasto (min):</label><input type="number" id="reg_tempo" placeholder="Ex: 45" required></div>
-                </div>
-
-                <div style="background: var(--bg-color); padding: 12px; border-radius: 6px; margin: 15px 0; border: 1px solid var(--border-color);">
-                    <label style="display:flex; align-items:center; gap:10px; margin:0; cursor:pointer;">
-                        <input type="checkbox" id="checkFezQuestoes" checked onchange="toggleQuestoesForm()" style="width:20px; height:20px; margin:0;">
-                        <span>Fiz a 1ª bateria de questões hoje.</span>
-                    </label>
-                </div>
-
-                <div id="boxQuestoesIniciais" style="display: flex; gap: 10px;">
-                    <div style="flex:1"><label>Questões Feitas:</label><input type="number" id="reg_feitas" placeholder="Ex: 25"></div>
-                    <div style="flex:1"><label>Acertos:</label><input type="number" id="reg_acertos" placeholder="Ex: 20"></div>
-                </div>
-
-                <div style="display: flex; gap: 10px;">
-                    <div style="flex:1"><label>Dificuldade da Aula/Teoria:</label><select id="reg_dificuldade" required><option value="medio">Médio</option><option value="facil">Fácil</option><option value="dificil">Difícil</option></select></div>
-                    <div style="flex:1"><label>Nível de Energia:</label><select id="reg_energia" required><option value="alta">⚡ Alta</option><option value="media" selected>🔋 Média</option><option value="baixa">🪫 Baixa</option></select></div>
-                </div>
-
-                <button type="submit">Salvar Estudo e Programar FSRS</button>
-            </form>
-        </div>
-
-        <div class="card">
-            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:15px;">
-                <h2 style="margin:0;">Cronograma de Revisões</h2>
-                <div style="text-align: right;">
-                    <div>
-                        <button class="btn-acao" onclick="ativarSprint()" id="btnSprintConfig" style="background:#2c3e50;">⚡ Ativar Sprint</button>
-                        <button class="btn-acao" onclick="limparSprint()" style="background:var(--danger-color);">Limpar Sprint</button>
-                    </div>
-                    <div style="font-size: 11px; margin-top: 5px;">Status do Sprint: <span id="sprintStatusText" style="font-weight:bold; color:var(--danger-color);">Inativo</span></div>
-                </div>
-            </div>
-            
-            <div class="sub-nav-abas">
-                <button class="sub-aba-btn active" onclick="mudarFiltroTabela('todas', this)">Todas</button>
-                <button class="sub-aba-btn" onclick="mudarFiltroTabela('atrasadas', this)">Atrasadas 🔴</button>
-                <button class="sub-aba-btn" onclick="mudarFiltroTabela('hoje', this)">Para Hoje 🎯</button>
-            </div>
-            <table>
-                <thead><tr><th>Área / Tema</th><th>Fase / Próxima</th><th>Ações</th></tr></thead>
-                <tbody id="tabela-estudos"></tbody>
-            </table>
-        </div>
-    </div>
-
-    <!-- ABA 4: MÉTRICAS DE ESTUDO -->
-    <div id="tab-analytics" class="tab-content">
-        <div class="card">
-            <h2>Radar & Evolução de Acertos por Subtema</h2>
-            <div class="dashboard-grid">
-                <div class="stat-box">
-                    <h4 style="margin-bottom:10px;">Radar das 5 Macro-Áreas</h4>
-                    <div class="grafico-container" style="height:250px;"><canvas id="graficoRadar"></canvas></div>
-                </div>
-                <div class="stat-box" style="text-align: left;">
-                    <h4 style="text-align:center; margin-bottom:10px;">Evolução de Acertos por Subtema</h4>
-                    <div class="row-form" style="margin-bottom:15px; font-size:12px;">
+                <div class="card">
+                    <h2>🏥 Data de Rodízios no Internato</h2>
+                    <p style="font-size:13px; opacity:0.8;">Cadastre os blocos de rodízio do seu internato. O sistema calculará o número exato de semanas e montará o calendário completo.</p>
+                    <form onsubmit="adicionarRodizio(event)" class="row-form">
+                        <div class="col-form"><label>Início do Rodízio:</label><input type="date" id="rodInicio" required></div>
+                        <div class="col-form"><label>Fim do Rodízio:</label><input type="date" id="rodFim" required></div>
                         <div class="col-form">
-                            <select id="evo_macro" onchange="popularEspecialidades('evo_macro', 'evo_esp', 'evo_subtema', true)"></select>
+                            <label>Macro-Área:</label>
+                            <select id="rodMacro" required></select>
                         </div>
+                        <div><button type="submit" style="margin:0; padding:11px 20px;">Adicionar</button></div>
+                    </form>
+                    <div id="listaRodizios" style="margin-top:20px; font-size:13px;"></div>
+                </div>
+
+                <div class="card">
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                        <h2 style="margin:0;">📅 Cronograma de Estudos Personalizado</h2>
+                        <button onclick="gerarTodoORodizio()" style="background:var(--primary-color); width:auto; padding:10px 20px; margin:0;">🚀 Gerar Todo o Rodízio</button>
+                    </div>
+                    <p style="font-size:13px; opacity:0.8; margin-top:10px;">Alterne entre as semanas abaixo. Altere turnos para <b>Ocupado</b> em imprevistos e recalcule estritamente aquela semana sem afetar as demais.</p>
+                    
+                    <div class="row-form" style="margin-bottom:20px; margin-top:20px;">
                         <div class="col-form">
-                            <select id="evo_esp" onchange="popularSubtemas('evo_macro', 'evo_esp', 'evo_subtema', true)"><option value="todas">📌 Todas</option></select>
+                            <label>Selecione a Semana Ativa:</label>
+                            <select id="seletorSemanaInternato" onchange="mudarSemanaAtiva(this.value)" style="font-weight:bold; color:var(--accent-color);">
+                                <option value="">Cadastre um rodízio primeiro...</option>
+                            </select>
                         </div>
-                        <div class="col-form">
-                            <select id="evo_subtema" onchange="atualizarGraficoEvolucao()"><option value="todas">📌 Todos</option></select>
+                        <div class="col-form" style="display:flex; align-items:flex-end;">
+                            <label style="display:flex; align-items:center; gap:10px; margin:0; cursor:pointer; height:42px; background:var(--bg-color); padding:0 15px; border-radius:8px; border:1px solid var(--border-color);">
+                                <input type="checkbox" id="chkMisto" checked style="width:18px; height:18px; margin:0;">
+                                <span>Modo Misto (65% Rodízio / 35% Revisão Global)</span>
+                            </label>
                         </div>
                     </div>
-                    <div class="grafico-container" style="height:200px;"><canvas id="graficoEvolucao"></canvas></div>
+
+                    <!-- BOTÕES DE AÇÃO EM LOTE -->
+                    <div style="background:var(--bg-color); padding:15px; border-radius:10px; border:1px solid var(--border-color); margin-bottom:20px;">
+                        <b style="font-size:13px; display:block; margin-bottom:12px; color:var(--header-bg);">⚡ Ações Rápidas da Grade (Semana Ativa)</b>
+                        
+                        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:12px;">
+                            <button type="button" class="sub-aba-btn" style="background:white;" onclick="copiarSemanaAnterior()">📋 Copiar da Semana Anterior</button>
+                        </div>
+                        
+                        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:12px;">
+                            <button type="button" class="sub-aba-btn" style="background:var(--accent-color); color:white;" onclick="aplicarLote(['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'], ['m'], 'estudo')">📘 Manhãs Livres</button>
+                            <button type="button" class="sub-aba-btn" style="background:var(--accent-color); color:white;" onclick="aplicarLote(['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'], ['t'], 'estudo')">📘 Tardes Livres</button>
+                            <button type="button" class="sub-aba-btn" style="background:var(--accent-color); color:white;" onclick="aplicarLote(['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'], ['n'], 'estudo')">📘 Noites Livres</button>
+                            <button type="button" class="sub-aba-btn" style="background:var(--primary-color); color:white;" onclick="aplicarLote(['Sáb','Dom'], ['m','t','n'], 'descanso')">🌿 FDS Livre</button>
+                        </div>
+
+                        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:12px;">
+                            <button type="button" class="sub-aba-btn" style="background:var(--border-color); color:var(--text-color);" onclick="aplicarLote(['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'], ['m'], 'ocupado')">🏥 Manhãs Ocupadas</button>
+                            <button type="button" class="sub-aba-btn" style="background:var(--border-color); color:var(--text-color);" onclick="aplicarLote(['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'], ['t'], 'ocupado')">🏥 Tardes Ocupadas</button>
+                            <button type="button" class="sub-aba-btn" style="background:var(--border-color); color:var(--text-color);" onclick="aplicarLote(['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'], ['n'], 'ocupado')">🏥 Noites Ocupadas</button>
+                            <button type="button" class="sub-aba-btn" style="background:var(--border-color); color:var(--text-color);" onclick="aplicarLote(['Sáb','Dom'], ['m','t','n'], 'ocupado')">🏥 FDS Ocupado</button>
+                        </div>
+
+                        <div style="display:flex; gap:10px; flex-wrap:wrap; border-top:1px dashed var(--border-color); padding-top:15px;">
+                            <button type="button" class="sub-aba-btn" style="background:var(--danger-color); color:white;" onclick="aplicarLote(['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'], ['m','t','n'], 'ocupado')">🗑️ Limpar Semana (Tudo Ocupado)</button>
+                            <button type="button" class="sub-aba-btn" style="background:#8b0000; color:white;" onclick="limparTodoRodizio()">⚠️ Limpar Todo o Rodízio</button>
+                        </div>
+                    </div>
+
+                    <div class="semana-grid" id="gridSemanaSetup"></div>
+                    
+                    <div style="display:flex; gap:15px; margin-top:25px;">
+                        <button onclick="gerarPlanoSemanaAtiva()" style="background:var(--accent-color); flex:2;">🔄 Recalcular Apenas Esta Semana (Efeito Local Isolado)</button>
+                        <button onclick="salvarGradeTurnosSemana()" style="background:var(--text-color); flex:1;">💾 Salvar Turnos Desta Semana</button>
+                    </div>
+
+                    <div id="resultadoInternato" style="margin-top:30px; display:none;"></div>
+                </div>
+
+                <!-- PAINEL DE BUSCA LIVRE UNIVERSAL -->
+                <div class="card" id="cardResgateEspecial" style="border: 2px dashed var(--accent-color); background: rgba(52, 152, 219, 0.02);">
+                    <h2 style="color:var(--accent-color);">🔎 Busca Livre de Temas no Edital</h2>
+                    <p style="font-size:13px; opacity:0.8;">Pesquise qualquer assunto do edital global para alocar diretamente em um turno livre desta semana (ideal para casos vistos em plantão ou temas de interesse).</p>
+                    <input type="text" id="inputBuscaLivre" placeholder="Digite para buscar no edital (mínimo 3 letras)..." onkeyup="renderizarBuscaLivre()" style="border: 1px solid var(--accent-color); background:white;">
+                    <div id="listaBuscaLivre" style="max-height:250px; overflow-y:auto; margin-top:10px;"></div>
+                </div>
+
+                <!-- TEMAS ADIADOS -->
+                <div class="card">
+                    <h2>📦 Temas Adiados (Backlog)</h2>
+                    <p style="font-size:13px; opacity:0.8; margin-bottom:15px;">Temas cancelados por falta de tempo. Eles estão ordenados por peso (prioridade). Resgate-os para um turno livre ou envie direto para as revisões práticas.</p>
+                    
+                    <div class="sub-nav-abas" style="margin-bottom: 15px;">
+                        <button class="sub-aba-btn active" id="btnFiltroBacklog_todas" onclick="setFiltroBacklog('todas')">Todas</button>
+                        <button class="sub-aba-btn" id="btnFiltroBacklog_CM" onclick="setFiltroBacklog('Clínica Médica')">Clínica</button>
+                        <button class="sub-aba-btn" id="btnFiltroBacklog_CIR" onclick="setFiltroBacklog('Cirurgia')">Cirurgia</button>
+                        <button class="sub-aba-btn" id="btnFiltroBacklog_GO" onclick="setFiltroBacklog('Ginecologia e Obstetrícia')">GO</button>
+                        <button class="sub-aba-btn" id="btnFiltroBacklog_PED" onclick="setFiltroBacklog('Pediatria')">Pediatria</button>
+                        <button class="sub-aba-btn" id="btnFiltroBacklog_PREV" onclick="setFiltroBacklog('Preventiva')">Preventiva</button>
+                    </div>
+
+                    <div id="listaBacklogAdiados" style="max-height:300px; overflow-y:auto;"></div>
+                </div>
+
+                <!-- MAPA DO RODÍZIO VIGENTE -->
+                <div class="card" id="cardMapaRodizio">
+                    <h2>🗺️ Mapa do Rodízio Vigente</h2>
+                    <p style="font-size:13px; opacity:0.8;">Acompanhe o status completo de todos os temas do edital da macro-área atual.</p>
+                    <div id="mapaRodizioContainer">
+                        <!-- Preenchido via JS -->
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="card">
-            <h2>Simulados: Registro e Desempenho</h2>
-            <form onsubmit="salvarSimulado(event)" style="display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end;">
-                <div style="flex:2; min-width:150px;"><label>Nome (Ex: ENARE #1):</label><input type="text" id="simNome" required></div>
-                <div style="flex:1; min-width:100px;"><label>Acertos:</label><input type="number" id="simAcertos" required></div>
-                <div style="flex:1; min-width:100px;"><label>Total:</label><input type="number" id="simTotal" required></div>
+            <!-- ABA 3: REGISTRO DE ESTUDO -->
+            <div id="tab-estudo" class="tab-content">
+                <div class="card">
+                    <h2>✍️ Registrar Novo Estudo</h2>
+                    <form onsubmit="salvarNovoEstudo(event)" id="formEstudo">
+                        <div class="row-form">
+                            <div class="col-form">
+                                <label>1. Macro-Área:</label>
+                                <select id="reg_macro" onchange="popularEspecialidades('reg_macro', 'reg_esp', 'reg_subtema', false)" required></select>
+                            </div>
+                            <div class="col-form">
+                                <label>2. Especialidade:</label>
+                                <select id="reg_esp" onchange="popularSubtemas('reg_macro', 'reg_esp', 'reg_subtema', false)" required disabled><option value="">Aguarde...</option></select>
+                            </div>
+                        </div>
+                        <div style="margin-top:10px;">
+                            <label>3. Subtema:</label>
+                            <select id="reg_subtema" required disabled><option value="">Aguarde...</option></select>
+                        </div>
+
+                        <div style="display: flex; gap: 15px; margin-top:20px;">
+                            <div style="flex:1"><label>Data da Teoria:</label><input type="date" id="reg_data" required></div>
+                            <div style="flex:1"><label>Tempo Gasto (min):</label><input type="number" id="reg_tempo" placeholder="Ex: 45" required></div>
+                        </div>
+
+                        <div style="background: var(--bg-color); padding: 15px; border-radius: 8px; margin: 20px 0; border: 1px solid var(--border-color);">
+                            <label style="display:flex; align-items:center; gap:12px; margin:0; cursor:pointer;">
+                                <input type="checkbox" id="checkFezQuestoes" checked onchange="toggleQuestoesForm()" style="width:20px; height:20px; margin:0; accent-color:var(--primary-color);">
+                                <span style="font-size:14px;">Fiz a 1ª bateria de questões hoje.</span>
+                            </label>
+                        </div>
+
+                        <div id="boxQuestoesIniciais" style="display: flex; gap: 15px;">
+                            <div style="flex:1"><label>Questões Feitas:</label><input type="number" id="reg_feitas" placeholder="Ex: 25"></div>
+                            <div style="flex:1"><label>Acertos:</label><input type="number" id="reg_acertos" placeholder="Ex: 20"></div>
+                        </div>
+
+                        <div style="display: flex; gap: 15px; margin-top:10px;">
+                            <div style="flex:1"><label>Dificuldade da Aula/Teoria:</label>
+                                <select id="reg_dificuldade" required>
+                                    <option value="medio">Médio</option><option value="facil">Fácil</option><option value="dificil">Difícil</option>
+                                </select>
+                            </div>
+                            <div style="flex:1"><label>Nível de Energia:</label>
+                                <select id="reg_energia" required>
+                                    <option value="alta">⚡ Alta</option><option value="media" selected>🔋 Média</option><option value="baixa">🪫 Baixa</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <button type="submit" style="margin-top:20px; padding:14px; font-size:15px;">Salvar Estudo e Programar FSRS</button>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:20px;">
+                        <h2 style="margin:0;">🔁 Cronograma de Revisões (FSRS)</h2>
+                        <div style="text-align: right;">
+                            <div>
+                                <button class="btn-acao" onclick="ativarSprint()" id="btnSprintConfig" style="background:var(--text-color); box-shadow:none;">⚡ Ativar Sprint</button>
+                                <button class="btn-acao" onclick="limparSprint()" style="background:var(--bg-color); color:var(--text-color); border:1px solid var(--border-color); box-shadow:none;">Limpar Sprint</button>
+                            </div>
+                            <div style="font-size: 11px; margin-top: 8px;">Status do Sprint: <span id="sprintStatusText" style="font-weight:bold; color:var(--danger-color);">Inativo</span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="sub-nav-abas" style="margin-bottom:15px;">
+                        <button class="sub-aba-btn active" onclick="mudarFiltroTabela('todas', this)">Todas</button>
+                        <button class="sub-aba-btn" onclick="mudarFiltroTabela('atrasadas', this)">Atrasadas 🔴</button>
+                        <button class="sub-aba-btn" onclick="mudarFiltroTabela('hoje', this)">Para Hoje 🎯</button>
+                    </div>
+                    <table>
+                        <thead><tr><th>Área / Tema</th><th>Fase / Próxima</th><th>Ações</th></tr></thead>
+                        <tbody id="tabela-estudos"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ABA 4: MÉTRICAS DE ESTUDO -->
+            <div id="tab-analytics" class="tab-content">
+                <div class="card">
+                    <h2>Radar & Evolução de Acertos por Subtema</h2>
+                    <div class="dashboard-grid">
+                        <div class="stat-box" style="padding:25px;">
+                            <h4 style="margin-top:0; margin-bottom:20px; opacity:0.8;">Radar das 5 Macro-Áreas</h4>
+                            <div style="display: flex; gap: 20px; align-items: center; flex-wrap: wrap;">
+                                <div class="grafico-container" style="height:250px; flex: 2; min-width: 260px;"><canvas id="graficoRadar"></canvas></div>
+                                <div id="radarValoresLista" style="flex: 1; min-width: 160px; font-size: 14px; text-align: left; background:var(--bg-color); padding:15px; border-radius:12px;"></div>
+                            </div>
+                        </div>
+                        <div class="stat-box" style="text-align: left; padding:25px;">
+                            <h4 style="margin-top:0; text-align:center; margin-bottom:20px; opacity:0.8;">Evolução de Acertos por Subtema</h4>
+                            <div class="row-form" style="margin-bottom:20px; font-size:13px;">
+                                <div class="col-form">
+                                    <select id="evo_macro" onchange="popularEspecialidades('evo_macro', 'evo_esp', 'evo_subtema', true)"></select>
+                                </div>
+                                <div class="col-form">
+                                    <select id="evo_esp" onchange="popularSubtemas('evo_macro', 'evo_esp', 'evo_subtema', true)"><option value="todas">📌 Todas</option></select>
+                                </div>
+                                <div class="col-form">
+                                    <select id="evo_subtema" onchange="atualizarGraficoEvolucao()"><option value="todas">📌 Todos</option></select>
+                                </div>
+                            </div>
+                            <div class="grafico-container" style="height:200px;"><canvas id="graficoEvolucao"></canvas></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>📝 Simulados: Registro e Desempenho</h2>
+                    <form onsubmit="salvarSimulado(event)" style="display:flex; gap:15px; flex-wrap:wrap; align-items:flex-end; background:var(--bg-color); padding:20px; border-radius:12px;">
+                        <div style="flex:2; min-width:200px;"><label>Nome (Ex: ENARE #1):</label><input type="text" id="simNome" required></div>
+                        <div style="flex:1; min-width:100px;"><label>Acertos:</label><input type="number" id="simAcertos" required></div>
+                        <div style="flex:1; min-width:100px;"><label>Total:</label><input type="number" id="simTotal" required></div>
+                        
+                        <div style="width:100%; display:flex; gap:10px; margin-top:5px; flex-wrap:wrap;">
+                            <input type="number" id="simCM" placeholder="Acertos Clínica" style="flex:1; min-width:120px;">
+                            <input type="number" id="simCIR" placeholder="Acertos Cirurgia" style="flex:1; min-width:120px;">
+                            <input type="number" id="simGO" placeholder="Acertos GO" style="flex:1; min-width:120px;">
+                            <input type="number" id="simPED" placeholder="Acertos Pediatria" style="flex:1; min-width:120px;">
+                            <input type="number" id="simPREV" placeholder="Acertos Preventiva" style="flex:1; min-width:120px;">
+                        </div>
+                        <button type="submit" style="margin:0; width:auto; padding:12px 25px;">Lançar Simulado</button>
+                    </form>
+                    
+                    <div style="margin-top: 40px; padding-top: 20px;">
+                        <h4 style="text-align:center; opacity:0.8;">Espelho de Simulados</h4>
+                        <div class="grafico-container" style="height:250px;"><canvas id="graficoSimulados"></canvas></div>
+                        <div id="listaSimulados" style="margin-top: 20px; font-size:13px; background:var(--bg-color); border-radius:12px; padding:15px;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ABA 5: TEMPO TOTAL DE ESTUDO -->
+            <div id="tab-nerd" class="tab-content">
+                <div class="card">
+                    <h2>🤓 Tempo Total de Estudo</h2>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-top:20px;">
+                        <div class="stat-box" style="border-left: 5px solid var(--primary-color);">
+                            <h4 style="opacity:0.6; margin-top:0;">HOJE</h4><h3 id="nerdTempoHoje">0h 0m</h3><p>Focado</p><hr style="border:none; border-top:1px dashed var(--border-color); margin:15px 0;"><h3 id="nerdQtsHoje" style="color:var(--text-color);">0</h3><p>Questões</p>
+                        </div>
+                        <div class="stat-box" style="border-left: 5px solid var(--accent-color);">
+                            <h4 style="opacity:0.6; margin-top:0;">7 DIAS</h4><h3 id="nerdTempoSemana">0h 0m</h3><p>Focado</p><hr style="border:none; border-top:1px dashed var(--border-color); margin:15px 0;"><h3 id="nerdQtsSemana" style="color:var(--text-color);">0</h3><p>Questões</p>
+                        </div>
+                        <div class="stat-box" style="border-left: 5px solid #8e44ad;">
+                            <h4 style="opacity:0.6; margin-top:0;">30 DIAS</h4><h3 id="nerdTempoMes">0h 0m</h3><p>Focado</p><hr style="border:none; border-top:1px dashed var(--border-color); margin:15px 0;"><h3 id="nerdQtsMes" style="color:var(--text-color);">0</h3><p>Questões</p>
+                        </div>
+                    </div>
+                    <h4 style="margin-top:40px; text-align:center; opacity:0.8;">🏆 Top 3 Áreas de Dedicação (Últimos 30 Dias)</h4>
+                    <ul id="nerdTopAreas" style="font-size:15px; line-height:2; margin:0 auto; max-width:400px; background:var(--bg-color); padding:20px 40px; border-radius:12px; list-style:none;"></ul>
+                </div>
+            </div>
+
+            <!-- ABA 6: METAS + INCIDÊNCIA DE ASSUNTOS + CADERNO DE ERROS -->
+            <div id="tab-caderno" class="tab-content">
+                <div class="card">
+                    <h2>🎯 Metas de Questões por Subtema</h2>
+                    <div class="row-form" style="margin-bottom:20px;">
+                        <div class="col-form">
+                            <label>Macro-Área:</label>
+                            <select id="meta_macro" onchange="popularEspecialidades('meta_macro', 'meta_esp', null, true)"></select>
+                        </div>
+                        <div class="col-form">
+                            <label>Especialidade:</label>
+                            <select id="meta_esp" onchange="renderizarMetasSubtemas()"><option value="todas">📌 Selecione...</option></select>
+                        </div>
+                    </div>
+                    <table>
+                        <thead><tr><th>Subtema</th><th>Meta Sugerida</th><th>Feitas</th><th>Status</th></tr></thead>
+                        <tbody id="tabela-metas-subtemas"></tbody>
+                    </table>
+                </div>
+
+                <div class="card">
+                    <h2>📋 Planilha de Incidência Focada</h2>
+                    <div class="row-form" style="margin-bottom:20px;">
+                        <div class="col-form">
+                            <label>Macro-Área:</label>
+                            <select id="plan_macro" onchange="popularEspecialidades('plan_macro', 'plan_esp', null, true)"></select>
+                        </div>
+                        <div class="col-form">
+                            <label>Especialidade:</label>
+                            <select id="plan_esp" onchange="renderizarPlanilha()"><option value="todas">📌 Selecione...</option></select>
+                        </div>
+                    </div>
+                    <table>
+                        <thead><tr><th style="width:30%">Subtema</th><th style="width:35%">O que focar (Texto)</th><th style="width:35%">Imagem (Cole o Link)</th></tr></thead>
+                        <tbody id="tabela-planilha"></tbody>
+                    </table>
+                </div>
+
+                <div class="card">
+                    <h2>📚 Caderno de Erros Clínicos</h2>
+                    <input type="text" id="buscaErros" placeholder="Buscar por palavra-chave nos seus erros..." onkeyup="renderizarCadernoErros()">
+                    <div id="listaCadernoErros" style="max-height: 300px; overflow-y: auto; margin-top: 15px;"></div>
+                </div>
+            </div>
+
+            <!-- ABA 7: CONFIGURAÇÃO -->
+            <div id="tab-config" class="tab-content">
+                <!-- CALENDÁRIO DE PROVAS -->
+                <div class="card">
+                    <h2>🎯 Calendário de Provas</h2>
+                    <p style="font-size:13px; opacity:0.8;">Cadastre suas provas. A "Prova Principal" ativará automaticamente o alerta e o bloqueio de revisão curta aos 45 dias.</p>
+                    <form onsubmit="adicionarOuEditarProva(event)" class="row-form" style="background:var(--bg-color); padding:20px; border-radius:12px;">
+                        <input type="hidden" id="provaIdEdit">
+                        <div class="col-form"><label>Nome da Prova:</label><input type="text" id="provaNome" placeholder="Ex: ENARE 2028" required></div>
+                        <div class="col-form"><label>Data da Prova:</label><input type="date" id="provaData" required></div>
+                        <div class="col-form">
+                            <label>Tipo:</label>
+                            <select id="provaTipo"><option value="principal">Alvo Principal (Reta Final 45d)</option><option value="secundaria">Secundária (Sprints)</option></select>
+                        </div>
+                        <div><button type="submit" id="btnSalvarProva" style="margin:0; padding:12px 20px;">Adicionar Prova</button></div>
+                    </form>
+                    <ul id="listaProvas" style="font-size:14px; margin-top:20px; padding-left:20px; line-height:2;"></ul>
+                </div>
                 
-                <div style="width:100%; display:flex; gap:5px; margin-top:5px; flex-wrap:wrap;">
-                    <input type="number" id="simCM" placeholder="Acertos Clínica" style="flex:1; min-width:100px;">
-                    <input type="number" id="simCIR" placeholder="Acertos Cirurgia" style="flex:1; min-width:100px;">
-                    <input type="number" id="simGO" placeholder="Acertos GO" style="flex:1; min-width:100px;">
-                    <input type="number" id="simPED" placeholder="Acertos Pediatria" style="flex:1; min-width:100px;">
-                    <input type="number" id="simPREV" placeholder="Acertos Preventiva" style="flex:1; min-width:100px;">
+                <div class="card">
+                    <h2>⚙️ Calibragem do Algoritmo FSRS (Pesos 1 a 5)</h2>
+                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap:15px; margin-top:15px;">
+                        <div><label>Fator Peso 5:</label><input type="number" step="0.1" id="configPeso5" value="0.5"></div>
+                        <div><label>Fator Peso 4:</label><input type="number" step="0.1" id="configPeso4" value="0.7"></div>
+                        <div><label>Fator Peso 3:</label><input type="number" step="0.1" id="configPeso3" value="0.9"></div>
+                        <div><label>Fator Peso 2:</label><input type="number" step="0.1" id="configPeso2" value="1.1"></div>
+                        <div><label>Fator Peso 1:</label><input type="number" step="0.1" id="configPeso1" value="1.4"></div>
+                    </div>
+                    <label style="margin-top:20px;">Intervalos Base (Dias):</label>
+                    <input type="text" id="configIntervalos" value="1, 7, 14, 30, 60, 90">
+                    <label>Limite de Saturação (Aviso de Burnout em 3 Dias):</label>
+                    <input type="number" id="configBurnout" value="15">
+                    <button onclick="salvarConfiguracoes()" style="margin-top:20px;">Salvar Configurações</button>
                 </div>
-                <button type="submit" style="margin:0; width:auto; padding:10px 20px;">Lançar Simulado</button>
-            </form>
-            
-            <div style="margin-top: 30px; border-top: 1px solid var(--border-color); padding-top: 20px;">
-                <h4 style="text-align:center;">Espelho de Simulados</h4>
-                <div class="grafico-container" style="height:250px;"><canvas id="graficoSimulados"></canvas></div>
-                <div id="listaSimulados" style="margin-top: 15px; font-size:12px;"></div>
-            </div>
-        </div>
-    </div>
 
-    <!-- ABA 5: TEMPO TOTAL DE ESTUDO -->
-    <div id="tab-nerd" class="tab-content">
-        <div class="card">
-            <h2>🤓 Tempo Total de Estudo</h2>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
-                <div class="stat-box" style="border-left: 4px solid var(--primary-color);">
-                    <h4>HOJE</h4><h3 id="nerdTempoHoje">0h 0m</h3><p>Focado</p><hr><h3 id="nerdQtsHoje">0</h3><p>Questões</p>
-                </div>
-                <div class="stat-box" style="border-left: 4px solid var(--accent-color);">
-                    <h4>7 DIAS</h4><h3 id="nerdTempoSemana">0h 0m</h3><p>Focado</p><hr><h3 id="nerdQtsSemana">0</h3><p>Questões</p>
-                </div>
-                <div class="stat-box" style="border-left: 4px solid #8e44ad;">
-                    <h4>30 DIAS</h4><h3 id="nerdTempoMes">0h 0m</h3><p>Focado</p><hr><h3 id="nerdQtsMes">0</h3><p>Questões</p>
+                <div class="card">
+                    <h2>🎨 Tema & Dados Pessoais</h2>
+                    <button class="sub-aba-btn" onclick="toggleDarkMode()" style="width:100%; padding:14px; margin-bottom:25px; border:1px solid var(--border-color); background:var(--bg-color);">🌓 Alternar Tema Claro / Escuro</button>
+                    
+                    <label>Meta Anual de Questões:</label>
+                    <input type="number" id="metaInputConfig" value="10000" onchange="atualizarMetaAnual()">
+
+                    <h4 style="margin-top:30px; margin-bottom:10px;">Backup Manual (JSON)</h4>
+                    <div style="display: flex; gap: 15px;">
+                        <button class="sub-aba-btn" onclick="exportarBackup()" style="flex:1; background:var(--accent-color); color:white; padding:12px; box-shadow:var(--shadow-btn); border:none;">💾 Exportar JSON</button>
+                        <button class="sub-aba-btn" onclick="document.getElementById('importFile').click()" style="flex:1; background:var(--primary-color); color:white; padding:12px; box-shadow:var(--shadow-btn); border:none;">📂 Importar JSON</button>
+                    </div>
+                    <input type="file" id="importFile" style="display:none" onchange="importarBackup(event)">
                 </div>
             </div>
-            <h4 style="margin-top:20px;">🏆 Top 3 Áreas de Dedicação (Últimos 30 Dias)</h4>
-            <ul id="nerdTopAreas" style="font-size:14px; line-height:1.8; margin:0;"></ul>
-        </div>
-    </div>
 
-    <!-- ABA 6: METAS + INCIDÊNCIA DE ASSUNTOS + CADERNO DE ERROS -->
-    <div id="tab-caderno" class="tab-content">
-        <div class="card">
-            <h2>🎯 Metas de Questões por Subtema</h2>
-            <div class="row-form" style="margin-bottom:15px;">
-                <div class="col-form">
-                    <label>Macro-Área:</label>
-                    <select id="meta_macro" onchange="popularEspecialidades('meta_macro', 'meta_esp', null, true)"></select>
-                </div>
-                <div class="col-form">
-                    <label>Especialidade:</label>
-                    <select id="meta_esp" onchange="renderizarMetasSubtemas()"><option value="todas">📌 Selecione...</option></select>
-                </div>
-            </div>
-            <table>
-                <thead><tr><th>Subtema</th><th>Meta Sugerida</th><th>Feitas</th><th>Status</th></tr></thead>
-                <tbody id="tabela-metas-subtemas"></tbody>
-            </table>
-        </div>
-
-        <div class="card">
-            <h2>📋 Planilha de Incidência Focada</h2>
-            <div class="row-form" style="margin-bottom:15px;">
-                <div class="col-form">
-                    <label>Macro-Área:</label>
-                    <select id="plan_macro" onchange="popularEspecialidades('plan_macro', 'plan_esp', null, true)"></select>
-                </div>
-                <div class="col-form">
-                    <label>Especialidade:</label>
-                    <select id="plan_esp" onchange="renderizarPlanilha()"><option value="todas">📌 Selecione...</option></select>
-                </div>
-            </div>
-            <table>
-                <thead><tr><th style="width:30%">Subtema</th><th style="width:35%">O que focar (Texto)</th><th style="width:35%">Imagem (Cole o Link)</th></tr></thead>
-                <tbody id="tabela-planilha"></tbody>
-            </table>
-        </div>
-
-        <div class="card">
-            <h2>📚 Caderno de Erros</h2>
-            <input type="text" id="buscaErros" placeholder="Buscar por palavra-chave nos seus erros clínicos..." onkeyup="renderizarCadernoErros()">
-            <div id="listaCadernoErros" style="max-height: 200px; overflow-y: auto; margin-top: 10px;"></div>
-        </div>
-    </div>
-
-    <!-- ABA 7: CONFIGURAÇÃO -->
-    <div id="tab-config" class="tab-content">
-        <!-- CALENDÁRIO DE PROVAS -->
-        <div class="card">
-            <h2>🎯 Calendário de Provas</h2>
-            <p style="font-size:12px; opacity:0.8;">Cadastre suas provas. A "Prova Principal" ativará automaticamente o alerta e o bloqueio de revisão curta aos 45 dias.</p>
-            <form onsubmit="adicionarOuEditarProva(event)" class="row-form">
-                <input type="hidden" id="provaIdEdit">
-                <div class="col-form"><label>Nome da Prova:</label><input type="text" id="provaNome" placeholder="Ex: ENARE 2028" required></div>
-                <div class="col-form"><label>Data da Prova:</label><input type="date" id="provaData" required></div>
-                <div class="col-form">
-                    <label>Tipo:</label>
-                    <select id="provaTipo"><option value="principal">Alvo Principal (Reta Final 45d)</option><option value="secundaria">Secundária (Sprints)</option></select>
-                </div>
-                <div><button type="submit" id="btnSalvarProva" style="margin:0; padding:10px;">Adicionar Prova</button></div>
-            </form>
-            <ul id="listaProvas" style="font-size:13px; margin-top:15px; padding-left:20px;"></ul>
-        </div>
-
-        <div class="card">
-            <h2>⚙️ Calibragem do Algoritmo FSRS (Pesos 1 a 5)</h2>
-            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap:10px; margin-top:10px;">
-                <div><label>Fator Peso 5:</label><input type="number" step="0.1" id="configPeso5" value="0.5"></div>
-                <div><label>Fator Peso 4:</label><input type="number" step="0.1" id="configPeso4" value="0.7"></div>
-                <div><label>Fator Peso 3:</label><input type="number" step="0.1" id="configPeso3" value="0.9"></div>
-                <div><label>Fator Peso 2:</label><input type="number" step="0.1" id="configPeso2" value="1.1"></div>
-                <div><label>Fator Peso 1:</label><input type="number" step="0.1" id="configPeso1" value="1.4"></div>
-            </div>
-            <label>Intervalos Base (Dias):</label>
-            <input type="text" id="configIntervalos" value="1, 7, 14, 30, 60, 90">
-            <label>Limite de Saturação (Aviso de Burnout em 3 Dias):</label>
-            <input type="number" id="configBurnout" value="15">
-            <button onclick="salvarConfiguracoes()">Salvar Configurações (Nuvem)</button>
-        </div>
-
-        <div class="card">
-            <h2>🎨 Tema & Meta Anual</h2>
-            <button class="sub-aba-btn" onclick="toggleDarkMode()" style="width:100%; padding:10px; margin-bottom:15px;">🌓 Alternar Tema Claro / Escuro</button>
-            
-            <label>Meta Anual de Questões:</label>
-            <input type="number" id="metaInputConfig" value="10000" onchange="atualizarMetaAnual()">
-
-            <h4 style="margin-top:15px; margin-bottom:5px;">Backup Manual (JSON)</h4>
-            <div style="display: flex; gap: 10px;">
-                <button class="sub-aba-btn" onclick="exportarBackup()" style="flex:1; background:var(--accent-color); color:white; padding:10px;">💾 Exportar JSON</button>
-                <button class="sub-aba-btn" onclick="document.getElementById('importFile').click()" style="flex:1; background:var(--primary-color); color:white; padding:10px;">📂 Importar JSON</button>
-            </div>
-            <input type="file" id="importFile" style="display:none" onchange="importarBackup(event)">
-        </div>
-    </div>
+        </main>
+    </div> <!-- FIM .app-container -->
 
     <!-- MODAL REVISÃO -->
     <div class="modal" id="modalRevisao">
@@ -529,8 +700,44 @@
             <form onsubmit="salvarRevisaoModal(event)">
                 <div id="modalBodyContent"></div>
                 <button type="submit">Salvar Revisão e Atualizar FSRS</button>
-                <button type="button" class="btn-excluir" style="width:100%; margin-top:5px; padding:10px; border:none; color:white; border-radius:4px; font-weight:bold; cursor:pointer;" onclick="fecharModal('modalRevisao')">Cancelar</button>
+                <button type="button" class="btn-excluir" style="width:100%; margin-top:10px; padding:12px; border:none; color:white; border-radius:8px; font-weight:bold; cursor:pointer;" onclick="fecharModal('modalRevisao')">Cancelar</button>
             </form>
+        </div>
+    </div>
+
+    <!-- MODAL ADIAR TEMA -->
+    <div class="modal" id="modalAdiarTema">
+        <div class="modal-content" style="max-width: 480px;">
+            <h3 style="margin-top:0;">📦 Adiar Tema</h3>
+            <p id="adiarTemaTitulo" style="font-weight:bold; color:var(--accent-color); margin-bottom: 20px; font-size:14px; background:var(--bg-color); padding:10px; border-radius:8px;"></p>
+            
+            <label>1. O que fazer com o horário liberado?</label>
+            <select id="adiarTurnoDestino">
+                <option value="ocupado">🏥 Marcar como Ocupado (Plantão / Cansaço)</option>
+                <option value="revisao">🔁 Marcar como Revisão FSRS</option>
+                <option value="estudo">📘 Deixar como Horário de Estudo Livre</option>
+            </select>
+
+            <label style="margin-top:20px;">2. Para onde enviar este tema?</label>
+            <select id="adiarTemaDestino" onchange="toggleOpcaoRealocar(this.value)">
+                <option value="backlog">📦 Colocar no Temas Adiados (Backlog)</option>
+                <option value="realocar">🗓️ Alocar em outro horário livre nesta semana</option>
+            </select>
+
+            <div id="boxRealocarTurno" style="display:none; margin-top:15px; padding:15px; background:var(--bg-color); border-radius:8px; border:1px solid var(--border-color);">
+                <label style="margin-top:0;">Selecione o turno vago de destino:</label>
+                <select id="selSlotRealocar" style="margin-bottom:0;"></select>
+            </div>
+
+            <div id="boxMotivoBacklog" style="margin-top:15px; padding:15px; background:var(--bg-color); border-radius:8px; border:1px solid var(--border-color);">
+                <label style="margin-top:0;">Motivo do adiamento:</label>
+                <input type="text" id="adiarMotivoInput" placeholder="Ex: Plantão extra, cansaço, imprevisto..." style="margin-bottom:0;">
+            </div>
+
+            <div style="display:flex; gap:15px; margin-top:25px;">
+                <button type="button" onclick="confirmarAdiarTema()" style="flex:1; margin:0;">Confirmar</button>
+                <button type="button" class="btn-excluir" style="flex:1; margin:0;" onclick="fecharModal('modalAdiarTema')">Cancelar</button>
+            </div>
         </div>
     </div>
 
@@ -538,7 +745,7 @@
     <div class="modal" id="modalDetalhes">
         <div class="modal-content">
             <div id="detalhesBodyContent"></div>
-            <button type="button" class="sub-aba-btn" style="width:100%; margin-top:15px; padding:10px;" onclick="fecharModal('modalDetalhes')">Fechar</button>
+            <button type="button" class="sub-aba-btn" style="width:100%; margin-top:20px; padding:12px; border:1px solid var(--border-color); background:var(--bg-color);" onclick="fecharModal('modalDetalhes')">Fechar</button>
         </div>
     </div>
 
@@ -548,9 +755,6 @@
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
-        // =======================================================================
-        // ATENÇÃO: COLOQUE SUAS CHAVES DO FIREBASE AQUI PARA A NUVEM FUNCIONAR!
-        // =======================================================================
         const firebaseConfig = {
             apiKey: "AIzaSyDbggm0tW-E3NaeSYJ_d4_wje6ncE4gk3o",
             authDomain: "aprovados-da44a.firebaseapp.com",
@@ -629,12 +833,10 @@
                         window.loadLocalState();
                     }
                 } else {
-                    // Se não estiver logado, exibe a tela de login opcional
                     document.getElementById('loginOverlay').style.display = 'flex';
                 }
             });
         } else {
-            // Sem chaves configuradas: carrega direto do localStorage sem bloquear
             setTimeout(() => {
                 document.getElementById('loginOverlay').style.display = 'none';
                 window.loadLocalState();
@@ -644,6 +846,263 @@
 
     <!-- SCRIPT DE LÓGICA DA APLICAÇÃO -->
     <script>
+        // ------------------------------------------------------------------
+        // BUSCA LIVRE UNIVERSAL
+        // ------------------------------------------------------------------
+        function renderizarBuscaLivre() {
+            let container = document.getElementById("listaBuscaLivre");
+            let query = document.getElementById("inputBuscaLivre").value.toLowerCase();
+            container.innerHTML = "";
+            if (query.length < 3) {
+                container.innerHTML = `<div style="text-align:center; padding:20px; opacity:0.7;"><div style="font-size:30px; margin-bottom:10px;">🔍</div><b>Digite pelo menos 3 letras para buscar...</b></div>`;
+                return;
+            }
+
+            let resultados = [];
+            Object.keys(taxonomia).forEach(m => {
+                Object.keys(taxonomia[m]).forEach(e => {
+                    taxonomia[m][e].forEach(sub => {
+                        if (sub.n.toLowerCase().includes(query)) {
+                            resultados.push({ macro: m, esp: e, tema: sub.n, peso: sub.p });
+                        }
+                    });
+                });
+            });
+
+            if (resultados.length === 0) {
+                container.innerHTML = `<div style="text-align:center; padding:20px; opacity:0.7;"><div style="font-size:30px; margin-bottom:10px;">📭</div><b>Nenhum tema encontrado no edital.</b></div>`;
+                return;
+            }
+
+            resultados.forEach(res => {
+                let jaEstudou = listaEstudos.some(est => est.tema === res.tema);
+                let badgeStyle = jaEstudou ? "background:#27ae60;" : "background:var(--header-bg);";
+                let btnTxt = jaEstudou ? "Re-alocar" : "Adicionar";
+                
+                container.innerHTML += `<div style="padding:12px; border-bottom:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center; font-size:13px; background:var(--card-bg);">
+                    <div>
+                        <span class="badge" style="${badgeStyle} margin-bottom:6px;">${res.macro}</span> <b style="color:var(--accent-color);">⭐ ${res.peso}</b><br>
+                        ${res.tema} ${jaEstudou ? '✅' : ''}
+                    </div>
+                    <button class="btn-acao" style="margin:0; padding:8px 15px; font-size:11px; box-shadow:var(--shadow-btn);" onclick="adicionarTemaLivreSemana('${res.macro}', '${res.esp}', '${res.tema}', ${res.peso})">${btnTxt}</button>
+                </div>`;
+            });
+        }
+
+        function adicionarTemaLivreSemana(macro, esp, tema, peso) {
+            let cg = cronogramaSemanasStore[semanaAtivaId];
+            if(!cg) return alert("Gere o cronograma da semana ativa primeiro!");
+
+            let alocado = false;
+            for(let dIdx = 0; dIdx < diasSemanaArr.length; dIdx++) {
+                let d = diasSemanaArr[dIdx];
+                for(let tIdx = 0; tIdx < turnosArr.length; tIdx++) {
+                    let t = turnosArr[tIdx];
+                    if(cg[d] && cg[d][t] && (cg[d][t].tipo === 'revisao' || cg[d][t].tipo === 'descanso')) {
+                        cg[d][t] = { tipo: 'teoria', macro: macro, esp: esp, tema: tema, peso: peso };
+                        alocado = true;
+                        let labelT = t==='m'?'Manhã':t==='t'?'Tarde':'Noite';
+                        alert(`Tema "${tema}" adicionado com sucesso na ${d} (${labelT})!`);
+                        break;
+                    }
+                }
+                if(alocado) break;
+            }
+
+            if(!alocado) {
+                alert("Não há turnos de revisão ou descanso livres nesta semana! Marque um turno como 'Estudo' primeiro.");
+                return;
+            }
+
+            cronogramaSemanasStore[semanaAtivaId] = cg;
+            window.syncToCloud();
+            renderizarKanbanSemanaAtiva();
+        }
+
+        // ------------------------------------------------------------------
+        // MAPA DO RODÍZIO VIGENTE
+        // ------------------------------------------------------------------
+        let filtroMapaRodizio = 'todos';
+
+        function setFiltroMapa(f) {
+            filtroMapaRodizio = f;
+            renderizarMapaRodizio();
+            if(f !== 'todos') expandirTodosAcordeoes();
+        }
+
+        function toggleAccordion(id) {
+            document.getElementById(id).classList.toggle('active');
+        }
+
+        function expandirTodosAcordeoes() {
+            document.querySelectorAll('.accordion-content').forEach(el => el.classList.add('active'));
+        }
+
+        function recolherTodosAcordeoes() {
+            document.querySelectorAll('.accordion-content').forEach(el => el.classList.remove('active'));
+        }
+
+        function renderizarMapaRodizio() {
+            let container = document.getElementById("mapaRodizioContainer");
+            if(!container) return;
+            
+            if(!semanaAtivaId || cronogramaInternato.length === 0) {
+                container.innerHTML = `<div style="text-align:center; padding:30px; opacity:0.7;"><div style="font-size:36px; margin-bottom:15px;">🗺️</div><b>Nenhum rodízio ativo no momento.</b></div>`;
+                return;
+            }
+            
+            let rIdx = parseInt(semanaAtivaId.split('_')[1]);
+            let rod = cronogramaInternato[rIdx];
+            if(!rod) return;
+            
+            let macro = rod.macro;
+            let temasMacro = null;
+            let mapTitle = macro;
+
+            if (macro === "Psiquiatria") {
+                temasMacro = { "Psiquiatria": taxonomia["Clínica Médica"]["Psiquiatria"] };
+                mapTitle = "Psiquiatria (Espelho da Clínica Médica)";
+            } else if (macro === "MFC") {
+                temasMacro = taxonomia["Preventiva"];
+                mapTitle = "MFC (Espelho da Medicina Preventiva)";
+            } else {
+                temasMacro = taxonomia[macro];
+            }
+
+            if(!temasMacro) {
+                container.innerHTML = "<p style='font-size:13px; opacity:0.7; padding:20px; text-align:center;'>Edital não mapeado para este rodízio.</p>";
+                return;
+            }
+            
+            let mapaAlocados = {};
+            Object.keys(cronogramaSemanasStore).forEach(sId => {
+                if(sId.startsWith(`rod_${rIdx}_`)) {
+                    let sNum = sId.split('_')[3];
+                    let cg = cronogramaSemanasStore[sId];
+                    diasSemanaArr.forEach(d => {
+                        turnosArr.forEach(t => {
+                            if(cg[d] && cg[d][t] && cg[d][t].tipo === 'teoria') {
+                                let labelT = t==='m'?'Manhã':t==='t'?'Tarde':'Noite';
+                                mapaAlocados[cg[d][t].tema] = `Sem. ${sNum} (${d} - ${labelT})`;
+                            }
+                        });
+                    });
+                }
+            });
+            
+            let mapaBacklog = {};
+            backlogAdiados.forEach(b => mapaBacklog[b.tema] = true);
+            
+            let totalTemas = 0;
+            let iniciados = 0;
+            let htmlAcordeoes = "";
+            
+            Object.keys(temasMacro).forEach((esp, espIdx) => {
+                let trs = "";
+                let espTotal = 0;
+                let espIniciados = 0;
+                
+                temasMacro[esp].forEach(sub => {
+                    totalTemas++;
+                    espTotal++;
+                    
+                    let est = listaEstudos.find(e => e.tema === sub.n);
+                    if(est) { iniciados++; espIniciados++; }
+                    
+                    let feitas = 0, acertos = 0;
+                    if(est) est.historico.forEach(h => { feitas += (h.feitas||0); acertos += (h.acertos||0); });
+                    
+                    let taxa = feitas > 0 ? ((acertos/feitas)*100).toFixed(0) : 0;
+                    
+                    let inK = mapaAlocados[sub.n];
+                    let inB = mapaBacklog[sub.n];
+                    
+                    let statusK = est ? "✅ Estudado" : (inK ? `🗓️ ${inK}` : (inB ? "📦 Backlog" : "⚪ Não Alocado"));
+                    let teoria = est ? "✅ Feito" : "⏳ Pend";
+                    let anki = est ? (est.fase > 1 ? "✅ Feito" : "⏳ Pend") : "—";
+                    let faseStr = est ? (est.fase === 0.5 ? "Anki Pend." : (est.fase === 1 ? "1ª Rev" : `${Math.floor(est.fase)}ª Rev`)) : "—";
+                    let corDesemp = taxa >= 70 ? "#27ae60" : (taxa >= 50 ? "#f39c12" : "#c0392b");
+                    let desempStr = feitas > 0 ? `<span style="color:${corDesemp}; font-weight:bold;">${taxa}%</span>` : "—";
+                    
+                    let mostrar = true;
+                    if(filtroMapaRodizio === 'nao_alocados' && statusK !== "⚪ Não Alocado" && statusK !== "📦 Backlog") mostrar = false;
+                    if(filtroMapaRodizio === 'pesos45' && sub.p < 4) mostrar = false;
+                    if(filtroMapaRodizio === 'pesos32' && (sub.p > 3 || sub.p < 2)) mostrar = false;
+                    if(filtroMapaRodizio === 'peso1' && sub.p !== 1) mostrar = false;
+                    if(filtroMapaRodizio === 'baixo_desempenho' && (!est || feitas === 0 || taxa >= 60)) mostrar = false;
+                    
+                    let targetMacroForStudy = (macro === "Psiquiatria" || macro === "MFC") ? (macro === "Psiquiatria" ? "Clínica Médica" : "Preventiva") : macro;
+                    let clickAcao = est ? `mudarAba('tab-estudo', document.querySelectorAll('.sidebar-btn')[2]); setTimeout(() => mudarFiltroTabela('todas', document.querySelectorAll('.sub-nav-abas .sub-aba-btn')[0]), 300);` : `iniciarTeoriaKanban('${targetMacroForStudy}', '${esp}', '${sub.n}')`;
+                    
+                    if(mostrar) {
+                        trs += `<tr>
+                            <td><b style="color:var(--text-color);">${sub.n}</b></td>
+                            <td style="text-align:center;">⭐ ${sub.p}</td>
+                            <td style="font-size:12px; color:#555;">${statusK}</td>
+                            <td style="text-align:center;">${teoria}</td>
+                            <td style="text-align:center;">${anki}</td>
+                            <td style="text-align:center;">${feitas}</td>
+                            <td style="text-align:center;">${desempStr}</td>
+                            <td style="text-align:center; font-size:12px;">${faseStr}</td>
+                            <td style="text-align:center;"><button class="btn-acao" style="margin:0; padding:6px 12px; font-size:11px; box-shadow:var(--shadow-btn);" onclick="${clickAcao}">${est ? 'Ver Histórico' : 'Estudar'}</button></td>
+                        </tr>`;
+                    }
+                });
+                
+                if(trs !== "") {
+                    let accId = `acc_esp_${espIdx}`;
+                    let pctEsp = espTotal > 0 ? Math.round((espIniciados/espTotal)*100) : 0;
+                    htmlAcordeoes += `
+                        <div class="accordion-header" onclick="toggleAccordion('${accId}')">
+                            <span>▼ ${esp}</span>
+                            <span style="background:var(--card-bg); color:var(--text-color); padding:4px 10px; border-radius:12px; font-size:11px;">${espIniciados}/${espTotal} (${pctEsp}%)</span>
+                        </div>
+                        <div class="accordion-content" id="${accId}">
+                            <table>
+                                <thead><tr>
+                                    <th>Subtema</th><th style="text-align:center;">Peso</th><th>Status</th>
+                                    <th style="text-align:center;">Teoria</th><th style="text-align:center;">Flashcards</th>
+                                    <th style="text-align:center;">Qts.</th><th style="text-align:center;">Desemp.</th>
+                                    <th style="text-align:center;">Fase FSRS</th><th style="text-align:center;">Ação</th>
+                                </tr></thead>
+                                <tbody>${trs}</tbody>
+                            </table>
+                        </div>
+                    `;
+                }
+            });
+            
+            if(htmlAcordeoes === "") htmlAcordeoes = `<div style="text-align:center; padding:30px; opacity:0.7;"><div style="font-size:36px; margin-bottom:15px;">📭</div><b>Nenhum tema para este filtro.</b></div>`;
+            
+            let pctGlobal = totalTemas > 0 ? Math.round((iniciados/totalTemas)*100) : 0;
+            
+            let painelHTML = `
+                <div style="background:var(--bg-color); border:1px solid var(--border-color); padding:20px; border-radius:12px; margin-bottom:20px;">
+                    <div style="display:flex; justify-content:space-between; font-weight:bold; font-size:15px; margin-bottom:8px;">
+                        <span>Cobertura da Grande Área (${mapTitle})</span>
+                        <span style="color:var(--primary-color);">${iniciados} / ${totalTemas} temas (${pctGlobal}%)</span>
+                    </div>
+                    <div class="progress-bar-bg" style="height:14px;"><div class="progress-bar-fill" style="width:${pctGlobal}%;"></div></div>
+                </div>
+                
+                <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:15px; align-items:center; background:var(--bg-color); padding:12px; border-radius:10px; border:1px solid var(--border-color);">
+                    <button class="sub-aba-btn" style="background:white; border-color:#ccc;" onclick="expandirTodosAcordeoes()">➕ Expandir Todos</button>
+                    <button class="sub-aba-btn" style="background:white; border-color:#ccc;" onclick="recolherTodosAcordeoes()">➖ Recolher Todos</button>
+                    <div style="border-left:1px solid #ccc; height:20px; margin:0 5px;"></div>
+                    <button class="sub-aba-btn ${filtroMapaRodizio==='todos'?'active':''}" onclick="setFiltroMapa('todos')">Todos</button>
+                    <button class="sub-aba-btn ${filtroMapaRodizio==='nao_alocados'?'active':''}" onclick="setFiltroMapa('nao_alocados')">⚪ Não Aloc. / Backlog</button>
+                    <button class="sub-aba-btn ${filtroMapaRodizio==='pesos45'?'active':''}" onclick="setFiltroMapa('pesos45')">⭐ Pesos 4 e 5</button>
+                    <button class="sub-aba-btn ${filtroMapaRodizio==='pesos32'?'active':''}" onclick="setFiltroMapa('pesos32')">⭐ Pesos 3 e 2</button>
+                    <button class="sub-aba-btn ${filtroMapaRodizio==='peso1'?'active':''}" onclick="setFiltroMapa('peso1')">⭐ Peso 1</button>
+                    <button class="sub-aba-btn ${filtroMapaRodizio==='baixo_desempenho'?'active':''}" onclick="setFiltroMapa('baixo_desempenho')">⚠️ Risco (< 60%)</button>
+                </div>
+                
+                ${htmlAcordeoes}
+            `;
+            
+            container.innerHTML = painelHTML;
+        }
+
         // ------------------------------------------------------------------
         // TAXONOMIA 3 NÍVEIS OFICIAL (PESO VISÍVEL NO TEXTO)
         // ------------------------------------------------------------------
@@ -1063,7 +1522,7 @@
         };
 
         // ------------------------------------------------------------------
-        // GLOBALS & LOCALSTORAGE HYDRATION
+        // GLOBALS & HYDRATION
         // ------------------------------------------------------------------
         let listaEstudos = [];
         let configAlgoritmo = { intervalos: [1, 7, 14, 30, 60, 90], p5: 0.5, p4: 0.7, p3: 0.9, p2: 1.1, p1: 1.4, burnout: 15 };
@@ -1082,11 +1541,59 @@
         let isSobrevivencia = false;
         let sprintAtivo = false;
         let semanaAtivaId = "";
+        let filtroBacklog = 'todas';
 
         const diasSemanaArr = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
         const turnosArr = ['m', 't', 'n'];
 
-        // Carrega estado local para garantir que dados antigos nunca se percam
+        // NOVO: Função para calcular dias seguidos reajustada para olhar as datas reais
+        function calcularStreak() {
+            let datasAtivas = new Set();
+            
+            // Pega datas de estudos e revisões
+            listaEstudos.forEach(i => i.historico.forEach(h => {
+                if(h.data) datasAtivas.add(h.data);
+            }));
+            // Pega datas em que usou o Pomodoro
+            Object.keys(pomodoroDiario).forEach(k => {
+                if(pomodoroDiario[k] > 0) datasAtivas.add(k);
+            });
+
+            let dStr = (d) => {
+                let y = d.getFullYear();
+                let m = String(d.getMonth()+1).padStart(2,'0');
+                let dia = String(d.getDate()).padStart(2,'0');
+                return `${y}-${m}-${dia}`;
+            };
+
+            let streakAtual = 0;
+            let dataCheck = new Date(); // Inicia conferindo a partir de hoje
+
+            let hojeStr = dStr(dataCheck);
+            let checkOntem = new Date(); checkOntem.setDate(checkOntem.getDate() - 1);
+            let ontemStr = dStr(checkOntem);
+
+            // Verifica se a sequência parou
+            if (datasAtivas.has(hojeStr)) {
+                // Estudou hoje, a contagem desce a partir de hoje normalmente
+            } else if (datasAtivas.has(ontemStr)) {
+                // Não estudou hoje AINDA, mas a sequência de ontem continua valendo
+                dataCheck.setDate(dataCheck.getDate() - 1);
+            } else {
+                // Não estudou nem hoje e nem ontem: fogo apagou.
+                streak = 0;
+                return;
+            }
+
+            // Conta quantos dias diretos o usuário tem no Set de datas
+            while(datasAtivas.has(dStr(dataCheck))) {
+                streakAtual++;
+                dataCheck.setDate(dataCheck.getDate() - 1); // Volta 1 dia
+            }
+
+            streak = streakAtual;
+        }
+
         window.loadLocalState = function() {
             listaEstudos = JSON.parse(localStorage.getItem('estudos_med')) || [];
             configAlgoritmo = JSON.parse(localStorage.getItem('config_alg')) || { intervalos: [1, 7, 14, 30, 60, 90], p5: 0.5, p4: 0.7, p3: 0.9, p2: 1.1, p1: 1.4, burnout: 15 };
@@ -1099,7 +1606,6 @@
             notasIncidencia = JSON.parse(localStorage.getItem('incidencia_notas')) || {};
             listaSimulados = JSON.parse(localStorage.getItem('simulados_med')) || [];
             metaAnual = parseInt(localStorage.getItem('meta_questoes')) || 10000;
-            streak = parseInt(localStorage.getItem('user_streak')) || 0;
             
             initApp();
         };
@@ -1116,7 +1622,6 @@
             notasIncidencia = d.notas || JSON.parse(localStorage.getItem('incidencia_notas')) || {};
             listaSimulados = d.simulados || JSON.parse(localStorage.getItem('simulados_med')) || [];
             metaAnual = d.metaAnual || parseInt(localStorage.getItem('meta_questoes')) || 10000;
-            streak = d.streak || parseInt(localStorage.getItem('user_streak')) || 0;
             
             initApp();
         };
@@ -1140,9 +1645,9 @@
             renderizarPlanilha(); 
             renderizarCadernoErros(); 
             atualizarEstatisticasNerds();
+            renderizarMapaRodizio();
         }
 
-        // Sincronização Local + Nuvem
         window.syncToCloud = function() {
             localStorage.setItem('estudos_med', JSON.stringify(listaEstudos));
             localStorage.setItem('config_alg', JSON.stringify(configAlgoritmo));
@@ -1155,14 +1660,13 @@
             localStorage.setItem('incidencia_notas', JSON.stringify(notasIncidencia));
             localStorage.setItem('simulados_med', JSON.stringify(listaSimulados));
             localStorage.setItem('meta_questoes', metaAnual);
-            localStorage.setItem('user_streak', streak);
 
             const dataToSave = {
                 estudos: listaEstudos, config: configAlgoritmo, provas: agendaProvas,
                 internato: cronogramaInternato, grades_semanais: gradesSemanaisStore,
                 crono_semanas: cronogramaSemanasStore, backlog: backlogAdiados,
                 pomodoro: pomodoroDiario, notas: notasIncidencia, simulados: listaSimulados,
-                metaAnual: metaAnual, streak: streak
+                metaAnual: metaAnual
             };
             if(window.firebaseSaveData && window.currentUserUid) {
                 window.firebaseSaveData(window.currentUserUid, dataToSave);
@@ -1181,6 +1685,9 @@
                 let opt = `<option value="${m}">${m}</option>`;
                 optionsReg += opt; optionsRod += opt; optionsFiltro += opt;
             });
+            
+            optionsRod += '<option value="Psiquiatria">🧠 Psiquiatria (Especial)</option>';
+            optionsRod += '<option value="MFC">🩺 MFC / APS (Especial)</option>';
             
             document.getElementById("reg_macro").innerHTML = optionsReg;
             document.getElementById("rodMacro").innerHTML = optionsRod;
@@ -1243,6 +1750,7 @@
                         pomodoroDiario[hj] = (pomodoroDiario[hj] || 0) + 1;
                         window.syncToCloud();
                         atualizarEstatisticasNerds();
+                        atualizarDashboard(); // Recalcula o streak se necessário no meio da sessão
                     }
                 } else { pausarPomodoro(); alert("Pomodoro Finalizado!"); timeLeft = pomodoroTemas.pausa * 60; atualizarDisplayTimer(); }
             }, 1000);
@@ -1258,11 +1766,17 @@
 
         function mudarAba(tabId, btn) {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.main-nav-abas .main-aba-tab').forEach(b => b.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active'); btn.classList.add('active');
+            document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.remove('active'));
+            
+            document.getElementById(tabId).classList.add('active'); 
+            if(btn) {
+                btn.classList.add('active');
+                document.getElementById('headerAbaTitulo').innerText = btn.innerText;
+            }
+            
             if (tabId === 'tab-analytics') { atualizarRadar(); atualizarGraficoEvolucao(); atualizarGraficoSimulados(); }
             if (tabId === 'tab-planejamento') { renderizarListasPlanejamento(); atualizarSeletorSemanasPorRodizios(); renderizarKanbanSemanaAtiva(); }
-            if (tabId === 'tab-nerd') atualizarEstatisticasNerds();
+            if (tabId === 'tab-nerd') { atualizarEstatisticasNerds(); }
         }
 
         // ------------------------------------------------------------------
@@ -1301,7 +1815,7 @@
             }
 
             listaEstudos.push(item);
-            streak++; 
+            
             salvarEAtualizar(); 
             document.getElementById("formEstudo").reset(); 
             document.getElementById('reg_data').valueAsDate = new Date();
@@ -1312,8 +1826,8 @@
             document.getElementById("reg_subtema").innerHTML = '<option value="">Selecione Especialidade...</option>';
             document.getElementById("reg_subtema").disabled = true;
 
-            mudarAba('tab-inicio', document.querySelectorAll('.main-nav-abas .main-aba-tab')[0]);
-            alert("Estudo Registrado com Sucesso!");
+            renderizarTabela();
+            alert("Estudo Registrado com Sucesso! Revisão FSRS programada.");
         }
 
         function getFatorPeso(peso) {
@@ -1392,7 +1906,10 @@
                 return true;
             });
 
-            if (filtrados.length === 0) { tbody.innerHTML = `<tr><td colspan="3" style="text-align:center;">Nada pendente.</td></tr>`; return; }
+            if (filtrados.length === 0) { 
+                tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; padding:30px;"><div style="font-size:30px; margin-bottom:10px;">✨</div><b style="color:var(--primary-color);">Tudo limpo por aqui!</b><br><span style="font-size:12px;opacity:0.7;">Nenhum estudo pendente para esta visualização.</span></td></tr>`; 
+                return; 
+            }
 
             filtrados.forEach(item => {
                 let rIdx = listaEstudos.indexOf(item); let atrasado = item.proximaData < hj;
@@ -1406,7 +1923,7 @@
                     <td>${fText}<br><small>${item.proximaData} ${atrasado ? '🔴' : ''}</small></td>
                     <td>
                         <button class="btn-acao" onclick="abrirModal(${rIdx})">Executar</button>
-                        <button class="btn-acao" style="background:#8e44ad;" onclick="abrirDetalhes(${rIdx})">Ver</button>
+                        <button class="btn-acao" style="background:var(--text-color);" onclick="abrirDetalhes(${rIdx})">Ver</button>
                         <button class="btn-acao btn-excluir" onclick="excluirEstudo(${rIdx})">X</button>
                     </td>
                 `;
@@ -1443,10 +1960,15 @@
                 }
             });
 
+            // NOVO: Garante o recálculo do Streak inteligente a cada refresh do painel
+            calcularStreak();
+
             document.getElementById("statHoje").innerText = h; document.getElementById("statAtrasadas").innerText = a;
             document.getElementById("statPendentesTeoria").innerText = p; document.getElementById("statCarga3Dias").innerText = cg;
             document.getElementById("burnoutAlert").style.display = cg >= configAlgoritmo.burnout ? "block" : "none";
-            document.getElementById("streakCount").innerText = streak; document.getElementById("focusStreak").innerText = streak;
+            
+            document.getElementById("streakCount").innerText = streak; 
+            document.getElementById("focusStreak").innerText = streak;
             document.getElementById("metaStatus").innerText = `${h}/${Math.max(1, h)}`; document.getElementById("focusMetaStatus").innerText = `${h}/${Math.max(1, h)}`;
             
             atualizarMetaAnualPainel();
@@ -1499,7 +2021,7 @@
         }
 
         // ------------------------------------------------------------------
-        // MODAIS DE EXECUÇÃO
+        // MODAIS DE EXECUÇÃO & ADIAMENTO
         // ------------------------------------------------------------------
         let idxModal = null;
         function abrirModal(idx) {
@@ -1548,14 +2070,108 @@
 
         function abrirDetalhes(idx) {
             let item = listaEstudos[idx]; if (!item.easeFactor) item.easeFactor = 2.5;
-            let html = `<h3>${item.tema}</h3><p style="font-size:12px;opacity:0.8;">Fator FSRS: <b>${item.easeFactor.toFixed(2)}</b> | Peso: <b>${item.peso}</b></p><ul>`;
+            let html = `<h3>${item.tema}</h3><p style="font-size:12px;opacity:0.8;">Fator FSRS: <b>${item.easeFactor.toFixed(2)}</b> | Peso: <b>${item.peso}</b></p><ul style="padding-left:15px;">`;
             item.historico.forEach(h => html += `<li><b>${h.fase}</b> (${h.data}) ${h.feitas ? `- Acertos: ${h.acertos}/${h.feitas}` : ''} ${h.notaErro ? `<br><i>Erro: ${h.notaErro}</i>` : ''}</li>`);
-            html += `</ul><h4>🔮 Previsão (Fim de Ciclo):</h4><ul>`;
+            html += `</ul><h4 style="margin-top:20px;">🔮 Previsão (Fim de Ciclo):</h4><ul style="padding-left:15px; opacity:0.8;">`;
             let tF = Math.max(2, Math.floor(item.fase)); let tD = item.proximaData || new Date().toISOString().split('T')[0];
             let last = item.historico.filter(h => h.feitas > 0).pop() || { feitas: 20, acertos: 16, percepcao: 'medio' };
             for (let i = tF; i <= 6; i++) { html += `<li><b>${i}ª Rev.:</b> ${tD}</li>`; tD = calcularNovaData(tD, item.peso, last.percepcao, i + 1, item.easeFactor, last.feitas, last.acertos); }
-            html += `<p style="color:var(--primary-color);font-weight:bold;margin-top:10px;">Estimativa de Alta: ${tD}</p>`;
-            document.getElementById("detalhesBodyContent").innerHTML = html + "</ul>"; document.getElementById("modalDetalhes").style.display = "flex";
+            html += `</ul><p style="color:var(--primary-color);font-weight:bold;margin-top:15px; font-size:15px;">Estimativa de Alta: ${tD}</p>`;
+            document.getElementById("detalhesBodyContent").innerHTML = html; document.getElementById("modalDetalhes").style.display = "flex";
+        }
+
+        // LÓGICA DO MODAL DE ADIAMENTO PERSONALIZADO
+        let adiarContext = null;
+
+        function adiarTemaParaBacklog(d, t, dtExata) {
+            let cg = cronogramaSemanasStore[semanaAtivaId];
+            if(!cg || !cg[d] || !cg[d][t] || cg[d][t].tipo !== 'teoria') return;
+
+            let topico = cg[d][t];
+            adiarContext = { d, t, dtExata, topico };
+
+            document.getElementById("adiarTemaTitulo").innerText = `${topico.tema} — (${d} às ${t === 'm' ? 'Manhã' : t === 't' ? 'Tarde' : 'Noite'})`;
+            document.getElementById("adiarMotivoInput").value = "Plantão / Imprevisto no internato";
+            document.getElementById("adiarTurnoDestino").value = "ocupado";
+            document.getElementById("adiarTemaDestino").value = "backlog";
+            document.getElementById("boxMotivoBacklog").style.display = "block";
+            document.getElementById("boxRealocarTurno").style.display = "none";
+
+            let selSlot = document.getElementById("selSlotRealocar");
+            selSlot.innerHTML = "";
+            let slotsDisponiveis = [];
+
+            diasSemanaArr.forEach(diaKey => {
+                turnosArr.forEach(trnKey => {
+                    if(diaKey === d && trnKey === t) return;
+                    if(cg[diaKey] && cg[diaKey][trnKey] && (cg[diaKey][trnKey].tipo === 'revisao' || cg[diaKey][trnKey].tipo === 'descanso' || cg[diaKey][trnKey].tipo === 'estudo')) {
+                        let labelT = trnKey === 'm' ? 'Manhã' : trnKey === 't' ? 'Tarde' : 'Noite';
+                        slotsDisponiveis.push({ d: diaKey, t: trnKey, desc: `${diaKey} (${labelT}) - [${cg[diaKey][trnKey].tipo}]` });
+                    }
+                });
+            });
+
+            if(slotsDisponiveis.length === 0) {
+                selSlot.innerHTML = `<option value="">Nenhum turno livre nesta semana</option>`;
+            } else {
+                slotsDisponiveis.forEach(s => {
+                    selSlot.innerHTML += `<option value="${s.d}|${s.t}">${s.desc}</option>`;
+                });
+            }
+
+            document.getElementById("modalAdiarTema").style.display = "flex";
+        }
+
+        function toggleOpcaoRealocar(val) {
+            document.getElementById("boxMotivoBacklog").style.display = (val === 'backlog') ? "block" : "none";
+            document.getElementById("boxRealocarTurno").style.display = (val === 'realocar') ? "block" : "none";
+        }
+
+        function confirmarAdiarTema() {
+            if(!adiarContext) return;
+            let cg = cronogramaSemanasStore[semanaAtivaId];
+            let { d, t, dtExata, topico } = adiarContext;
+
+            let novoTipoTurno = document.getElementById("adiarTurnoDestino").value;
+            let acaoTema = document.getElementById("adiarTemaDestino").value;
+
+            cg[d][t] = { tipo: novoTipoTurno };
+
+            if(acaoTema === 'backlog') {
+                let motivo = document.getElementById("adiarMotivoInput").value.trim() || "Adiado pelo internato";
+                backlogAdiados.push({
+                    macro: topico.macro,
+                    esp: topico.esp,
+                    tema: topico.tema,
+                    peso: topico.peso,
+                    dataAdiado: dtExata,
+                    dataRealAdiado: new Date().toISOString(),
+                    motivo: motivo
+                });
+                alert(`Tema enviado para o Backlog! Horário liberado marcado como '${novoTipoTurno}'.`);
+            } else if(acaoTema === 'realocar') {
+                let destinoVal = document.getElementById("selSlotRealocar").value;
+                if(!destinoVal) {
+                    alert("Nenhum turno selecionado para realocação! O tema será mantido no Backlog.");
+                    backlogAdiados.push({
+                        macro: topico.macro, esp: topico.esp, tema: topico.tema, peso: topico.peso,
+                        dataAdiado: dtExata, dataRealAdiado: new Date().toISOString(), motivo: "Sem turnos livres para realocar"
+                    });
+                } else {
+                    let [destD, destT] = destinoVal.split('|');
+                    cg[destD][destT] = { tipo: 'teoria', macro: topico.macro, esp: topico.esp, tema: topico.tema, peso: topico.peso };
+                    let labelT = destT === 'm' ? 'Manhã' : destT === 't' ? 'Tarde' : 'Noite';
+                    alert(`Tema realocado para ${destD} (${labelT})!`);
+                }
+            }
+
+            cronogramaSemanasStore[semanaAtivaId] = cg;
+            window.syncToCloud();
+
+            fecharModal('modalAdiarTema');
+            renderizarKanbanSemanaAtiva();
+            renderizarBacklogAdiados();
+            adiarContext = null;
         }
 
         function excluirEstudo(idx) { if (confirm("Excluir este estudo?")) { listaEstudos.splice(idx, 1); salvarEAtualizar(); } }
@@ -1570,7 +2186,7 @@
             
             if(cronogramaInternato.length === 0) {
                 sel.innerHTML = `<option value="">Cadastre um rodízio primeiro...</option>`;
-                document.getElementById("gridSemanaSetup").innerHTML = "<p style='font-size:12px;opacity:0.8;'>Cadastre um rodízio na Data de Rodízios no Internato para habilitar o Kanban.</p>";
+                document.getElementById("gridSemanaSetup").innerHTML = `<div style="text-align:center; padding:20px; opacity:0.7;"><div style="font-size:30px; margin-bottom:10px;">🗺️</div><b>Nenhum rodízio cadastrado ou ativo.</b></div>`;
                 document.getElementById("resultadoInternato").style.display = "none";
                 return;
             }
@@ -1647,10 +2263,10 @@
                         <option value="descanso" ${v==='descanso'?'selected':''}>🌿 Descanso</option>
                     </select>
                 `;
-                g.innerHTML += `<div class="dia-col"><h4>${d}<br><small style="font-size:9px; font-weight:normal;">(${dtExata})</small></h4>
-                <div style="font-size:10px;">Manhã</div>${renderSel('m', trns.m)}
-                <div style="font-size:10px;">Tarde</div>${renderSel('t', trns.t)}
-                <div style="font-size:10px;">Noite</div>${renderSel('n', trns.n)}</div>`;
+                g.innerHTML += `<div class="dia-col"><h4>${d}<br><small style="font-size:10px; font-weight:normal; opacity:0.8;">(${dtExata})</small></h4>
+                <div style="font-size:10px; opacity:0.8; margin-bottom:4px;">Manhã</div>${renderSel('m', trns.m)}
+                <div style="font-size:10px; opacity:0.8; margin-bottom:4px;">Tarde</div>${renderSel('t', trns.t)}
+                <div style="font-size:10px; opacity:0.8; margin-bottom:4px;">Noite</div>${renderSel('n', trns.n)}</div>`;
             });
         }
 
@@ -1667,6 +2283,79 @@
         function salvarGradeTurnosSemana() {
             salvarGradeTurnosSemanaSilencioso();
             alert("Grade de turnos salva com sucesso!");
+        }
+
+        // Ações em Lote
+        function aplicarLote(dias, turnos, valor) {
+            if(!semanaAtivaId) return alert("Selecione uma semana primeiro.");
+            document.querySelectorAll('.sel-turno').forEach(sel => {
+                if(dias.includes(sel.dataset.dia) && turnos.includes(sel.dataset.trn)) {
+                    sel.value = valor;
+                }
+            });
+            salvarGradeTurnosSemanaSilencioso();
+        }
+
+        function copiarSemanaAnterior() {
+            if(!semanaAtivaId) return alert("Selecione uma semana primeiro.");
+            let partes = semanaAtivaId.split('_'); 
+            let sNum = parseInt(partes[3]);
+            if(sNum <= 1) return alert("Esta já é a primeira semana do rodízio!");
+            
+            let antId = `rod_${partes[1]}_sem_${sNum-1}`;
+            let antGrade = gradesSemanaisStore[antId];
+            
+            if(!antGrade) return alert("Semana anterior sem grade salva!");
+            
+            diasSemanaArr.forEach(d => {
+                turnosArr.forEach(t => {
+                    let sel = document.querySelector(`.sel-turno[data-dia="${d}"][data-trn="${t}"]`);
+                    if(sel && antGrade[d] && antGrade[d][t]) sel.value = antGrade[d][t];
+                });
+            });
+            salvarGradeTurnosSemanaSilencioso();
+            alert("Grade da semana anterior copiada com sucesso!");
+        }
+
+        function limparTodoRodizio() {
+            if(!semanaAtivaId) return alert("Selecione um rodízio primeiro.");
+            let rIdx = parseInt(semanaAtivaId.split('_')[1]);
+            let rod = cronogramaInternato[rIdx];
+            if(!rod) return;
+            
+            if(!confirm(`⚠️ ATENÇÃO: AÇÃO IRREVERSÍVEL!\n\nVocê está prestes a APAGAR todo o planejamento (turnos e alocações de temas) de TODAS as semanas do rodízio atual (${rod.macro}).\n\nDeseja realmente continuar?`)) {
+                return;
+            }
+
+            let dIni = new Date(rod.inicio + 'T00:00:00');
+            let dFim = new Date(rod.fim + 'T00:00:00');
+            let diffDias = Math.ceil((dFim - dIni) / (1000 * 60 * 60 * 24)) + 1;
+            let numSemanasRod = Math.max(1, Math.ceil(diffDias / 7));
+
+            for(let s=1; s<=numSemanasRod; s++) {
+                let sId = `rod_${rIdx}_sem_${s}`;
+                
+                let gradeVazia = { 
+                    Seg:{m:'ocupado',t:'ocupado',n:'ocupado'}, Ter:{m:'ocupado',t:'ocupado',n:'ocupado'}, 
+                    Qua:{m:'ocupado',t:'ocupado',n:'ocupado'}, Qui:{m:'ocupado',t:'ocupado',n:'ocupado'}, 
+                    Sex:{m:'ocupado',t:'ocupado',n:'ocupado'}, Sáb:{m:'ocupado',t:'ocupado',n:'ocupado'}, 
+                    Dom:{m:'ocupado',t:'ocupado',n:'ocupado'} 
+                };
+                gradesSemanaisStore[sId] = gradeVazia;
+                
+                if(cronogramaSemanasStore[sId]) {
+                    delete cronogramaSemanasStore[sId];
+                }
+            }
+            
+            backlogAdiados = backlogAdiados.filter(item => item.macro !== rod.macro);
+
+            window.syncToCloud();
+            gerarGridSemanaAtiva();
+            renderizarKanbanSemanaAtiva();
+            renderizarBacklogAdiados();
+            
+            alert(`Rodízio de ${rod.macro} limpo com sucesso! Todos os turnos voltaram para 'Ocupado'.`);
         }
 
         function gerarTodoORodizio() {
@@ -1732,10 +2421,26 @@
                 cronogramaSemanasStore[sId] = cronoSemanal;
             }
 
+            if(pool.length > 0) {
+                pool.forEach(sobra => {
+                    backlogAdiados.push({
+                        macro: sobra.macro, esp: sobra.esp, tema: sobra.tema, peso: sobra.peso,
+                        dataAdiado: "Fim do Rodízio",
+                        dataRealAdiado: new Date().toISOString(),
+                        motivo: "Sem espaço no rodízio completo"
+                    });
+                });
+            }
+
             window.syncToCloud();
             renderizarKanbanSemanaAtiva();
             renderizarBacklogAdiados();
-            alert(`Todo o rodízio de ${rod.macro} (${numSemanasRod} semanas) foi planejado com sucesso!`);
+            
+            if(rod.macro === "Psiquiatria" || rod.macro === "MFC") {
+                alert(`Rodízio de ${rod.macro} gerado! Os turnos de estudo estão livres para você resgatar os temas manualmente na Busca Livre.`);
+            } else {
+                alert(`Todo o rodízio de ${rod.macro} (${numSemanasRod} semanas) foi planejado com sucesso!`);
+            }
         }
 
         function gerarPlanoSemanaAtiva() {
@@ -1804,6 +2509,7 @@
                     backlogAdiados.push({
                         macro: sobra.macro, esp: sobra.esp, tema: sobra.tema, peso: sobra.peso,
                         dataAdiado: calcularDataExataRodizio(semanaAtivaId, 0),
+                        dataRealAdiado: new Date().toISOString(),
                         motivo: "Sem espaço livre após recalcular a semana"
                     });
                 });
@@ -1823,35 +2529,35 @@
             
             if(!cg) { res.style.display = "none"; return; }
 
-            let html = `<div style="display:grid; grid-template-columns: repeat(7, 1fr); gap:6px; margin-top:10px;">`;
+            let html = `<div style="display:grid; grid-template-columns: repeat(7, 1fr); gap:10px; margin-top:10px;">`;
             
             diasSemanaArr.forEach((d, idx) => {
                 let dtExata = calcularDataExataRodizio(semanaAtivaId, idx);
-                html += `<div style="background:var(--bg-color); border:1px solid var(--border-color); border-radius:6px; padding:6px;">
-                            <h4 style="text-align:center; margin-top:0; border-bottom:1px solid var(--border-color); padding-bottom:4px; font-size:11px;">${d}<br><small style="font-size:9px;">${dtExata}</small></h4>`;
+                html += `<div style="background:var(--card-bg); border:1px solid var(--border-color); border-radius:10px; padding:8px; box-shadow:var(--shadow-btn);">
+                            <h4 style="text-align:center; margin-top:0; border-bottom:1px solid var(--border-color); padding-bottom:8px; font-size:13px;">${d}<br><small style="font-size:10px; opacity:0.7; font-weight:normal;">${dtExata}</small></h4>`;
                 turnosArr.forEach(t => {
                     let b = cg[d] && cg[d][t] ? cg[d][t] : {tipo: 'ocupado'};
                     let label = t==='m'?'Manhã':t==='t'?'Tarde':'Noite';
                     let bg, cont;
 
                     if(b.tipo === 'ocupado') {
-                        bg = 'var(--border-color)'; cont = `<div style="font-size:9px; color:#555; text-align:center;">🏥 Ocupado</div>`;
+                        bg = 'var(--bg-color)'; cont = `<div style="font-size:11px; color:#7f8c8d; text-align:center; padding:10px 0;">🏥 Ocupado</div>`;
                     } else if(b.tipo === 'descanso') {
-                        bg = '#2ecc71'; cont = `<div style="font-size:9px; color:white; text-align:center;">🌿 Descanso</div>`;
+                        bg = '#2ecc71'; cont = `<div style="font-size:11px; color:white; text-align:center; padding:10px 0;">🌿 Descanso</div>`;
                     } else if(b.tipo === 'teoria') {
                         bg = '#3498db';
-                        cont = `<div style="font-size:9px; color:white;"><b>📘 Teoria</b><br>${b.tema.substring(0,30)}...
-                                  <div style="display:flex; gap:2px; margin-top:4px;">
-                                      <button style="padding:2px; font-size:8px; margin:0;" onclick="iniciarTeoriaKanban('${b.macro}', '${b.esp}', '${b.tema}')">✔️ Estudar</button>
-                                      <button style="padding:2px; font-size:8px; margin:0; background:#f39c12;" onclick="adiarTemaParaBacklog('${d}', '${t}', '${dtExata}')">📦 Adiar</button>
+                        cont = `<div style="font-size:10px; color:white;"><b>📘 Teoria</b><br>${b.tema.substring(0,30)}...
+                                  <div style="display:flex; gap:4px; margin-top:8px;">
+                                      <button style="padding:4px; font-size:9px; margin:0; border-radius:4px; box-shadow:none;" onclick="iniciarTeoriaKanban('${b.macro}', '${b.esp}', '${b.tema}')">✔️ Estudar</button>
+                                      <button style="padding:4px; font-size:9px; margin:0; border-radius:4px; box-shadow:none; background:#f39c12;" onclick="adiarTemaParaBacklog('${d}', '${t}', '${dtExata}')">📦 Adiar</button>
                                   </div></div>`;
                     } else if(b.tipo === 'revisao') {
                         bg = '#e67e22';
-                        cont = `<div style="font-size:9px; color:white; text-align:center;"><b>🔁 FSRS</b><br>Revisões</div>`;
+                        cont = `<div style="font-size:11px; color:white; text-align:center; padding:10px 0;"><b>🔁 FSRS</b><br>Revisões</div>`;
                     }
 
-                    html += `<div style="background:${bg}; padding:5px; border-radius:4px; margin-bottom:5px; min-height:50px;">
-                                <div style="font-size:8px; opacity:0.8; margin-bottom:2px; color:${b.tipo==='ocupado'?'#333':'white'};">${label}</div>
+                    html += `<div style="background:${bg}; padding:8px; border-radius:6px; margin-bottom:8px; min-height:60px; display:flex; flex-direction:column; justify-content:center;">
+                                <div style="font-size:9px; opacity:0.8; margin-bottom:4px; text-transform:uppercase; font-weight:bold; color:${b.tipo==='ocupado'?'#95a5a6':'white'};">${label}</div>
                                 ${cont}
                              </div>`;
                 });
@@ -1859,53 +2565,75 @@
             });
             res.innerHTML = html + "</div>";
             res.style.display = "block";
+            renderizarMapaRodizio();
         }
 
-        function adiarTemaParaBacklog(d, t, dtExata) {
-            let cg = cronogramaSemanasStore[semanaAtivaId];
-            if(cg && cg[d] && cg[d][t] && cg[d][t].tipo === 'teoria') {
-                let topico = cg[d][t];
-                let motivoPrompt = prompt("Qual o motivo do adiamento? (Ex: Plantão extra, Cansaço)", "Plantão no internato");
-                if(motivoPrompt === null) return;
-
-                let realocado = false;
-                diasSemanaArr.forEach(diaKey => {
-                    turnosArr.forEach(trnKey => {
-                        if(!realocado && cg[diaKey] && cg[diaKey][trnKey] && cg[diaKey][trnKey].tipo === 'revisao') {
-                            cg[diaKey][trnKey] = { tipo: 'teoria', macro: topico.macro, esp: topico.esp, tema: topico.tema, peso: topico.peso };
-                            cg[d][t] = { tipo: 'revisao' };
-                            realocado = true;
-                            alert(`Tema realocado localmente para ${diaKey} (${trnKey === 'm' ? 'Manhã' : trnKey === 't' ? 'Tarde' : 'Noite'})!`);
-                        }
-                    });
-                });
-
-                if(!realocado) {
-                    cg[d][t] = { tipo: 'revisao' };
-                    backlogAdiados.push({ 
-                        macro: topico.macro, esp: topico.esp, tema: topico.tema, peso: topico.peso,
-                        dataAdiado: dtExata, motivo: motivoPrompt || "Sem turnos livres na semana"
-                    });
-                    alert("Sem turnos livres nesta semana. Tema enviado para Temas Adiados!");
-                }
-
-                cronogramaSemanasStore[semanaAtivaId] = cg;
-                window.syncToCloud();
-                
-                renderizarKanbanSemanaAtiva();
-                renderizarBacklogAdiados();
-            }
+        function setFiltroBacklog(macro) {
+            filtroBacklog = macro;
+            document.querySelectorAll('#listaBacklogAdiados').forEach(el => {
+                el.parentElement.querySelectorAll('.sub-aba-btn').forEach(b => b.classList.remove('active'));
+            });
+            let idBtn = macro === 'todas' ? 'btnFiltroBacklog_todas' : 
+                        macro === 'Clínica Médica' ? 'btnFiltroBacklog_CM' : 
+                        macro === 'Cirurgia' ? 'btnFiltroBacklog_CIR' : 
+                        macro === 'Ginecologia e Obstetrícia' ? 'btnFiltroBacklog_GO' : 
+                        macro === 'Pediatria' ? 'btnFiltroBacklog_PED' : 'btnFiltroBacklog_PREV';
+            let btnElement = document.getElementById(idBtn);
+            if(btnElement) btnElement.classList.add('active');
+            renderizarBacklogAdiados();
         }
 
         function renderizarBacklogAdiados() {
             let div = document.getElementById("listaBacklogAdiados"); div.innerHTML = "";
-            if(backlogAdiados.length === 0) { div.innerHTML = "<p style='opacity:0.7; font-size:12px;'>Nenhum tema na fila de adiados.</p>"; return; }
-            backlogAdiados.forEach((item, idx) => {
-                div.innerHTML += `<div style="padding:6px; border-bottom:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center; font-size:12px;">
-                    <span><b>${item.tema}</b> — Adiado de ${item.dataAdiado} — <em>Motivo: ${item.motivo}</em></span>
-                    <button class="btn-acao" style="margin:0; padding:4px 8px; font-size:10px;" onclick="abrirModalResgate(${idx})">📥 Resgatar</button>
+            if(backlogAdiados.length === 0) { 
+                div.innerHTML = `<div style="text-align:center; padding:20px; opacity:0.7;"><div style="font-size:30px; margin-bottom:10px;">📦</div><b>Nenhum tema no Backlog.</b></div>`; 
+                return; 
+            }
+            
+            let filtrados = backlogAdiados.map((item, idx) => ({item, idxOriginal: idx}))
+                .filter(x => filtroBacklog === 'todas' || x.item.macro === filtroBacklog)
+                .sort((a,b) => b.item.peso - a.item.peso);
+
+            if(filtrados.length === 0) { 
+                div.innerHTML = `<div style="text-align:center; padding:20px; opacity:0.7;"><div style="font-size:30px; margin-bottom:10px;">📭</div><b>Nenhum tema para este filtro.</b></div>`; 
+                return; 
+            }
+
+            let hj = new Date();
+            filtrados.forEach((obj) => {
+                let item = obj.item;
+                let idx = obj.idxOriginal;
+                let dAdiado = new Date(item.dataRealAdiado || hj.toISOString());
+                let diffDias = Math.floor((hj - dAdiado)/(1000*60*60*24));
+                let alertaTempo = diffDias > 14 ? `<span style="color:var(--danger-color); font-weight:bold;">⚠️ Há ${diffDias} dias</span>` : `<span style="color:#7f8c8d;">Há ${diffDias} dias</span>`;
+
+                div.innerHTML += `<div style="padding:15px; border-bottom:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center; font-size:13px; gap:10px; background: ${item.peso >= 4 ? 'rgba(243, 156, 18, 0.05)' : 'var(--card-bg)'};">
+                    <div style="flex:1;">
+                        <span class="badge" style="background:var(--header-bg); margin-bottom:6px;">Peso ${item.peso}</span> ${alertaTempo}<br>
+                        <b style="font-size:14px;">${item.tema}</b><br><em style="opacity:0.7; font-size:11px;">Motivo: ${item.motivo} (${item.dataAdiado})</em>
+                    </div>
+                    <div style="display:flex; flex-direction:column; gap:8px; min-width:130px;">
+                        <button class="btn-acao" style="margin:0; padding:8px; font-size:11px; background:var(--primary-color); box-shadow:var(--shadow-btn);" onclick="abrirModalResgate(${idx})">📥 Resgatar p/ Turno</button>
+                        <button class="btn-acao" style="margin:0; padding:8px; font-size:11px; background:var(--accent-color); box-shadow:var(--shadow-btn);" onclick="converterParaQuestoes(${idx})">⚡ Ir p/ Questões</button>
+                    </div>
                 </div>`;
             });
+        }
+
+        function converterParaQuestoes(idx) {
+            if(!confirm("Isso removerá a teoria do backlog e a enviará direto para o fluxo de Questões (Fase 2). Confirmar?")) return;
+            let item = backlogAdiados[idx];
+            let hoje = new Date().toISOString().split('T')[0];
+            listaEstudos.push({
+                id: Date.now(), macroArea: item.macro, especialidade: item.esp, tema: item.tema, 
+                peso: item.peso, easeFactor: 2.5, fase: 2, 
+                proximaData: hoje,
+                historico: [{fase: "Conversão (Direto p/ Questões)", percepcao: "medio", feitas: 0, acertos: 0, data: hoje}]
+            });
+            backlogAdiados.splice(idx, 1);
+            salvarEAtualizar(); 
+            renderizarBacklogAdiados();
+            alert("Tema movido para o Cronograma de Revisões (Questões) com sucesso!");
         }
 
         function abrirModalResgate(idx) {
@@ -1944,15 +2672,6 @@
             alert("Tema resgatado com sucesso para o turno escolhido!");
         }
 
-        function iniciarTeoriaKanban(macro, esp, tema) {
-            mudarAba('tab-estudo', document.querySelectorAll('.main-nav-abas .main-aba-tab')[2]);
-            document.getElementById('reg_macro').value = macro;
-            popularEspecialidades('reg_macro', 'reg_esp', 'reg_subtema', false);
-            document.getElementById('reg_esp').value = esp;
-            popularSubtemas('reg_macro', 'reg_esp', 'reg_subtema', false);
-            document.getElementById('reg_subtema').value = tema;
-        }
-
         // ------------------------------------------------------------------
         // PROVAS E LINHA DO TEMPO
         // ------------------------------------------------------------------
@@ -1984,7 +2703,6 @@
             atualizarSeletorSemanasPorRodizios();
         }
 
-        
         function renderizarWidgetProvas() {
             let div = document.getElementById("widgetProvasContainer");
             if (!div) return;
@@ -1998,36 +2716,36 @@
                 let dP = new Date(pp.data + 'T00:00:00');
                 let diff = Math.ceil((dP - hj) / (1000 * 60 * 60 * 24));
                 if(diff > 0) {
-                    html += `<div style="text-align:center; padding: 20px; background: rgba(41, 128, 185, 0.1); border: 1px solid var(--accent-color); border-radius: 8px; margin-bottom:15px;">
-                                <h3 style="margin:0; color:var(--accent-color); font-size:24px;">⏳ Faltam ${diff} dias</h3>
-                                <p style="margin:5px 0 0; font-size:14px; font-weight:bold;">Para o ${pp.nome} (${pp.data.split('-').reverse().join('/')})</p>
+                    html += `<div style="text-align:center; padding: 25px; background: var(--bg-color); border: 2px solid var(--accent-color); border-radius: 12px; margin-bottom:20px;">
+                                <h3 style="margin:0; color:var(--accent-color); font-size:28px;">⏳ Faltam ${diff} dias</h3>
+                                <p style="margin:8px 0 0; font-size:15px; font-weight:bold;">Para o ${pp.nome} (${pp.data.split('-').reverse().join('/')})</p>
                              </div>`;
                 } else if (diff === 0) {
-                    html += `<div style="text-align:center; padding: 20px; background: rgba(39, 174, 96, 0.1); border: 1px solid var(--primary-color); border-radius: 8px; margin-bottom:15px;">
-                                <h3 style="margin:0; color:var(--primary-color); font-size:24px;">🎉 É Hoje!</h3>
-                                <p style="margin:5px 0 0; font-size:14px; font-weight:bold;">Boa prova no ${pp.nome}!</p>
+                    html += `<div style="text-align:center; padding: 25px; background: var(--bg-color); border: 2px solid var(--primary-color); border-radius: 12px; margin-bottom:20px;">
+                                <h3 style="margin:0; color:var(--primary-color); font-size:28px;">🎉 É Hoje!</h3>
+                                <p style="margin:8px 0 0; font-size:15px; font-weight:bold;">Boa prova no ${pp.nome}!</p>
                              </div>`;
                 } else {
-                     html += `<div style="text-align:center; padding: 20px; border: 1px solid var(--border-color); border-radius: 8px; margin-bottom:15px; opacity: 0.6;">
-                                <h3 style="margin:0; color:#7f8c8d; font-size:18px;">Prova Concluída</h3>
-                                <p style="margin:5px 0 0; font-size:14px; font-weight:bold;">${pp.nome}</p>
+                     html += `<div style="text-align:center; padding: 25px; border: 2px solid var(--border-color); border-radius: 12px; margin-bottom:20px; opacity: 0.6;">
+                                <h3 style="margin:0; color:#7f8c8d; font-size:20px;">Prova Concluída</h3>
+                                <p style="margin:8px 0 0; font-size:15px; font-weight:bold;">${pp.nome}</p>
                              </div>`;
                 }
             } else {
-                html += `<div style="text-align:center; padding: 20px; border: 1px dashed var(--border-color); border-radius: 8px; margin-bottom:15px; opacity:0.7;">
-                            <p style="margin:0; font-size:14px;">Nenhuma Prova Principal cadastrada.</p>
+                html += `<div style="text-align:center; padding: 30px; border: 2px dashed var(--border-color); border-radius: 12px; margin-bottom:20px; opacity:0.7;">
+                            <p style="margin:0; font-size:15px;">Nenhuma Prova Principal cadastrada.</p>
                          </div>`;
             }
 
             let secundarias = agendaProvas.filter(x => x.tipo === "secundaria");
             if (secundarias.length > 0) {
-                html += `<div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center;">`;
+                html += `<div style="display:flex; gap:12px; flex-wrap:wrap; justify-content:center;">`;
                 secundarias.forEach(sec => {
                     let dS = new Date(sec.data + 'T00:00:00');
                     let diffS = Math.ceil((dS - hj) / (1000 * 60 * 60 * 24));
                     if(diffS >= 0) {
-                        html += `<div style="background:var(--bg-color); border:1px solid var(--border-color); padding:8px 12px; border-radius:6px; font-size:12px; text-align:center; flex:1; min-width:120px;">
-                                    <b>${sec.nome}</b><br><span style="color:var(--accent-color); font-weight:bold;">${diffS} dias</span>
+                        html += `<div style="background:var(--bg-color); border:1px solid var(--border-color); padding:12px 15px; border-radius:10px; font-size:13px; text-align:center; flex:1; min-width:140px; box-shadow:var(--shadow-btn);">
+                                    <b>${sec.nome}</b><br><span style="color:var(--accent-color); font-weight:bold; font-size:16px;">${diffS} dias</span>
                                  </div>`;
                     }
                 });
@@ -2036,17 +2754,17 @@
             div.innerHTML = html;
         }
 
-
         function renderizarListasPlanejamento() {
             let ulP = document.getElementById("listaProvas"); ulP.innerHTML = "";
-            agendaProvas.forEach((p, i) => ulP.innerHTML += `<li><b>${p.nome}</b> (${p.data}) - [${p.tipo}] <button class="btn-acao btn-edit" onclick="editarProva(${i})">Editar</button> <span style="color:red;cursor:pointer;" onclick="agendaProvas.splice(${i},1); window.syncToCloud(); renderizarListasPlanejamento();">[Excluir]</span></li>`);
+            agendaProvas.forEach((p, i) => ulP.innerHTML += `<li style="margin-bottom:10px; display:flex; align-items:center; gap:10px;"><b>${p.nome}</b> (${p.data}) - [${p.tipo}] <button class="btn-acao btn-edit" onclick="editarProva(${i})">Editar</button> <span style="color:red;cursor:pointer; font-weight:bold;" onclick="agendaProvas.splice(${i},1); window.syncToCloud(); renderizarListasPlanejamento();">[X]</span></li>`);
             
             let divR = document.getElementById("listaRodizios"); divR.innerHTML = "";
             let hj = new Date().toISOString().split('T')[0];
             cronogramaInternato.forEach((r, i) => {
                 let isActive = (r.inicio <= hj && r.fim >= hj);
-                divR.innerHTML += `<div style="padding:6px; border-bottom:1px solid var(--border-color); ${isActive ? 'background:rgba(39, 174, 96, 0.1); font-weight:bold; border-left:4px solid var(--primary-color);' : ''}">${isActive ? '🟢 [ATUAL] ' : ''}<b>${r.macro}</b>: ${r.inicio} até ${r.fim} <span style="color:red;cursor:pointer;float:right;" onclick="cronogramaInternato.splice(${i},1); window.syncToCloud(); renderizarListasPlanejamento(); atualizarSeletorSemanasPorRodizios();">[Excluir]</span></div>`;
+                divR.innerHTML += `<div style="padding:12px; border-radius:8px; border:1px solid var(--border-color); margin-bottom:8px; ${isActive ? 'background:rgba(39, 174, 96, 0.05); font-weight:bold; border-left:4px solid var(--primary-color);' : 'background:var(--bg-color);'}">${isActive ? '🟢 [ATUAL] ' : ''}<b>${r.macro}</b>: ${r.inicio} até ${r.fim} <span style="color:var(--danger-color); cursor:pointer; float:right; font-weight:bold;" onclick="cronogramaInternato.splice(${i},1); window.syncToCloud(); renderizarListasPlanejamento(); atualizarSeletorSemanasPorRodizios();">[X]</span></div>`;
             });
+
             renderizarWidgetProvas();
         }
 
@@ -2081,7 +2799,7 @@
 
             let top = Object.entries(aTop).sort((a, b) => b[1] - a[1]).slice(0, 3);
             let ul = document.getElementById("nerdTopAreas"); ul.innerHTML = "";
-            if(top.length === 0) ul.innerHTML = "<li>Sem registros no mês.</li>";
+            if(top.length === 0) ul.innerHTML = "<li>Sem registros de tempo focado no mês.</li>";
             top.forEach((x, i) => ul.innerHTML += `<li>${i === 0 ? '🥇' : i === 1 ? '🥈' : '🥉'} <b>${x[0]}</b>: ${fT(x[1])}</li>`);
         }
 
@@ -2098,7 +2816,7 @@
                     let ft = 0; listaEstudos.forEach(i => { if (i.tema === sub.n) i.historico.forEach(h => ft += (h.feitas || 0)); });
                     let pct = (ft / meta) * 100;
                     let bg = pct >= 100 ? "#27ae60" : pct >= 75 ? "#2980b9" : pct >= 50 ? "#e67e22" : "#c0392b";
-                    tbody.innerHTML += `<tr><td><small style="opacity:0.7">${esp}</small><br><strong>${sub.n}</strong></td><td>${meta} qts</td><td>${ft}</td><td><span class="badge" style="background:${bg};">${pct.toFixed(0)}%</span></td></tr>`;
+                    tbody.innerHTML += `<tr><td><small style="opacity:0.7">${esp}</small><br><strong>${sub.n}</strong></td><td style="text-align:center;">${meta} qts</td><td style="text-align:center;">${ft}</td><td style="text-align:center;"><span class="badge" style="background:${bg}; padding:6px 10px; font-size:12px;">${pct.toFixed(0)}%</span></td></tr>`;
                 });
             });
         }
@@ -2106,21 +2824,21 @@
         function renderizarPlanilha() {
             let m = document.getElementById("plan_macro").value; let e = document.getElementById("plan_esp").value;
             let tbody = document.getElementById("tabela-planilha"); tbody.innerHTML = "";
-            if (!m || m === 'todas' || !e || e === 'todas') { tbody.innerHTML = `<tr><td colspan='3' style='text-align:center;'>Selecione a Especialidade!</td></tr>`; return; }
+            if (!m || m === 'todas' || !e || e === 'todas') { tbody.innerHTML = `<tr><td colspan='3' style='text-align:center; padding:20px; opacity:0.7;'>Selecione uma Macro-Área e Especialidade nos filtros acima!</td></tr>`; return; }
             
             taxonomia[m][e].forEach(sub => {
                 if (!notasIncidencia[sub.n]) notasIncidencia[sub.n] = { text: "", img: "" }; let nota = notasIncidencia[sub.n];
                 tbody.innerHTML += `<tr><td><strong>${sub.n}</strong></td>
                 <td><input type="text" value="${nota.text}" placeholder="O que mais cai..." onchange="sNI('${sub.n}', 'text', this.value)" style="margin:0;"></td>
-                <td><input type="url" value="${nota.img}" placeholder="URL Imagem" onchange="sNI('${sub.n}', 'img', this.value)" style="margin:0;">${nota.img ? `<br><img src="${nota.img}" style="max-width:100%;border-radius:4px;margin-top:5px;">` : ''}</td></tr>`;
+                <td><input type="url" value="${nota.img}" placeholder="URL Imagem" onchange="sNI('${sub.n}', 'img', this.value)" style="margin:0;">${nota.img ? `<br><img src="${nota.img}" style="max-width:100%;border-radius:4px;margin-top:5px; box-shadow:var(--shadow-btn);">` : ''}</td></tr>`;
             });
         }
         function sNI(tema, tipo, val) { if (!notasIncidencia[tema]) notasIncidencia[tema] = {}; notasIncidencia[tema][tipo] = val; window.syncToCloud(); renderizarPlanilha(); }
 
         function renderizarCadernoErros() {
             let f = document.getElementById("buscaErros").value.toLowerCase(); let d = document.getElementById("listaCadernoErros"); d.innerHTML = ""; let c = 0;
-            listaEstudos.forEach(i => i.historico.forEach(h => { if (h.notaErro && h.notaErro.toLowerCase().includes(f)) { c++; d.innerHTML += `<div style="padding:6px 0; border-bottom:1px solid var(--border-color); font-size:13px;"><b>${i.tema}</b> (${h.fase}): ${h.notaErro}</div>`; }}));
-            if (c === 0) d.innerHTML = "<p style='opacity:0.7; font-size:13px;'>Nenhum erro encontrado.</p>";
+            listaEstudos.forEach(i => i.historico.forEach(h => { if (h.notaErro && h.notaErro.toLowerCase().includes(f)) { c++; d.innerHTML += `<div style="padding:10px 15px; border-bottom:1px solid var(--border-color); font-size:13px; background:var(--bg-color); margin-bottom:5px; border-radius:6px;"><b>${i.tema}</b> <span style="opacity:0.6; font-size:11px;">(${h.fase})</span>: <span style="color:var(--danger-color);">${h.notaErro}</span></div>`; }}));
+            if (c === 0) d.innerHTML = `<div style="text-align:center; padding:20px; opacity:0.7;"><div style="font-size:30px; margin-bottom:10px;">🎯</div><b>Nenhum erro registrado com esta palavra.</b></div>`;
         }
 
         // ------------------------------------------------------------------
@@ -2131,6 +2849,13 @@
             listaSimulados.push({ id: Date.now(), data: new Date().toISOString().split('T')[0], nome: document.getElementById("simNome").value, acertos: parseInt(document.getElementById("simAcertos").value), total: parseInt(document.getElementById("simTotal").value), areas: { CM: document.getElementById("simCM").value, CIR: document.getElementById("simCIR").value, GO: document.getElementById("simGO").value, PED: document.getElementById("simPED").value, PREV: document.getElementById("simPREV").value } });
             e.target.reset(); salvarEAtualizar();
         }
+
+        window.excluirSimulado = function(idx) {
+            if(confirm("Deseja realmente excluir este simulado? O gráfico será atualizado imediatamente.")) {
+                listaSimulados.splice(idx, 1);
+                salvarEAtualizar();
+            }
+        };
 
         let chartRadar = null, chartSim = null, chartEvo = null;
         function atualizarRadar() {
@@ -2145,17 +2870,40 @@
             listaEstudos.forEach(i => { let idx = macros.indexOf(i.macroArea); if (idx !== -1) counts[idx]++; });
             let data = counts.map((c, idx) => Math.min(100, Math.round((c / totals[idx]) * 100) || 0));
 
-            chartRadar = new Chart(ctx, { type: 'radar', data: { labels: ["Clínica", "Cirurgia", "GO", "Pediatria", "Preventiva"], datasets: [{ label: '% Cobertura', data: data, backgroundColor: 'rgba(41, 128, 185, 0.2)', borderColor: '#2980b9' }] }, options: { scales: { r: { max: 100, min: 0 } } } });
+            chartRadar = new Chart(ctx, { type: 'radar', data: { labels: ["Clínica", "Cirurgia", "GO", "Pediatria", "Preventiva"], datasets: [{ label: '% Cobertura', data: data, backgroundColor: 'rgba(52, 152, 219, 0.2)', borderColor: '#3498db', pointBackgroundColor: '#2980b9' }] }, options: { scales: { r: { max: 100, min: 0 } } } });
+
+            // Renderiza a lista de valores exatos ao lado do gráfico
+            let listaHtml = "<ul style='list-style:none; padding:0; margin:0; line-height:2.4;'>";
+            let labelsCurto = ["Clínica", "Cirurgia", "GO", "Pediatria", "Preventiva"];
+            macros.forEach((m, idx) => {
+                let pct = data[idx];
+                let cTotal = totals[idx];
+                let cFeito = counts[idx];
+                let color = pct >= 70 ? "var(--primary-color)" : pct >= 40 ? "#f39c12" : "var(--danger-color)";
+                listaHtml += `<li><b>${labelsCurto[idx]}:</b> <span style="color:${color}; font-weight:bold; font-size:16px;">${pct}%</span> <small style="opacity:0.6; margin-left:5px;">(${cFeito}/${cTotal})</small></li>`;
+            });
+            listaHtml += "</ul>";
+            let elLista = document.getElementById('radarValoresLista');
+            if(elLista) elLista.innerHTML = listaHtml;
         }
 
         function atualizarGraficoSimulados() {
             let ctx = document.getElementById('graficoSimulados').getContext('2d'); if (chartSim) chartSim.destroy();
-            chartSim = new Chart(ctx, { type: 'line', data: { labels: listaSimulados.map(x => x.nome), datasets: [{ label: '% Acertos', data: listaSimulados.map(x => Math.round((x.acertos / x.total) * 100)), borderColor: '#e74c3c', tension: 0.2 }] }, options: { scales: { y: { max: 100, min: 0 } } } });
+            chartSim = new Chart(ctx, { type: 'line', data: { labels: listaSimulados.map(x => x.nome), datasets: [{ label: '% Acertos', data: listaSimulados.map(x => Math.round((x.acertos / x.total) * 100)), borderColor: '#e74c3c', backgroundColor: 'rgba(231, 76, 60, 0.1)', fill:true, tension: 0.3 }] }, options: { scales: { y: { max: 100, min: 0 } } } });
 
             let div = document.getElementById("listaSimulados"); div.innerHTML = "";
-            listaSimulados.forEach(x => {
+            listaSimulados.forEach((x, idx) => {
                 let st = Object.entries(x.areas).filter(y => y[1]).map(y => `${y[0]}: ${y[1]}`).join(' | ');
-                div.innerHTML += `<div style="padding:5px 0; border-bottom:1px solid var(--border-color); font-size:12px;"><b>${x.nome}</b>: ${x.acertos}/${x.total} (${Math.round((x.acertos/x.total)*100)}%) <small style="opacity:0.8;">${st ? `[${st}]` : ''}</small></div>`;
+                div.innerHTML += `<div style="padding:10px 0; border-bottom:1px solid var(--border-color); font-size:13px; display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <b>${x.nome}</b>
+                        <div style="font-size:11px; opacity:0.7; margin-top:4px;">${st ? `[${st}]` : 'Geral'}</div>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:15px;">
+                        <span><span style="color:var(--danger-color); font-weight:bold; font-size:14px;">${Math.round((x.acertos/x.total)*100)}%</span> <small style="opacity:0.6;">(${x.acertos}/${x.total})</small></span>
+                        <button onclick="excluirSimulado(${idx})" style="background:var(--danger-color); color:white; border:none; border-radius:4px; padding:4px 8px; font-size:10px; cursor:pointer; box-shadow:var(--shadow-btn);">Excluir</button>
+                    </div>
+                </div>`;
             });
         }
 
@@ -2170,7 +2918,7 @@
                 i.historico.forEach(h => { if (h.feitas > 0) hist.push({ d: h.data, n: i.tema.substring(0, 10), t: (h.acertos / h.feitas) * 100 }); });
             });
             hist.sort((x, y) => new Date(x.d) - new Date(y.d));
-            chartEvo = new Chart(ctx, { type: 'line', data: { labels: hist.map(x => x.n), datasets: [{ label: '% Acertos', data: hist.map(x => x.t), borderColor: '#27ae60', tension: 0.2 }] }, options: { scales: { y: { max: 100, min: 0 } } } });
+            chartEvo = new Chart(ctx, { type: 'line', data: { labels: hist.map(x => x.n), datasets: [{ label: '% Acertos', data: hist.map(x => x.t), borderColor: '#2ecc71', backgroundColor: 'rgba(46, 204, 113, 0.1)', fill:true, tension: 0.3 }] }, options: { scales: { y: { max: 100, min: 0 } } } });
         }
 
         // ------------------------------------------------------------------
@@ -2213,15 +2961,15 @@
             reader.onload = function(evt) {
                 try {
                     let d = JSON.parse(evt.target.result);
-                    window.hydrateData(d); // reaplica globais e renderiza
-                    window.syncToCloud(); // joga pro firebase logo após importar
-                    alert("Backup restaurado!");
+                    window.hydrateData(d);
+                    window.syncToCloud();
+                    alert("Backup restaurado com sucesso!");
                 } catch(err) { alert("Arquivo JSON inválido."); }
             }; reader.readAsText(file);
         }
 
         function salvarEAtualizar() {
-            window.syncToCloud(); // Salva estado atual na nuvem
+            window.syncToCloud();
             renderizarTabela(); 
             atualizarRadar(); 
             atualizarGraficoSimulados(); 
@@ -2229,6 +2977,7 @@
             renderizarPlanilha(); 
             renderizarCadernoErros(); 
             atualizarEstatisticasNerds();
+            renderizarMapaRodizio();
         }
     </script>
 </body>
