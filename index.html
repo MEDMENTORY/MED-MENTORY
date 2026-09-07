@@ -64,11 +64,13 @@
         .sidebar-logo h1 { font-size: 20px; margin: 0; color: var(--accent-color); font-weight: 800; display:flex; align-items:center; gap:8px;}
         .sidebar-logo p { margin: 5px 0 0; font-size: 11px; opacity: 0.6; line-height: 1.3;}
 
-        .sidebar-nav { display: flex; flex-direction: column; gap: 8px; flex: 1; }
+        .sidebar-nav { display: flex; flex-direction: column; gap: 8px; flex: 1; overflow-y:auto; padding-right:5px;}
+        .sidebar-nav::-webkit-scrollbar { width: 4px; }
+        .sidebar-nav::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
         
         .sidebar-btn { 
             background: transparent; color: var(--text-color); 
-            border: none; padding: 14px 15px; border-radius: 10px; 
+            border: none; padding: 12px 15px; border-radius: 10px; 
             text-align: left; font-size: 14px; font-weight: 600; 
             cursor: pointer; transition: 0.2s; 
         }
@@ -191,6 +193,13 @@
         .tab-content.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
+        /* ESTILOS DO MANUAL DE BORDO */
+        .manual-section { margin-bottom: 30px; }
+        .manual-section h3 { color: var(--accent-color); border-bottom: 2px solid var(--border-color); padding-bottom: 8px; margin-bottom: 15px; font-size:18px;}
+        .manual-box { background: var(--bg-color); border-left: 4px solid var(--primary-color); padding: 15px 20px; border-radius: 0 8px 8px 0; margin-bottom: 15px; font-size: 14px; line-height: 1.6;}
+        .manual-list li { margin-bottom: 10px; font-size: 14px; line-height: 1.6; }
+        .manual-list b { color: var(--text-color); }
+
         /* ========================================================
            RESPONSIVIDADE MOBILE / CELULAR
            ======================================================== */
@@ -290,14 +299,15 @@
                 <button class="sidebar-btn active" onclick="mudarAba('tab-inicio', this)">🏠 Dashboard Inicial</button>
                 <button class="sidebar-btn" onclick="mudarAba('tab-planejamento', this)">📅 Cronograma de Atividades</button>
                 <button class="sidebar-btn" onclick="mudarAba('tab-estudo', this)">✍️ Registro de Estudo</button>
-                <button class="sidebar-btn" onclick="mudarAba('tab-analytics', this)">📊 Radar de Evolução e Simulados</button>
+                <button class="sidebar-btn" onclick="mudarAba('tab-analytics', this)">📊 Radar de Evolução</button>
                 <button class="sidebar-btn" onclick="mudarAba('tab-nerd', this)">🤓 Carga de Estudo</button>
-                <button class="sidebar-btn" onclick="mudarAba('tab-caderno', this)">📚 Metas & Caderno de Erros</button>
+                <button class="sidebar-btn" onclick="mudarAba('tab-caderno', this)">📚 Metas & Cadernos</button>
+                <button class="sidebar-btn" onclick="mudarAba('tab-manual', this)">📖 Manual de Bordo</button>
                 <button class="sidebar-btn" onclick="mudarAba('tab-config', this)">⚙️ Configurações</button>
             </nav>
 
             <div style="margin-top:auto; padding-top:15px; font-size:11px; opacity:0.5; text-align:center;">
-                MED MENTORY v5.2
+                MED MENTORY v5.3
             </div>
         </aside>
 
@@ -686,6 +696,78 @@
                     <h2>📚 Caderno de Erros Clínicos</h2>
                     <input type="text" id="buscaErros" placeholder="Buscar por palavra-chave nos seus erros..." onkeyup="renderizarCadernoErros()">
                     <div id="listaCadernoErros" style="max-height: 300px; overflow-y: auto; margin-top: 15px;"></div>
+                </div>
+            </div>
+            
+            <!-- NOVA ABA: MANUAL DE BORDO -->
+            <div id="tab-manual" class="tab-content">
+                <div class="card">
+                    <h2 style="font-size:24px; color:var(--accent-color); margin-bottom:5px;">📖 Guia Operacional</h2>
+                    <p style="opacity:0.7; font-size:14px; margin-bottom:30px;">Tudo o que você precisa saber para extrair o máximo do MED MENTORY.</p>
+
+                    <div class="manual-section">
+                        <h3>1. Como Usar a Plataforma (Passo a Passo)</h3>
+                        <div class="manual-box">
+                            <ul class="manual-list" style="padding-left:15px; margin:0;">
+                                <li><b>Passo 1: Configuração de Metas e Provas</b><br>Cadastre a data da sua Prova Principal (alvo) na aba de Configurações e defina sua Meta Anual de Questões.</li>
+                                <li><b>Passo 2: Montagem do Internato e Grade Semanal</b><br>Na aba de Cronograma, insira as datas dos seus rodízios hospitalares. Na semana ativa, use as "Ações Rápidas" para preencher com um clique seus horários de plantão ou turnos livres. Depois, clique em <i>Gerar Cronograma</i> para o sistema distribuir os temas do edital nos seus turnos de estudo livres.</li>
+                                <li><b>Passo 3: Registro do Estudo Teórico</b><br>Ao assistir a uma aula ou ler a teoria, vá em <i>Registro de Estudo</i>. Selecione o tema, informe o tempo gasto, sua percepção de dificuldade e o resultado das questões. O sistema agendará a revisão automaticamente.</li>
+                                <li><b>Passo 4: Cumprimento das Revisões Diárias</b><br>Monitore o painel diário na aba de Registro ou no Dashboard Inicial. Execute as revisões agendadas clicando em <i>Executar</i> e lance seus acertos, erros e notas clínicas.</li>
+                                <li><b>Passo 5: Gestão de Imprevistos</b><br>Teve plantão extra ou cansou? Use o botão <i>Adiar</i> no Cronograma da semana. O sistema perguntará se quer realocar o tema para outro turno livre ou enviá-lo aos Temas Adiados para resgate posterior.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="manual-section">
+                        <h3>2. Como funciona o motor FSRS (Revisões)</h3>
+                        <div class="manual-box">
+                            <p style="margin-top:0;">O motor do sistema utiliza uma arquitetura baseada em Repetição Espaçada adaptada para medicina, considerando quatro variáveis:</p>
+                            <ul class="manual-list" style="padding-left:15px; margin-bottom:0;">
+                                <li><b>Incidência em Prova (Pesos 1 a 5):</b> Temas de Peso 5 (ex: Hipertensão, Pré-natal) têm intervalos de repetição mais curtos. Temas Peso 1 demoram mais para voltar.</li>
+                                <li><b>Taxa de Acerto nas Questões:</b> Ao revisar, seu percentual de acertos ajusta a memória. Taxas menores que 50% encurtam o intervalo drasticamente; acima de 85% dão mais fôlego.</li>
+                                <li><b>Percepção de Dificuldade:</b> A autoavaliação (Fácil, Médio, Difícil) calibra a velocidade em que o tema avança no calendário.</li>
+                                <li><b>Trava de Segurança (Reta Final):</b> Quando faltarem 45 dias ou menos para sua Prova Principal, o algoritmo trava todos os intervalos futuros em no máximo 10 dias.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="manual-section">
+                        <h3>3. Benefícios Práticos da Plataforma</h3>
+                        <div class="manual-box">
+                            <ul class="manual-list" style="padding-left:15px; margin:0;">
+                                <li><b>Fim da Fadiga de Decisão:</b> Você não perde energia pensando "o que devo estudar hoje?". A lista de prioridades já está pronta ao abrir o app.</li>
+                                <li><b>Adaptação ao Internato Real:</b> Diferente de PDFs estáticos, a grade semanal é maleável. Mudou a escala do hospital? Basta reconfigurar a semana isoladamente.</li>
+                                <li><b>Flexibilidade com Busca Livre:</b> Permite pesquisar e puxar qualquer tema do edital para estudar no dia, ideal para revisar casos vistos à beira do leito.</li>
+                                <li><b>Prevenção de Fugas:</b> Temas adiados não desaparecem. Eles ficam organizados por prioridade no Backlog esperando um turno livre.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="manual-section">
+                        <h3>4. Pontos Fortes que Ela Desenvolve no Aluno</h3>
+                        <div class="manual-box">
+                            <ul class="manual-list" style="padding-left:15px; margin:0;">
+                                <li><b>Consistência Diária e Ritmo Preditivo:</b> O painel de ritmo calcula a velocidade real de resolução de questões, mostrando se o aluno está no caminho certo para bater a meta antes do exame.</li>
+                                <li><b>Metacognição Clínica e Caderno de Erros:</b> O registro direto das pegadinhas e justificativas de erro cria um banco de dados personalizado, consultável por palavra-chave.</li>
+                                <li><b>Cobertura Equilibrada das 5 Grandes Áreas:</b> O gráfico de Radar e a lista quantitativa impedem o vício comum de estudar apenas a área do rodízio atual e negligenciar as demais.</li>
+                                <li><b>Retenção Ativa de Longo Prazo:</b> Substitui o estudo passivo (apenas assistir aulas) por ciclos programados de questões e flashcards na frequência exata da curva do esquecimento.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+
+                    <div class="manual-section">
+                        <h3>5. Recursos Estratégicos (Avançado)</h3>
+                        <div class="manual-box">
+                            <ul class="manual-list" style="padding-left:15px; margin:0;">
+                                <li><b>Modo Sobrevivência:</b> Em dias de plantão pesado, clique no botão "Sobrevivência" no topo da tela. Ele oculta tarefas futuras e foca só no que vence hoje e no que está atrasado.</li>
+                                <li><b>Busca Livre Universal:</b> Permite pesquisar e puxar qualquer tema do edital para estudar no dia atual. Ideal para revisar casos reais atendidos no hospital (Ex: atendeu Asma, puxa a teoria na hora).</li>
+                                <li><b>Espelhamento de MFC e Psiquiatria:</b> Se você cadastrar o rodízio de Psiquiatria ou MFC, o sistema adapta a grade sem desconfigurar o banco de dados oficial de Clínica Médica e Preventiva.</li>
+                                <li><b>Acompanhamento de Simulados com Desdobramento por Área:</b> Além da nota geral, o sistema registra o desempenho específico nas 5 áreas, facilitando identificar onde estão os pontos fracos.</li>
+                            </ul>
+                        </div>
+                    </div>
+
                 </div>
             </div>
 
@@ -1119,7 +1201,7 @@
                         <div class="accordion-content" id="${accId}">
                             <table>
                                 <thead><tr>
-                                    <th>Subtema</th><th style="text-align:center;">Peso</th><th>Status Internato</th>
+                                    <th>Subtema</th><th style="text-align:center;">Peso</th><th>Status</th>
                                     <th style="text-align:center;">Teoria</th><th style="text-align:center;">Flashcards</th>
                                     <th style="text-align:center;">Qts.</th><th style="text-align:center;">Desemp.</th>
                                     <th style="text-align:center;">Fase FSRS</th><th style="text-align:center;">Ação</th>
@@ -2595,11 +2677,11 @@
             
             if(!cg) { res.style.display = "none"; return; }
 
-            let html = `<div style="display:grid; grid-template-columns: repeat(7, 1fr); gap:10px; margin-top:10px;">`;
+            let html = `<div style="display:grid; grid-template-columns: repeat(7, 1fr); gap:10px; margin-top:10px;" class="semana-grid">`;
             
             diasSemanaArr.forEach((d, idx) => {
                 let dtExata = calcularDataExataRodizio(semanaAtivaId, idx);
-                html += `<div style="background:var(--card-bg); border:1px solid var(--border-color); border-radius:10px; padding:8px; box-shadow:var(--shadow-btn);">
+                html += `<div style="background:var(--card-bg); border:1px solid var(--border-color); border-radius:10px; padding:8px; box-shadow:var(--shadow-btn);" class="dia-col">
                             <h4 style="text-align:center; margin-top:0; border-bottom:1px solid var(--border-color); padding-bottom:8px; font-size:13px;">${d}<br><small style="font-size:10px; opacity:0.7; font-weight:normal;">${dtExata}</small></h4>`;
                 turnosArr.forEach(t => {
                     let b = cg[d] && cg[d][t] ? cg[d][t] : {tipo: 'ocupado'};
@@ -2673,12 +2755,12 @@
                 let diffDias = Math.floor((hj - dAdiado)/(1000*60*60*24));
                 let alertaTempo = diffDias > 14 ? `<span style="color:var(--danger-color); font-weight:bold;">⚠️ Há ${diffDias} dias</span>` : `<span style="color:#7f8c8d;">Há ${diffDias} dias</span>`;
 
-                div.innerHTML += `<div style="padding:15px; border-bottom:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center; font-size:13px; gap:10px; background: ${item.peso >= 4 ? 'rgba(243, 156, 18, 0.05)' : 'var(--card-bg)'};">
-                    <div style="flex:1;">
+                div.innerHTML += `<div style="padding:15px; border-bottom:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center; font-size:13px; gap:10px; background: ${item.peso >= 4 ? 'rgba(243, 156, 18, 0.05)' : 'var(--card-bg)'}; flex-wrap:wrap;">
+                    <div style="flex:1; min-width:200px;">
                         <span class="badge" style="background:var(--header-bg); margin-bottom:6px;">Peso ${item.peso}</span> ${alertaTempo}<br>
                         <b style="font-size:14px;">${item.tema}</b><br><em style="opacity:0.7; font-size:11px;">Motivo: ${item.motivo} (${item.dataAdiado})</em>
                     </div>
-                    <div style="display:flex; flex-direction:column; gap:8px; min-width:130px;">
+                    <div style="display:flex; flex-direction:column; gap:8px; min-width:130px; flex:1;">
                         <button class="btn-acao" style="margin:0; padding:8px; font-size:11px; background:var(--primary-color); box-shadow:var(--shadow-btn);" onclick="abrirModalResgate(${idx})">📥 Resgatar p/ Turno</button>
                         <button class="btn-acao" style="margin:0; padding:8px; font-size:11px; background:var(--accent-color); box-shadow:var(--shadow-btn);" onclick="converterParaQuestoes(${idx})">⚡ Ir p/ Questões</button>
                     </div>
