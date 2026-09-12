@@ -154,7 +154,7 @@
         tr.atrasado { background-color: rgba(231, 76, 60, 0.05); border-left: 3px solid var(--danger-color); }
         
         .badge { padding: 4px 8px; border-radius: 6px; color: white; font-weight: bold; font-size: 11px; display: inline-block; }
-        .badge-macro { background-color: var(--header-bg); margin-bottom: 5px; }
+        .badge-macro { margin-bottom: 5px; }
 
         /* DASHBOARD GRID */
         .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 25px; }
@@ -307,7 +307,7 @@
             </nav>
 
             <div style="margin-top:auto; padding-top:15px; font-size:11px; opacity:0.5; text-align:center;">
-                MED MENTORY v5.3
+                MED MENTORY v5.5
             </div>
         </aside>
 
@@ -469,7 +469,7 @@
                 <!-- PAINEL DE BUSCA LIVRE UNIVERSAL -->
                 <div class="card" id="cardResgateEspecial" style="border: 2px dashed var(--accent-color); background: rgba(52, 152, 219, 0.02);">
                     <h2 style="color:var(--accent-color);">🔎 Busca Livre de Temas no Edital</h2>
-                    <p style="font-size:13px; opacity:0.8;">Pesquise qualquer assunto do edital para alocar diretamente em um turno livre desta semana (ideal para casos vistos em plantão ou temas de interesse). Adicione e depois edite manualmente no cronograma semanal.</p>
+                    <p style="font-size:13px; opacity:0.8;">Pesquise qualquer assunto do edital para alocar diretamente em um turno livre desta semana (ideal para casos vistos em plantão ou temas de interesse).</p>
                     <input type="text" id="inputBuscaLivre" placeholder="Digite para buscar no edital (mínimo 3 letras)..." onkeyup="renderizarBuscaLivre()" style="border: 1px solid var(--accent-color); background:white;">
                     <div id="listaBuscaLivre" style="max-height:250px; overflow-y:auto; margin-top:10px;"></div>
                 </div>
@@ -713,7 +713,7 @@
                                 <li><b>Passo 2: Montagem do Internato e Grade Semanal</b><br>Na aba de Cronograma, insira as datas dos seus rodízios hospitalares. Na semana ativa, use as "Ações Rápidas" para preencher com um clique seus horários de plantão ou turnos livres. Depois, clique em <i>Gerar Cronograma</i> para o sistema distribuir os temas do edital nos seus turnos de estudo livres.</li>
                                 <li><b>Passo 3: Registro do Estudo Teórico</b><br>Ao assistir a uma aula ou ler a teoria, vá em <i>Registro de Estudo</i>. Selecione o tema, informe o tempo gasto, sua percepção de dificuldade e o resultado das questões. O sistema agendará a revisão automaticamente.</li>
                                 <li><b>Passo 4: Cumprimento das Revisões Diárias</b><br>Monitore o painel diário na aba de Registro ou no Dashboard Inicial. Execute as revisões agendadas clicando em <i>Executar</i> e lance seus acertos, erros e notas clínicas.</li>
-                                <li><b>Passo 5: Gestão de Imprevistos</b><br>Teve plantão extra ou cansou? Use o botão <i>Adiar</i> no Cronograma da semana. O sistema perguntará se quer realocar o tema para outro turno livre ou enviá-lo aos Temas Adiados para resgate posterior.</li>
+                                <li><b>Passo 5: Gestão de Imprevistos</b><br>Teve plantão extra ou cansou? Use o botão <i>Adiar</i> no Kanban da semana. O sistema perguntará se quer realocar o tema para outro turno livre ou enviá-lo ao Backlog (Temas Adiados) para resgate posterior.</li>
                             </ul>
                         </div>
                     </div>
@@ -979,6 +979,22 @@
     <script>
         
         // ------------------------------------------------------------------
+        // UTILITÁRIOS GERAIS (CORES POR MACRO-ÁREA)
+        // ------------------------------------------------------------------
+        function getMacroColor(macro) {
+            switch(macro) {
+                case 'Clínica Médica': return '#3498db'; // Azul
+                case 'Cirurgia': return '#ff260f'; // Vermelho Específico
+                case 'Ginecologia e Obstetrícia': return '#9b59b6'; // Roxo
+                case 'Pediatria': return '#e84393'; // Rosa
+                case 'Preventiva': return '#795548'; // Marrom
+                case 'Psiquiatria': return '#f1c40f'; // Amarelo
+                case 'MFC': return '#795548'; // Marrom (Preventiva)
+                default: return '#3498db';
+            }
+        }
+
+        // ------------------------------------------------------------------
         // CONTROLE DA SIDEBAR RESPONSIVA (MOBILE)
         // ------------------------------------------------------------------
         function toggleSidebar() {
@@ -1017,7 +1033,8 @@
 
             resultados.forEach(res => {
                 let jaEstudou = listaEstudos.some(est => est.tema === res.tema);
-                let badgeStyle = jaEstudou ? "background:#27ae60;" : "background:var(--header-bg);";
+                let mColor = getMacroColor(res.macro);
+                let badgeStyle = `background:${mColor}; color:white; text-shadow: 0px 1px 2px rgba(0,0,0,0.4);`;
                 let btnTxt = jaEstudou ? "Re-alocar" : "Adicionar";
                 
                 container.innerHTML += `<div style="padding:12px; border-bottom:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center; font-size:13px; background:var(--card-bg);">
@@ -1034,30 +1051,33 @@
             let cg = cronogramaSemanasStore[semanaAtivaId];
             if(!cg) return alert("Gere o cronograma da semana ativa primeiro!");
 
-            let alocado = false;
-            for(let dIdx = 0; dIdx < diasSemanaArr.length; dIdx++) {
-                let d = diasSemanaArr[dIdx];
-                for(let tIdx = 0; tIdx < turnosArr.length; tIdx++) {
-                    let t = turnosArr[tIdx];
-                    if(cg[d] && cg[d][t] && (cg[d][t].tipo === 'revisao' || cg[d][t].tipo === 'descanso')) {
-                        cg[d][t] = { tipo: 'teoria', macro: macro, esp: esp, tema: tema, peso: peso };
-                        alocado = true;
+            let slotsLivres = [];
+            diasSemanaArr.forEach((d, dIdx) => {
+                turnosArr.forEach(t => {
+                    if(cg[d] && cg[d][t] && (cg[d][t].tipo === 'revisao' || cg[d][t].tipo === 'descanso' || cg[d][t].tipo === 'estudo')) {
                         let labelT = t==='m'?'Manhã':t==='t'?'Tarde':'Noite';
-                        alert(`Tema "${tema}" adicionado com sucesso na ${d} (${labelT})!`);
-                        break;
+                        let dt = calcularDataExataRodizio(semanaAtivaId, dIdx);
+                        slotsLivres.push({ d, t, desc: `${d} (${dt}) - ${labelT}` });
                     }
-                }
-                if(alocado) break;
-            }
+                });
+            });
 
-            if(!alocado) {
-                alert("Não há turnos de revisão ou descanso livres nesta semana! Marque um turno como 'Estudo' primeiro.");
-                return;
-            }
+            if(slotsLivres.length === 0) return alert("Não há turnos de revisão, descanso ou estudo livres nesta semana para alocar!");
 
+            let msg = `Escolha o turno para alocar o tema:\n` + slotsLivres.map((s, i) => `${i+1}. ${s.desc}`).join('\n');
+            let esc = prompt(msg, "1");
+            if(esc === null) return;
+            let num = parseInt(esc) - 1;
+            if(isNaN(num) || num < 0 || num >= slotsLivres.length) return alert("Opção inválida!");
+
+            let destino = slotsLivres[num];
+            cg[destino.d][destino.t] = { tipo: 'teoria', macro: macro, esp: esp, tema: tema, peso: peso };
+            
             cronogramaSemanasStore[semanaAtivaId] = cg;
             window.syncToCloud();
             renderizarKanbanSemanaAtiva();
+            renderizarBuscaLivre();
+            alert(`Tema adicionado com sucesso na ${destino.d} (${destino.t === 'm' ? 'Manhã' : destino.t === 't' ? 'Tarde' : 'Noite'})!`);
         }
 
         // ------------------------------------------------------------------
@@ -2064,10 +2084,10 @@
                 let tr = document.createElement("tr"); if (atrasado) tr.classList.add('atrasado');
                 let fText = item.fase === 0.5 ? "Anki (Teoria)" : item.fase === 1 ? "1ª Rev (Anki)" : `${Math.floor(item.fase)}ª Rev (Questões)`;
                 
-                let bColor = item.macroArea === 'Clínica Médica' ? '#3498db' : item.macroArea === 'Cirurgia' ? '#e67e22' : item.macroArea === 'Pediatria' ? '#e74c3c' : '#2ecc71';
+                let bColor = getMacroColor(item.macroArea);
 
                 tr.innerHTML = `
-                    <td><div class="badge badge-macro" style="background:${bColor}">${item.macroArea.substring(0,8)}</div><br><small style="opacity:0.7">${item.especialidade}</small><br><strong>${item.tema}</strong></td>
+                    <td><div class="badge badge-macro" style="background:${bColor}; text-shadow: 0px 1px 2px rgba(0,0,0,0.4);">${item.macroArea.substring(0,8)}</div><br><small style="opacity:0.7">${item.especialidade}</small><br><strong>${item.tema}</strong></td>
                     <td>${fText}<br><small>${item.proximaData} ${atrasado ? '🔴' : ''}</small></td>
                     <td>
                         <button class="btn-acao" onclick="abrirModal(${rIdx})">Executar</button>
@@ -2692,12 +2712,15 @@
                         bg = 'var(--bg-color)'; cont = `<div style="font-size:11px; color:#7f8c8d; text-align:center; padding:10px 0;">🏥 Ocupado</div>`;
                     } else if(b.tipo === 'descanso') {
                         bg = '#2ecc71'; cont = `<div style="font-size:11px; color:white; text-align:center; padding:10px 0;">🌿 Descanso</div>`;
+                    } else if(b.tipo === 'estudo') {
+                        bg = 'rgba(52, 152, 219, 0.05)'; 
+                        cont = `<div style="font-size:11px; color:var(--accent-color); text-align:center; padding:10px 0; border: 1px dashed var(--accent-color); border-radius:6px;">📘 Estudo Livre</div>`;
                     } else if(b.tipo === 'teoria') {
-                        bg = '#3498db';
-                        cont = `<div style="font-size:10px; color:white;"><b>📘 Teoria</b><br>${b.tema.substring(0,30)}...
+                        bg = getMacroColor(b.macro);
+                        cont = `<div style="font-size:10px; color:white; text-shadow: 0px 1px 3px rgba(0,0,0,0.4);"><b>📘 Teoria</b><br>${b.tema.substring(0,30)}...
                                   <div style="display:flex; gap:4px; margin-top:8px;">
-                                      <button style="padding:4px; font-size:9px; margin:0; border-radius:4px; box-shadow:none;" onclick="iniciarTeoriaKanban('${b.macro}', '${b.esp}', '${b.tema}')">✔️ Estudar</button>
-                                      <button style="padding:4px; font-size:9px; margin:0; border-radius:4px; box-shadow:none; background:#f39c12;" onclick="adiarTemaParaBacklog('${d}', '${t}', '${dtExata}')">📦 Adiar</button>
+                                      <button style="padding:4px; font-size:9px; margin:0; border-radius:4px; box-shadow:none; text-shadow:none;" onclick="iniciarTeoriaKanban('${b.macro}', '${b.esp}', '${b.tema}')">✔️ Estudar</button>
+                                      <button style="padding:4px; font-size:9px; margin:0; border-radius:4px; box-shadow:none; background:#f39c12; text-shadow:none;" onclick="adiarTemaParaBacklog('${d}', '${t}', '${dtExata}')">📦 Adiar</button>
                                   </div></div>`;
                     } else if(b.tipo === 'revisao') {
                         bg = '#e67e22';
@@ -2705,7 +2728,7 @@
                     }
 
                     html += `<div style="background:${bg}; padding:8px; border-radius:6px; margin-bottom:8px; min-height:60px; display:flex; flex-direction:column; justify-content:center;">
-                                <div style="font-size:9px; opacity:0.8; margin-bottom:4px; text-transform:uppercase; font-weight:bold; color:${b.tipo==='ocupado'?'#95a5a6':'white'};">${label}</div>
+                                <div style="font-size:9px; opacity:0.8; margin-bottom:4px; text-transform:uppercase; font-weight:bold; color:${(b.tipo==='ocupado' || b.tipo==='estudo') ?'#95a5a6':'white'};">${label}</div>
                                 ${cont}
                              </div>`;
                 });
@@ -2792,7 +2815,7 @@
             let slotsLivres = [];
             diasSemanaArr.forEach((d, dIdx) => {
                 turnosArr.forEach(t => {
-                    if(cg[d] && cg[d][t] && (cg[d][t].tipo === 'revisao' || cg[d][t].tipo === 'descanso')) {
+                    if(cg[d] && cg[d][t] && (cg[d][t].tipo === 'revisao' || cg[d][t].tipo === 'descanso' || cg[d][t].tipo === 'estudo')) {
                         let labelT = t==='m'?'Manhã':t==='t'?'Tarde':'Noite';
                         let dt = calcularDataExataRodizio(semanaAtivaId, dIdx);
                         slotsLivres.push({ d, t, desc: `${d} (${dt}) - ${labelT}` });
@@ -2800,7 +2823,7 @@
                 });
             });
 
-            if(slotsLivres.length === 0) return alert("Não há turnos de revisão ou descanso disponíveis na semana ativa para resgate!");
+            if(slotsLivres.length === 0) return alert("Não há turnos de revisão, descanso ou estudo livres nesta semana para resgate!");
 
             let msg = `Escolha o turno para encaixar:\n` + slotsLivres.map((s, i) => `${i+1}. ${s.desc}`).join('\n');
             let esc = prompt(msg, "1");
