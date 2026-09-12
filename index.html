@@ -93,7 +93,7 @@
             border-bottom: 1px solid var(--border-color); 
         }
         
-        #btnMenuMobile { display: none; } /* Escondido no Desktop */
+        #btnMenuMobile { display: none; }
 
         /* MODO FOCO E ALERTAS */
         .focus-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-color); z-index: 99999; flex-direction: column; justify-content: center; align-items: center; gap: 20px; }
@@ -216,7 +216,6 @@
             
             .main-content { padding: 15px; }
             
-            /* Botão Menu Hambúrguer no Header */
             #btnMenuMobile { 
                 display: flex !important; align-items: center; justify-content: center; 
                 width: 45px; height: 45px; border-radius: 10px; 
@@ -232,8 +231,6 @@
             
             .dashboard-grid { grid-template-columns: 1fr 1fr; }
             .pomodoro-box { flex-direction: column; text-align: center; }
-            
-            /* Empilha o Kanban em coluna para leitura perfeita no celular */
             .semana-grid { grid-template-columns: 1fr; }
             .dia-col { margin-bottom: 10px; }
         }
@@ -298,6 +295,7 @@
             <nav class="sidebar-nav">
                 <button class="sidebar-btn active" onclick="mudarAba('tab-inicio', this)">🏠 Dashboard Inicial</button>
                 <button class="sidebar-btn" onclick="mudarAba('tab-planejamento', this)">📅 Cronograma de Atividades</button>
+                <button class="sidebar-btn" onclick="mudarAba('tab-rastreio', this)">🧭 Rastreio de Temas</button>
                 <button class="sidebar-btn" onclick="mudarAba('tab-estudo', this)">✍️ Registro de Estudo</button>
                 <button class="sidebar-btn" onclick="mudarAba('tab-analytics', this)">📊 Radar de Evolução</button>
                 <button class="sidebar-btn" onclick="mudarAba('tab-nerd', this)">🤓 Carga de Estudo</button>
@@ -307,7 +305,7 @@
             </nav>
 
             <div style="margin-top:auto; padding-top:15px; font-size:11px; opacity:0.5; text-align:center;">
-                MED MENTORY v5.5
+                MED MENTORY v5.7
             </div>
         </aside>
 
@@ -385,6 +383,48 @@
                 <div class="card">
                     <h2 style="font-size: 16px; margin-bottom: 15px;">⏳ Contagem Regressiva</h2>
                     <div id="widgetProvasContainer"></div>
+                </div>
+            </div>
+
+            <!-- NOVA ABA: RASTREIO DE TEMAS -->
+            <div id="tab-rastreio" class="tab-content">
+                <div class="card">
+                    <h2 style="color:var(--accent-color);">🧭 Auditoria e Rastreio de Temas</h2>
+                    <p style="font-size:13px; opacity:0.8;">Visualize facilmente onde cada tema do edital está alocado no seu planejamento de estudos.</p>
+                    
+                    <div class="row-form" style="margin-bottom:20px; background:var(--bg-color); padding:15px; border-radius:10px; border:1px solid var(--border-color);">
+                        <div class="col-form">
+                            <label>Macro-Área:</label>
+                            <select id="rastreio_macro" onchange="popularEspecialidadesRastreio()"></select>
+                        </div>
+                        <div class="col-form">
+                            <label>Especialidade:</label>
+                            <select id="rastreio_esp" onchange="renderizarRastreio()"><option value="todas">📌 Todas</option></select>
+                        </div>
+                        <div class="col-form">
+                            <label>Filtro de Status:</label>
+                            <select id="rastreio_status" onchange="renderizarRastreio()">
+                                <option value="todos">👁️ Todos os Temas</option>
+                                <option value="livre">⚪ Não Alocados (Livres)</option>
+                                <option value="alocado">🗓️ Alocados no Cronograma</option>
+                                <option value="backlog">📦 No Backlog (Adiados)</option>
+                                <option value="estudado">✅ Já Estudados</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div style="overflow-x:auto;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Subtema</th>
+                                    <th style="text-align:center;">Peso</th>
+                                    <th>Status / Localização no Tempo</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabela-rastreio"></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
@@ -469,7 +509,7 @@
                 <!-- PAINEL DE BUSCA LIVRE UNIVERSAL -->
                 <div class="card" id="cardResgateEspecial" style="border: 2px dashed var(--accent-color); background: rgba(52, 152, 219, 0.02);">
                     <h2 style="color:var(--accent-color);">🔎 Busca Livre de Temas no Edital</h2>
-                    <p style="font-size:13px; opacity:0.8;">Pesquise qualquer assunto do edital para alocar diretamente em um turno livre desta semana (ideal para casos vistos em plantão ou temas de interesse).</p>
+                    <p style="font-size:13px; opacity:0.8;">Pesquise qualquer assunto do edital para alocar diretamente em um turno livre desta semana (ideal para casos vistos em plantão ou temas de interesse). Adicione e depois edite manualmente no cronograma semanal.</p>
                     <input type="text" id="inputBuscaLivre" placeholder="Digite para buscar no edital (mínimo 3 letras)..." onkeyup="renderizarBuscaLivre()" style="border: 1px solid var(--accent-color); background:white;">
                     <div id="listaBuscaLivre" style="max-height:250px; overflow-y:auto; margin-top:10px;"></div>
                 </div>
@@ -979,7 +1019,7 @@
     <script>
         
         // ------------------------------------------------------------------
-        // UTILITÁRIOS GERAIS (CORES POR MACRO-ÁREA)
+        // UTILITÁRIOS GERAIS (CORES POR MACRO-ÁREA E STATUS)
         // ------------------------------------------------------------------
         function getMacroColor(macro) {
             switch(macro) {
@@ -992,6 +1032,49 @@
                 case 'MFC': return '#795548'; // Marrom (Preventiva)
                 default: return '#3498db';
             }
+        }
+
+        // Função de Auditoria: Retorna onde o tema está (Estudado, Alocado, Backlog, Livre)
+        function getTemaStatus(temaNome) {
+            let estudado = listaEstudos.find(e => e.tema === temaNome);
+            if(estudado) return { type: 'estudado', text: '✅ Já Estudado' };
+
+            for (let sId in cronogramaSemanasStore) {
+                let cg = cronogramaSemanasStore[sId];
+                for (let d of diasSemanaArr) {
+                    for (let t of turnosArr) {
+                        if (cg[d] && cg[d][t] && cg[d][t].tipo === 'teoria' && cg[d][t].tema === temaNome) {
+                            let partes = sId.split('_');
+                            let rIdx = parseInt(partes[1]);
+                            let sNum = parseInt(partes[3]);
+                            let rod = cronogramaInternato[rIdx];
+                            let rodName = rod ? rod.macro : "Rodízio";
+                            let labelT = t === 'm' ? 'Manhã' : t === 't' ? 'Tarde' : 'Noite';
+                            return { type: 'alocado', text: `🗓️ Alocado: ${rodName} (Semana ${sNum}) - ${d} (${labelT})` };
+                        }
+                    }
+                }
+            }
+
+            let inBacklog = backlogAdiados.find(b => b.tema === temaNome);
+            if(inBacklog) return { type: 'backlog', text: '📦 No Backlog (Fila de Atrasados)' };
+
+            return { type: 'livre', text: '⚪ Livre (Não Alocado)' };
+        }
+
+        // Remove alocações futuras de um tema para evitar duplicatas ao resgatar
+        function removerAlocacaoAnterior(temaNome) {
+            for (let sId in cronogramaSemanasStore) {
+                let cg = cronogramaSemanasStore[sId];
+                for (let d of diasSemanaArr) {
+                    for (let t of turnosArr) {
+                        if (cg[d] && cg[d][t] && cg[d][t].tipo === 'teoria' && cg[d][t].tema === temaNome) {
+                            cg[d][t] = { tipo: 'estudo' }; // Devolve o turno como Estudo Livre
+                        }
+                    }
+                }
+            }
+            backlogAdiados = backlogAdiados.filter(b => b.tema !== temaNome);
         }
 
         // ------------------------------------------------------------------
@@ -1032,17 +1115,34 @@
             }
 
             resultados.forEach(res => {
-                let jaEstudou = listaEstudos.some(est => est.tema === res.tema);
                 let mColor = getMacroColor(res.macro);
                 let badgeStyle = `background:${mColor}; color:white; text-shadow: 0px 1px 2px rgba(0,0,0,0.4);`;
-                let btnTxt = jaEstudou ? "Re-alocar" : "Adicionar";
+                
+                let statusObj = getTemaStatus(res.tema);
+                let statusHtml = "";
+                let btnHtml = "";
+
+                if(statusObj.type === 'estudado') {
+                    statusHtml = `<div style="color:#27ae60; font-size:11px; font-weight:bold; margin-top:4px;">${statusObj.text}</div>`;
+                    btnHtml = `<button class="btn-acao" style="margin:0; padding:6px 12px; font-size:10px; background:var(--bg-color); color:var(--text-color); border:1px solid var(--border-color); box-shadow:none;" onclick="adicionarTemaLivreSemana('${res.macro}', '${res.esp}', '${res.tema}', ${res.peso})">Re-estudar p/ Semana Atual</button>`;
+                } else if (statusObj.type === 'alocado') {
+                    statusHtml = `<div style="color:var(--accent-color); font-size:11px; font-weight:bold; margin-top:4px;">${statusObj.text}</div>`;
+                    btnHtml = `<button class="btn-acao" style="margin:0; padding:6px 12px; font-size:10px; background:var(--bg-color); color:var(--text-color); border:1px solid var(--border-color); box-shadow:none;" onclick="adicionarTemaLivreSemana('${res.macro}', '${res.esp}', '${res.tema}', ${res.peso})">Mover p/ cá</button>`;
+                } else if (statusObj.type === 'backlog') {
+                    statusHtml = `<div style="color:#e67e22; font-size:11px; font-weight:bold; margin-top:4px;">${statusObj.text}</div>`;
+                    btnHtml = `<button class="btn-acao" style="margin:0; padding:6px 12px; font-size:10px; box-shadow:var(--shadow-btn);" onclick="adicionarTemaLivreSemana('${res.macro}', '${res.esp}', '${res.tema}', ${res.peso})">Resgatar</button>`;
+                } else {
+                    statusHtml = `<div style="color:#7f8c8d; font-size:11px; font-weight:bold; margin-top:4px;">${statusObj.text}</div>`;
+                    btnHtml = `<button class="btn-acao" style="margin:0; padding:8px 15px; font-size:11px; box-shadow:var(--shadow-btn);" onclick="adicionarTemaLivreSemana('${res.macro}', '${res.esp}', '${res.tema}', ${res.peso})">Adicionar</button>`;
+                }
                 
                 container.innerHTML += `<div style="padding:12px; border-bottom:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center; font-size:13px; background:var(--card-bg);">
                     <div>
                         <span class="badge" style="${badgeStyle} margin-bottom:6px;">${res.macro}</span> <b style="color:var(--accent-color);">⭐ ${res.peso}</b><br>
-                        ${res.tema} ${jaEstudou ? '✅' : ''}
+                        ${res.tema}
+                        ${statusHtml}
                     </div>
-                    <button class="btn-acao" style="margin:0; padding:8px 15px; font-size:11px; box-shadow:var(--shadow-btn);" onclick="adicionarTemaLivreSemana('${res.macro}', '${res.esp}', '${res.tema}', ${res.peso})">${btnTxt}</button>
+                    ${btnHtml}
                 </div>`;
             });
         }
@@ -1071,13 +1171,73 @@
             if(isNaN(num) || num < 0 || num >= slotsLivres.length) return alert("Opção inválida!");
 
             let destino = slotsLivres[num];
+
+            // Limpa o tema se ele estiver no backlog ou em outra semana no futuro
+            removerAlocacaoAnterior(tema);
+
             cg[destino.d][destino.t] = { tipo: 'teoria', macro: macro, esp: esp, tema: tema, peso: peso };
             
             cronogramaSemanasStore[semanaAtivaId] = cg;
             window.syncToCloud();
+            
             renderizarKanbanSemanaAtiva();
             renderizarBuscaLivre();
+            if(document.getElementById('tab-rastreio').classList.contains('active')) renderizarRastreio(); 
+            
             alert(`Tema adicionado com sucesso na ${destino.d} (${destino.t === 'm' ? 'Manhã' : destino.t === 't' ? 'Tarde' : 'Noite'})!`);
+        }
+
+        // ------------------------------------------------------------------
+        // ABA: RASTREIO E AUDITORIA DE TEMAS
+        // ------------------------------------------------------------------
+        function popularEspecialidadesRastreio() {
+            let m = document.getElementById('rastreio_macro').value;
+            let sE = document.getElementById('rastreio_esp');
+            sE.innerHTML = '<option value="todas">📌 Todas as Especialidades</option>';
+            if(m && m !== 'todas' && taxonomia[m]) {
+                Object.keys(taxonomia[m]).forEach(e => sE.innerHTML += `<option value="${e}">${e}</option>`);
+            }
+            renderizarRastreio();
+        }
+
+        function renderizarRastreio() {
+            let m = document.getElementById('rastreio_macro').value;
+            let e = document.getElementById('rastreio_esp').value;
+            let st = document.getElementById('rastreio_status').value;
+            let tbody = document.getElementById('tabela-rastreio');
+            tbody.innerHTML = "";
+
+            if (!m || m === 'todas') {
+                tbody.innerHTML = `<tr><td colspan='3' style='text-align:center; padding:20px; opacity:0.7;'>Selecione uma Macro-Área acima para auditar os temas.</td></tr>`;
+                return;
+            }
+
+            let esps = (e === 'todas') ? Object.keys(taxonomia[m]) : [e];
+            let hasResults = false;
+
+            esps.forEach(esp => {
+                if(!taxonomia[m][esp]) return;
+                taxonomia[m][esp].forEach(sub => {
+                    let statusObj = getTemaStatus(sub.n);
+                    
+                    if(st !== 'todos' && statusObj.type !== st) return;
+                    hasResults = true;
+
+                    let corType = statusObj.type === 'estudado' ? '#27ae60' : 
+                                  statusObj.type === 'alocado' ? 'var(--accent-color)' : 
+                                  statusObj.type === 'backlog' ? '#e67e22' : '#7f8c8d';
+
+                    tbody.innerHTML += `<tr>
+                        <td><small style="opacity:0.7">${esp}</small><br><strong style="font-size:14px; color:var(--text-color);">${sub.n}</strong></td>
+                        <td style="text-align:center; color:var(--accent-color);"><b>⭐ ${sub.p}</b></td>
+                        <td style="color:${corType}; font-weight:bold; font-size:12px;">${statusObj.text}</td>
+                    </tr>`;
+                });
+            });
+
+            if(!hasResults) {
+                tbody.innerHTML = `<tr><td colspan='3' style='text-align:center; padding:20px; opacity:0.7;'>Nenhum tema encontrado com os filtros selecionados.</td></tr>`;
+            }
         }
 
         // ------------------------------------------------------------------
@@ -1193,7 +1353,7 @@
                     if(filtroMapaRodizio === 'baixo_desempenho' && (!est || feitas === 0 || taxa >= 60)) mostrar = false;
                     
                     let targetMacroForStudy = (macro === "Psiquiatria" || macro === "MFC") ? (macro === "Psiquiatria" ? "Clínica Médica" : "Preventiva") : macro;
-                    let clickAcao = est ? `mudarAba('tab-estudo', document.querySelectorAll('.sidebar-btn')[2]); setTimeout(() => mudarFiltroTabela('todas', document.querySelectorAll('.sub-nav-abas .sub-aba-btn')[0]), 300);` : `iniciarTeoriaKanban('${targetMacroForStudy}', '${esp}', '${sub.n}')`;
+                    let clickAcao = est ? `mudarAba('tab-estudo', document.querySelectorAll('.sidebar-btn')[3]); setTimeout(() => mudarFiltroTabela('todas', document.querySelectorAll('.sub-nav-abas .sub-aba-btn')[0]), 300);` : `iniciarTeoriaKanban('${targetMacroForStudy}', '${esp}', '${sub.n}')`;
                     
                     if(mostrar) {
                         trs += `<tr>
@@ -1707,15 +1867,11 @@
         const diasSemanaArr = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
         const turnosArr = ['m', 't', 'n'];
 
-        // NOVO: Função para calcular dias seguidos reajustada para olhar as datas reais
         function calcularStreak() {
             let datasAtivas = new Set();
-            
-            // Pega datas de estudos e revisões
             listaEstudos.forEach(i => i.historico.forEach(h => {
                 if(h.data) datasAtivas.add(h.data);
             }));
-            // Pega datas em que usou o Pomodoro
             Object.keys(pomodoroDiario).forEach(k => {
                 if(pomodoroDiario[k] > 0) datasAtivas.add(k);
             });
@@ -1728,30 +1884,24 @@
             };
 
             let streakAtual = 0;
-            let dataCheck = new Date(); // Inicia conferindo a partir de hoje
+            let dataCheck = new Date(); 
 
             let hojeStr = dStr(dataCheck);
             let checkOntem = new Date(); checkOntem.setDate(checkOntem.getDate() - 1);
             let ontemStr = dStr(checkOntem);
 
-            // Verifica se a sequência parou
             if (datasAtivas.has(hojeStr)) {
-                // Estudou hoje, a contagem desce a partir de hoje normalmente
             } else if (datasAtivas.has(ontemStr)) {
-                // Não estudou hoje AINDA, mas a sequência de ontem continua valendo
                 dataCheck.setDate(dataCheck.getDate() - 1);
             } else {
-                // Não estudou nem hoje e nem ontem: fogo apagou.
                 streak = 0;
                 return;
             }
 
-            // Conta quantos dias diretos o usuário tem no Set de datas
             while(datasAtivas.has(dStr(dataCheck))) {
                 streakAtual++;
-                dataCheck.setDate(dataCheck.getDate() - 1); // Volta 1 dia
+                dataCheck.setDate(dataCheck.getDate() - 1); 
             }
-
             streak = streakAtual;
         }
 
@@ -1807,6 +1957,7 @@
             renderizarCadernoErros(); 
             atualizarEstatisticasNerds();
             renderizarMapaRodizio();
+            if(document.getElementById('tab-rastreio').classList.contains('active')) renderizarRastreio();
         }
 
         window.syncToCloud = function() {
@@ -1835,7 +1986,7 @@
         };
 
         // ------------------------------------------------------------------
-        // CASCATAS DINÂMICAS
+        // CASCATAS DINÂMICAS E RASTREIO
         // ------------------------------------------------------------------
         function popularSelectsMacros() {
             let optionsReg = '<option value="">1. Selecione a Macro-Área...</option>';
@@ -1852,9 +2003,11 @@
             
             document.getElementById("reg_macro").innerHTML = optionsReg;
             document.getElementById("rodMacro").innerHTML = optionsRod;
+            
             let evo = document.getElementById("evo_macro"); if(evo) evo.innerHTML = optionsFiltro;
             let meta = document.getElementById("meta_macro"); if(meta) meta.innerHTML = optionsFiltro;
             let plan = document.getElementById("plan_macro"); if(plan) plan.innerHTML = optionsFiltro;
+            let rast = document.getElementById("rastreio_macro"); if(rast) rast.innerHTML = '<option value="">📌 Selecione...</option>' + optionsFiltro;
         }
 
         function popularEspecialidades(idMacro, idEsp, idSub, isFiltro) {
@@ -1911,7 +2064,7 @@
                         pomodoroDiario[hj] = (pomodoroDiario[hj] || 0) + 1;
                         window.syncToCloud();
                         atualizarEstatisticasNerds();
-                        atualizarDashboard(); // Recalcula o streak se necessário no meio da sessão
+                        atualizarDashboard(); 
                     }
                 } else { pausarPomodoro(); alert("Pomodoro Finalizado!"); timeLeft = pomodoroTemas.pausa * 60; atualizarDisplayTimer(); }
             }, 1000);
@@ -1935,7 +2088,6 @@
                 document.getElementById('headerAbaTitulo').innerText = btn.innerText;
             }
             
-            // NOVO: Fecha a sidebar no celular ao clicar em uma aba
             if(window.innerWidth <= 850) {
                 document.querySelector('.sidebar').classList.remove('active');
                 let overlay = document.getElementById('sidebarOverlay');
@@ -1945,6 +2097,7 @@
             if (tabId === 'tab-analytics') { atualizarRadar(); atualizarGraficoEvolucao(); atualizarGraficoSimulados(); }
             if (tabId === 'tab-planejamento') { renderizarListasPlanejamento(); atualizarSeletorSemanasPorRodizios(); renderizarKanbanSemanaAtiva(); }
             if (tabId === 'tab-nerd') { atualizarEstatisticasNerds(); }
+            if (tabId === 'tab-rastreio') { popularEspecialidadesRastreio(); }
         }
 
         // ------------------------------------------------------------------
@@ -2128,7 +2281,6 @@
                 }
             });
 
-            // NOVO: Garante o recálculo do Streak inteligente a cada refresh do painel
             calcularStreak();
 
             document.getElementById("statHoje").innerText = h; document.getElementById("statAtrasadas").innerText = a;
@@ -2832,19 +2984,23 @@
             if(isNaN(num) || num < 0 || num >= slotsLivres.length) return alert("Opção inválida!");
 
             let destino = slotsLivres[num];
+
+            removerAlocacaoAnterior(item.tema);
+
             cg[destino.d][destino.t] = { tipo: 'teoria', macro: item.macro, esp: item.esp, tema: item.tema, peso: item.peso };
             
-            backlogAdiados.splice(idx, 1);
             cronogramaSemanasStore[semanaAtivaId] = cg;
             window.syncToCloud();
 
             renderizarKanbanSemanaAtiva();
             renderizarBacklogAdiados();
+            if(document.getElementById('tab-rastreio').classList.contains('active')) renderizarRastreio();
+
             alert("Tema resgatado com sucesso para o turno escolhido!");
         }
 
         function iniciarTeoriaKanban(macro, esp, tema) {
-            mudarAba('tab-estudo', document.querySelectorAll('.sidebar-btn')[2]);
+            mudarAba('tab-estudo', document.querySelectorAll('.sidebar-btn')[3]);
             document.getElementById('reg_macro').value = macro;
             popularEspecialidades('reg_macro', 'reg_esp', 'reg_subtema', false);
             document.getElementById('reg_esp').value = esp;
@@ -3158,6 +3314,7 @@
             renderizarCadernoErros(); 
             atualizarEstatisticasNerds();
             renderizarMapaRodizio();
+            if(document.getElementById('tab-rastreio').classList.contains('active')) renderizarRastreio();
         }
     </script>
 </body>
