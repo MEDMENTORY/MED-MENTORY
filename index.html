@@ -299,13 +299,13 @@
                 <button class="sidebar-btn" onclick="mudarAba('tab-estudo', this)">✍️ Registro de Estudo</button>
                 <button class="sidebar-btn" onclick="mudarAba('tab-analytics', this)">📊 Radar de Evolução</button>
                 <button class="sidebar-btn" onclick="mudarAba('tab-nerd', this)">🤓 Carga de Estudo</button>
-                <button class="sidebar-btn" onclick="mudarAba('tab-caderno', this)">📚 Metas & Cadernos</button>
+                <button class="sidebar-btn" onclick="mudarAba('tab-caderno', this)">📚 Metas & Incidência</button>
                 <button class="sidebar-btn" onclick="mudarAba('tab-manual', this)">📖 Manual de Bordo</button>
                 <button class="sidebar-btn" onclick="mudarAba('tab-config', this)">⚙️ Configurações</button>
             </nav>
 
             <div style="margin-top:auto; padding-top:15px; font-size:11px; opacity:0.5; text-align:center;">
-                MED MENTORY v5.7
+                MED MENTORY v5.8
             </div>
         </aside>
 
@@ -694,7 +694,7 @@
                 </div>
             </div>
 
-            <!-- ABA 6: METAS + INCIDÊNCIA DE ASSUNTOS + CADERNO DE ERROS -->
+            <!-- ABA 6: METAS + INCIDÊNCIA DE ASSUNTOS -->
             <div id="tab-caderno" class="tab-content">
                 <div class="card">
                     <h2>🎯 Metas de Questões por Subtema</h2>
@@ -731,15 +731,9 @@
                         <tbody id="tabela-planilha"></tbody>
                     </table>
                 </div>
-
-                <div class="card">
-                    <h2>📚 Caderno de Erros Clínicos</h2>
-                    <input type="text" id="buscaErros" placeholder="Buscar por palavra-chave nos seus erros..." onkeyup="renderizarCadernoErros()">
-                    <div id="listaCadernoErros" style="max-height: 300px; overflow-y: auto; margin-top: 15px;"></div>
-                </div>
             </div>
             
-            <!-- NOVA ABA: MANUAL DE BORDO -->
+            <!-- ABA: MANUAL DE BORDO -->
             <div id="tab-manual" class="tab-content">
                 <div class="card">
                     <h2 style="font-size:24px; color:var(--accent-color); margin-bottom:5px;">📖 Guia Operacional</h2>
@@ -788,13 +782,11 @@
                         <div class="manual-box">
                             <ul class="manual-list" style="padding-left:15px; margin:0;">
                                 <li><b>Consistência Diária e Ritmo Preditivo:</b> O painel de ritmo calcula a velocidade real de resolução de questões, mostrando se o aluno está no caminho certo para bater a meta antes do exame.</li>
-                                <li><b>Metacognição Clínica e Caderno de Erros:</b> O registro direto das pegadinhas e justificativas de erro cria um banco de dados personalizado, consultável por palavra-chave.</li>
                                 <li><b>Cobertura Equilibrada das 5 Grandes Áreas:</b> O gráfico de Radar e a lista quantitativa impedem o vício comum de estudar apenas a área do rodízio atual e negligenciar as demais.</li>
                                 <li><b>Retenção Ativa de Longo Prazo:</b> Substitui o estudo passivo (apenas assistir aulas) por ciclos programados de questões e flashcards na frequência exata da curva do esquecimento.</li>
                             </ul>
                         </div>
                     </div>
-
 
                     <div class="manual-section">
                         <h3>5. Recursos Estratégicos (Avançado)</h3>
@@ -919,8 +911,7 @@
             <button type="button" class="sub-aba-btn" style="width:100%; margin-top:20px; padding:12px; border:1px solid var(--border-color); background:var(--bg-color);" onclick="fecharModal('modalDetalhes')">Fechar</button>
         </div>
     </div>
-
-    <!-- SCRIPT DE INFRAESTRUTURA FIREBASE -->
+<!-- SCRIPT DE INFRAESTRUTURA FIREBASE -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
@@ -1954,7 +1945,6 @@
             atualizarGraficoSimulados(); 
             renderizarMetasSubtemas(); 
             renderizarPlanilha(); 
-            renderizarCadernoErros(); 
             atualizarEstatisticasNerds();
             renderizarMapaRodizio();
             if(document.getElementById('tab-rastreio').classList.contains('active')) renderizarRastreio();
@@ -2356,7 +2346,7 @@
                 <label>Feitas:</label><input type="number" id="modFeitas" required>
                 <label>Acertos:</label><input type="number" id="modAcertos" required>
                 <label>Dificuldade:</label><select id="modPerc" required><option value="medio">Médio</option><option value="facil">Fácil</option><option value="dificil">Difícil</option></select>
-                <label>Caderno de Erros:</label><textarea id="modErro" placeholder="O que pegou?"></textarea>`;
+                <label>Caderno de Erros (Opcional):</label><textarea id="modErro" placeholder="O que pegou?"></textarea>`;
             }
             document.getElementById("modalRevisao").style.display = "flex";
         }
@@ -2869,11 +2859,21 @@
                         cont = `<div style="font-size:11px; color:var(--accent-color); text-align:center; padding:10px 0; border: 1px dashed var(--accent-color); border-radius:6px;">📘 Estudo Livre</div>`;
                     } else if(b.tipo === 'teoria') {
                         bg = getMacroColor(b.macro);
-                        cont = `<div style="font-size:10px; color:white; text-shadow: 0px 1px 3px rgba(0,0,0,0.4);"><b>📘 Teoria</b><br>${b.tema.substring(0,30)}...
-                                  <div style="display:flex; gap:4px; margin-top:8px;">
-                                      <button style="padding:4px; font-size:9px; margin:0; border-radius:4px; box-shadow:none; text-shadow:none;" onclick="iniciarTeoriaKanban('${b.macro}', '${b.esp}', '${b.tema}')">✔️ Estudar</button>
-                                      <button style="padding:4px; font-size:9px; margin:0; border-radius:4px; box-shadow:none; background:#f39c12; text-shadow:none;" onclick="adiarTemaParaBacklog('${d}', '${t}', '${dtExata}')">📦 Adiar</button>
-                                  </div></div>`;
+                        
+                        // NOVO: Feedback visual se o tema já foi estudado
+                        let jaEstudou = listaEstudos.some(e => e.tema === b.tema);
+                        
+                        if (jaEstudou) {
+                            cont = `<div style="font-size:10px; color:white; text-shadow: 0px 1px 3px rgba(0,0,0,0.4);">
+                                      <b>✅ Estudado</b><br>${b.tema.substring(0,30)}...
+                                    </div>`;
+                        } else {
+                            cont = `<div style="font-size:10px; color:white; text-shadow: 0px 1px 3px rgba(0,0,0,0.4);"><b>📘 Teoria</b><br>${b.tema.substring(0,30)}...
+                                      <div style="display:flex; gap:4px; margin-top:8px;">
+                                          <button style="padding:4px; font-size:9px; margin:0; border-radius:4px; box-shadow:none; text-shadow:none;" onclick="iniciarTeoriaKanban('${b.macro}', '${b.esp}', '${b.tema}')">✔️ Estudar</button>
+                                          <button style="padding:4px; font-size:9px; margin:0; border-radius:4px; box-shadow:none; background:#f39c12; text-shadow:none;" onclick="adiarTemaParaBacklog('${d}', '${t}', '${dtExata}')">📦 Adiar</button>
+                                      </div></div>`;
+                        }
                     } else if(b.tipo === 'revisao') {
                         bg = '#e67e22';
                         cont = `<div style="font-size:11px; color:white; text-align:center; padding:10px 0;"><b>🔁 FSRS</b><br>Revisões</div>`;
@@ -3171,12 +3171,6 @@
         }
         function sNI(tema, tipo, val) { if (!notasIncidencia[tema]) notasIncidencia[tema] = {}; notasIncidencia[tema][tipo] = val; window.syncToCloud(); renderizarPlanilha(); }
 
-        function renderizarCadernoErros() {
-            let f = document.getElementById("buscaErros").value.toLowerCase(); let d = document.getElementById("listaCadernoErros"); d.innerHTML = ""; let c = 0;
-            listaEstudos.forEach(i => i.historico.forEach(h => { if (h.notaErro && h.notaErro.toLowerCase().includes(f)) { c++; d.innerHTML += `<div style="padding:10px 15px; border-bottom:1px solid var(--border-color); font-size:13px; background:var(--bg-color); margin-bottom:5px; border-radius:6px;"><b>${i.tema}</b> <span style="opacity:0.6; font-size:11px;">(${h.fase})</span>: <span style="color:var(--danger-color);">${h.notaErro}</span></div>`; }}));
-            if (c === 0) d.innerHTML = `<div style="text-align:center; padding:20px; opacity:0.7;"><div style="font-size:30px; margin-bottom:10px;">🎯</div><b>Nenhum erro registrado com esta palavra.</b></div>`;
-        }
-
         // ------------------------------------------------------------------
         // MÉTRICAS DE ESTUDO & SIMULADOS
         // ------------------------------------------------------------------
@@ -3311,7 +3305,6 @@
             atualizarGraficoSimulados(); 
             renderizarMetasSubtemas(); 
             renderizarPlanilha(); 
-            renderizarCadernoErros(); 
             atualizarEstatisticasNerds();
             renderizarMapaRodizio();
             if(document.getElementById('tab-rastreio').classList.contains('active')) renderizarRastreio();
