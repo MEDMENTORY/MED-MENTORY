@@ -93,7 +93,7 @@
             border-bottom: 1px solid var(--border-color); 
         }
         
-        #btnMenuMobile { display: none; } /* Escondido no Desktop */
+        #btnMenuMobile { display: none; }
 
         /* MODO FOCO E ALERTAS */
         .focus-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-color); z-index: 99999; flex-direction: column; justify-content: center; align-items: center; gap: 20px; }
@@ -308,7 +308,7 @@
             </nav>
 
             <div style="margin-top:auto; padding-top:15px; font-size:11px; opacity:0.5; text-align:center;">
-                MED MENTORY v5.8
+                MED MENTORY v5.9
             </div>
         </aside>
 
@@ -1029,6 +1029,7 @@
             }
         }
 
+        // Função de Auditoria: Retorna onde o tema está (Estudado, Alocado, Backlog, Livre)
         function getTemaStatus(temaNome) {
             let estudado = listaEstudos.find(e => e.tema === temaNome);
             if(estudado) return { type: 'estudado', text: '✅ Já Estudado' };
@@ -1056,13 +1057,14 @@
             return { type: 'livre', text: '⚪ Livre (Não Alocado)' };
         }
 
+        // Remove alocações futuras de um tema para evitar duplicatas ao resgatar
         function removerAlocacaoAnterior(temaNome) {
             for (let sId in cronogramaSemanasStore) {
                 let cg = cronogramaSemanasStore[sId];
                 for (let d of diasSemanaArr) {
                     for (let t of turnosArr) {
                         if (cg[d] && cg[d][t] && cg[d][t].tipo === 'teoria' && cg[d][t].tema === temaNome) {
-                            cg[d][t] = { tipo: 'estudo' }; 
+                            cg[d][t] = { tipo: 'estudo' }; // Devolve o turno como Estudo Livre
                         }
                     }
                 }
@@ -1165,6 +1167,7 @@
 
             let destino = slotsLivres[num];
 
+            // Limpa o tema se ele estiver no backlog ou em outra semana no futuro
             removerAlocacaoAnterior(tema);
 
             cg[destino.d][destino.t] = { tipo: 'teoria', macro: macro, esp: esp, tema: tema, peso: peso };
@@ -1417,7 +1420,7 @@
         }
 
         // ------------------------------------------------------------------
-        // TAXONOMIA 3 NÍVEIS OFICIAL COM NOVOS PESOS (v5.8)
+        // TAXONOMIA 3 NÍVEIS OFICIAL COM NOVOS PESOS (v5.9)
         // ------------------------------------------------------------------
         const taxonomia = {
             "Clínica Médica": {
@@ -1859,6 +1862,60 @@
         const diasSemanaArr = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
         const turnosArr = ['m', 't', 'n'];
 
+        // MIGRAÇÃO SILENCIOSA DOS PESOS
+        function migrarPesosAntigos() {
+            let mapaLimpo = {};
+            Object.keys(taxonomia).forEach(m => {
+                Object.keys(taxonomia[m]).forEach(e => {
+                    taxonomia[m][e].forEach(sub => {
+                        let nomeLimpo = sub.n.split(' — Peso:')[0].trim();
+                        mapaLimpo[nomeLimpo] = { n: sub.n, p: sub.p };
+                    });
+                });
+            });
+
+            let mudou = false;
+
+            listaEstudos.forEach(i => {
+                let limpo = i.tema.split(' — Peso:')[0].trim();
+                if(mapaLimpo[limpo] && (i.tema !== mapaLimpo[limpo].n || i.peso !== mapaLimpo[limpo].p)) {
+                    i.tema = mapaLimpo[limpo].n;
+                    i.peso = mapaLimpo[limpo].p;
+                    mudou = true;
+                }
+            });
+
+            backlogAdiados.forEach(b => {
+                let limpo = b.tema.split(' — Peso:')[0].trim();
+                if(mapaLimpo[limpo] && (b.tema !== mapaLimpo[limpo].n || b.peso !== mapaLimpo[limpo].p)) {
+                    b.tema = mapaLimpo[limpo].n;
+                    b.peso = mapaLimpo[limpo].p;
+                    mudou = true;
+                }
+            });
+
+            Object.keys(cronogramaSemanasStore).forEach(sId => {
+                let cg = cronogramaSemanasStore[sId];
+                diasSemanaArr.forEach(d => {
+                    turnosArr.forEach(t => {
+                        if(cg[d] && cg[d][t] && cg[d][t].tipo === 'teoria') {
+                            let limpo = cg[d][t].tema.split(' — Peso:')[0].trim();
+                            if(mapaLimpo[limpo] && (cg[d][t].tema !== mapaLimpo[limpo].n || cg[d][t].peso !== mapaLimpo[limpo].p)) {
+                                cg[d][t].tema = mapaLimpo[limpo].n;
+                                cg[d][t].peso = mapaLimpo[limpo].p;
+                                mudou = true;
+                            }
+                        }
+                    });
+                });
+            });
+
+            if(mudou) {
+                console.log("Migração de pesos concluída.");
+                window.syncToCloud();
+            }
+        }
+
         function calcularStreak() {
             let datasAtivas = new Set();
             listaEstudos.forEach(i => i.historico.forEach(h => {
@@ -1910,6 +1967,7 @@
             listaSimulados = JSON.parse(localStorage.getItem('simulados_med')) || [];
             metaAnual = parseInt(localStorage.getItem('meta_questoes')) || 10000;
             
+            migrarPesosAntigos();
             initApp();
         };
 
@@ -1926,6 +1984,7 @@
             listaSimulados = d.simulados || JSON.parse(localStorage.getItem('simulados_med')) || [];
             metaAnual = d.metaAnual || parseInt(localStorage.getItem('meta_questoes')) || 10000;
             
+            migrarPesosAntigos();
             initApp();
         };
 
@@ -2595,7 +2654,6 @@
             alert("Grade de turnos salva com sucesso!");
         }
 
-        // Ações em Lote
         function aplicarLote(dias, turnos, valor) {
             if(!semanaAtivaId) return alert("Selecione uma semana primeiro.");
             document.querySelectorAll('.sel-turno').forEach(sel => {
@@ -2860,7 +2918,6 @@
                     } else if(b.tipo === 'teoria') {
                         bg = getMacroColor(b.macro);
                         
-                        // Verifica se já foi estudado na lista de estudos concluídos
                         let jaEstudou = listaEstudos.some(e => e.tema === b.tema);
                         
                         if (jaEstudou) {
@@ -3202,7 +3259,6 @@
 
             chartRadar = new Chart(ctx, { type: 'radar', data: { labels: ["Clínica", "Cirurgia", "GO", "Pediatria", "Preventiva"], datasets: [{ label: '% Cobertura', data: data, backgroundColor: 'rgba(52, 152, 219, 0.2)', borderColor: '#3498db', pointBackgroundColor: '#2980b9' }] }, options: { scales: { r: { max: 100, min: 0 } } } });
 
-            // Renderiza a lista de valores exatos ao lado do gráfico
             let listaHtml = "<ul style='list-style:none; padding:0; margin:0; line-height:2.4;'>";
             let labelsCurto = ["Clínica", "Cirurgia", "GO", "Pediatria", "Preventiva"];
             macros.forEach((m, idx) => {
