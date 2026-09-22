@@ -93,7 +93,7 @@
             border-bottom: 1px solid var(--border-color); 
         }
         
-        #btnMenuMobile { display: none; }
+        #btnMenuMobile { display: none; } /* Escondido no Desktop */
 
         /* MODO FOCO E ALERTAS */
         .focus-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-color); z-index: 99999; flex-direction: column; justify-content: center; align-items: center; gap: 20px; }
@@ -216,6 +216,7 @@
             
             .main-content { padding: 15px; }
             
+            /* Botão Menu Hambúrguer no Header */
             #btnMenuMobile { 
                 display: flex !important; align-items: center; justify-content: center; 
                 width: 45px; height: 45px; border-radius: 10px; 
@@ -231,6 +232,8 @@
             
             .dashboard-grid { grid-template-columns: 1fr 1fr; }
             .pomodoro-box { flex-direction: column; text-align: center; }
+            
+            /* Empilha o Kanban em coluna para leitura perfeita no celular */
             .semana-grid { grid-template-columns: 1fr; }
             .dia-col { margin-bottom: 10px; }
         }
@@ -788,6 +791,7 @@
                         </div>
                     </div>
 
+
                     <div class="manual-section">
                         <h3>5. Recursos Estratégicos (Avançado)</h3>
                         <div class="manual-box">
@@ -1025,7 +1029,6 @@
             }
         }
 
-        // Função de Auditoria: Retorna onde o tema está (Estudado, Alocado, Backlog, Livre)
         function getTemaStatus(temaNome) {
             let estudado = listaEstudos.find(e => e.tema === temaNome);
             if(estudado) return { type: 'estudado', text: '✅ Já Estudado' };
@@ -1053,14 +1056,13 @@
             return { type: 'livre', text: '⚪ Livre (Não Alocado)' };
         }
 
-        // Remove alocações futuras de um tema para evitar duplicatas ao resgatar
         function removerAlocacaoAnterior(temaNome) {
             for (let sId in cronogramaSemanasStore) {
                 let cg = cronogramaSemanasStore[sId];
                 for (let d of diasSemanaArr) {
                     for (let t of turnosArr) {
                         if (cg[d] && cg[d][t] && cg[d][t].tipo === 'teoria' && cg[d][t].tema === temaNome) {
-                            cg[d][t] = { tipo: 'estudo' }; // Devolve o turno como Estudo Livre
+                            cg[d][t] = { tipo: 'estudo' }; 
                         }
                     }
                 }
@@ -1163,7 +1165,6 @@
 
             let destino = slotsLivres[num];
 
-            // Limpa o tema se ele estiver no backlog ou em outra semana no futuro
             removerAlocacaoAnterior(tema);
 
             cg[destino.d][destino.t] = { tipo: 'teoria', macro: macro, esp: esp, tema: tema, peso: peso };
@@ -1416,12 +1417,12 @@
         }
 
         // ------------------------------------------------------------------
-        // TAXONOMIA 3 NÍVEIS OFICIAL (PESO VISÍVEL NO TEXTO)
+        // TAXONOMIA 3 NÍVEIS OFICIAL COM NOVOS PESOS (v5.8)
         // ------------------------------------------------------------------
         const taxonomia = {
             "Clínica Médica": {
                 "Cardiologia": [
-                    { n: "1. Parada Cardiorrespiratória (PCR) — Peso: 2", p: 2 },
+                    { n: "1. Parada Cardiorrespiratória (PCR) — Peso: 4", p: 4 },
                     { n: "2. Bradicardias — Peso: 1", p: 1 },
                     { n: "3. Taquiarritmias — Peso: 2", p: 2 },
                     { n: "4. Fibrilação e Flutter Atrial — Peso: 2", p: 2 },
@@ -1435,42 +1436,42 @@
                     { n: "12. Hipertensão Arterial Sistêmica (Parte 2) Tratamento — Peso: 5", p: 5 },
                     { n: "13. Hipertensão Arterial Sistêmica (Parte 3) Secundária... — Peso: 5", p: 5 },
                     { n: "14. Insuficiência Cardíaca (Parte 1) Classificação... — Peso: 3", p: 3 },
-                    { n: "15. Insuficiência Cardíaca (Parte 2) Tratamento — Peso: 3", p: 3 },
+                    { n: "15. Insuficiência Cardíaca (Parte 2) Tratamento — Peso: 4", p: 4 },
                     { n: "16. Insuficiência Cardíaca Aguda — Peso: 3", p: 3 },
                     { n: "17. Choque — Peso: 3", p: 3 },
                     { n: "18. Semiologia Cardíaca — Peso: 3", p: 3 },
                     { n: "19. Valvopatias — Peso: 2", p: 2 },
                     { n: "20. Cardiomiopatias — Peso: 3", p: 3 },
                     { n: "21. Pericardiopatias — Peso: 3", p: 3 },
-                    { n: "22. Eletrocardiograma — Peso: 2", p: 2 }
+                    { n: "22. Eletrocardiograma — Peso: 4", p: 4 }
                 ],
                 "Endocrinologia": [
-                    { n: "1. Introdução ao Diabetes Mellitus — Peso: 5", p: 5 },
-                    { n: "2. Diabetes Mellitus Tipo 2 — Peso: 5", p: 5 },
-                    { n: "3. Diabetes Mellitus - Insulinoterapia e Cirurgia Metabólica — Peso: 5", p: 5 },
+                    { n: "1. Introdução ao Diabetes Mellitus — Peso: 4", p: 4 },
+                    { n: "2. Diabetes Mellitus Tipo 2 — Peso: 4", p: 4 },
+                    { n: "3. Diabetes Mellitus - Insulinoterapia e Cirurgia Metabólica — Peso: 4", p: 4 },
                     { n: "4. Diabetes Mellitus - Complicações Agudas — Peso: 5", p: 5 },
-                    { n: "5. Diabetes Mellitus - Complicações Crônicas — Peso: 5", p: 5 },
-                    { n: "6. Diabetes Mellitus - Hiperglicemia Hospitalar — Peso: 5", p: 5 },
-                    { n: "7. Tireoide - Hipotireoidismo — Peso: 4", p: 4 },
+                    { n: "5. Diabetes Mellitus - Complicações Crônicas — Peso: 2", p: 2 },
+                    { n: "6. Diabetes Mellitus - Hiperglicemia Hospitalar — Peso: 2", p: 2 },
+                    { n: "7. Tireoide - Hipotireoidismo — Peso: 5", p: 5 },
                     { n: "8. Tireoide - Tireotoxicose Diagnóstico, Etiologia, Tratamento — Peso: 4", p: 4 },
                     { n: "9. Obesidade - Obesidade e Síndrome Metabólica — Peso: 2", p: 2 },
-                    { n: "10. Cirurgia Bariátrica e Metabólica — Peso: 2", p: 2 },
-                    { n: "11. Metabolismo Ósseo e Mineral - Princípios e Fisiologia — Peso: 2", p: 2 },
+                    { n: "10. Cirurgia Bariátrica e Metabólica — Peso: 4", p: 4 },
+                    { n: "11. Metabolismo Ósseo e Mineral - Princípios e Fisiologia — Peso: 1", p: 1 },
                     { n: "12. Metabolismo Ósseo e Mineral - Hipercalcemia — Peso: 2", p: 2 },
                     { n: "13. Metabolismo Ósseo e Mineral - Hipocalcemia — Peso: 2", p: 2 },
-                    { n: "14. Metabolismo Ósseo e Mineral - Magnésio e Fosfato — Peso: 2", p: 2 },
-                    { n: "15. Metabolismo Ósseo e Mineral - Vitamina D e Osteomalácia — Peso: 2", p: 2 },
+                    { n: "14. Metabolismo Ósseo e Mineral - Magnésio e Fosfato — Peso: 1", p: 1 },
+                    { n: "15. Metabolismo Ósseo e Mineral - Vitamina D e Osteomalácia — Peso: 1", p: 1 },
                     { n: "16. Raquitismo — Peso: 2", p: 2 },
                     { n: "17. Metabolismo Ósseo e Mineral - Osteoporose e Paget — Peso: 2", p: 2 },
                     { n: "18. Adrenal - Morfofisiologia Adrenal — Peso: 2", p: 2 },
-                    { n: "19. Adrenal - Hipocortisolismo (Insuficiência Adrenal) — Peso: 2", p: 2 },
-                    { n: "20. Adrenal - Hipercortisolismo (Síndrome de Cushing) — Peso: 3", p: 3 },
-                    { n: "21. Adrenal - Feocromocitoma e Hiperaldosteronismo — Peso: 2", p: 2 },
+                    { n: "19. Adrenal - Hipocortisolismo (Insuficiência Adrenal) — Peso: 1", p: 1 },
+                    { n: "20. Adrenal - Hipercortisolismo (Síndrome de Cushing) — Peso: 1", p: 1 },
+                    { n: "21. Adrenal - Feocromocitoma e Hiperaldosteronismo — Peso: 1", p: 1 },
                     { n: "22. Perioperatório - Controle Glicêmico e Glicocorticóides — Peso: 3", p: 3 },
                     { n: "23. Hipófise - Fisiologia da Hipófise e Hipopituitarismo — Peso: 2", p: 2 },
-                    { n: "24. Hipófise - Acromegalia e Incidentaloma Hipofisário — Peso: 2", p: 2 },
+                    { n: "24. Hipófise - Acromegalia e Incidentaloma Hipofisário — Peso: 1", p: 1 },
                     { n: "25. Hipófise - Hiperprolactinemia — Peso: 2", p: 2 },
-                    { n: "26. Neoplasias Endócrinas Múltiplas — Peso: 2", p: 2 },
+                    { n: "26. Neoplasias Endócrinas Múltiplas — Peso: 1", p: 1 },
                     { n: "27. Hipoglicemia no Paciente não Diabético — Peso: 2", p: 2 },
                     { n: "28. Doenças das Adrenais e Hipófise e Noções de Obesidade — Peso: 2", p: 2 },
                     { n: "29. Incongruência de Gênero — Peso: 1", p: 1 }
@@ -1485,78 +1486,78 @@
                     { n: "7. Doença Ulcerosa Péptica e Inibidores de Bomba de Prótons — Peso: 4", p: 4 },
                     { n: "8. Pancreatite Aguda e Crônica (Pancreatites) — Peso: 4", p: 4 },
                     { n: "9. Anatomia/Fisiologia do Cólon e Síndrome do Intestino Irritável — Peso: 2", p: 2 },
-                    { n: "10. Doença Inflamatória Intestinal — Peso: 3", p: 3 },
+                    { n: "10. Doença Inflamatória Intestinal — Peso: 5", p: 5 },
                     { n: "11. Distúrbios Disabsortivos — Peso: 3", p: 3 },
-                    { n: "12. Divertículos Colônicos e Divertículo de Meckel — Peso: 2", p: 2 },
-                    { n: "13. Polipose Intestinal e Câncer Colorretal — Peso: 4", p: 4 },
+                    { n: "12. Divertículos Colônicos e Divertículo de Meckel — Peso: 5", p: 5 },
+                    { n: "13. Polipose Intestinal e Câncer Colorretal — Peso: 5", p: 5 },
                     { n: "14. Neoplasias de Estômago e Esôfago — Peso: 4", p: 4 },
                     { n: "15. Anatomia e Fisiologia do Pâncreas e Neoplasias Pancreáticas — Peso: 2", p: 2 },
                     { n: "16. Tumores Neuroendócrinos — Peso: 1", p: 1 }
                 ],
                 "Hematologia": [
-                    { n: "1. Introdução ao Estudo das Anemias — Peso: 4", p: 4 },
+                    { n: "1. Introdução ao Estudo das Anemias — Peso: 3", p: 3 },
                     { n: "2. Anemias Microcíticas — Peso: 4", p: 4 },
-                    { n: "3. Anemias Macrocíticas — Peso: 3", p: 3 },
-                    { n: "4. Anemias Hemolíticas — Peso: 3", p: 3 },
+                    { n: "3. Anemias Macrocíticas — Peso: 2", p: 2 },
+                    { n: "4. Anemias Hemolíticas — Peso: 4", p: 4 },
                     { n: "5. Anemias Associadas a Condições Não Hematológicas — Peso: 4", p: 4 },
                     { n: "6. Leucemias Agudas — Peso: 3", p: 3 },
-                    { n: "7. Leucemias Crônicas, Linfomas, Mielodisplasias — Peso: 3", p: 3 },
-                    { n: "8. Mieloma Múltiplo (Gamopatias Monoclonais) — Peso: 3", p: 3 },
-                    { n: "9. Hemostasia I - Conceitos Básicos e Anticoagulantes — Peso: 2", p: 2 },
-                    { n: "10. Hemostasia II - Doenças Hemostáticas — Peso: 2", p: 2 },
+                    { n: "7. Leucemias Crônicas, Linfomas, Mielodisplasias — Peso: 1", p: 1 },
+                    { n: "8. Mieloma Múltiplo (Gamopatias Monoclonais) — Peso: 1", p: 1 },
+                    { n: "9. Hemostasia I - Conceitos Básicos e Anticoagulantes — Peso: 3", p: 3 },
+                    { n: "10. Hemostasia II - Doenças Hemostáticas — Peso: 3", p: 3 },
                     { n: "11. Medicina Transfusional — Peso: 2", p: 2 }
                 ],
                 "Hepatologia": [
-                    { n: "1. Introdução à Hepatologia — Peso: 2", p: 2 },
-                    { n: "2. Hepatites Virais — Peso: 2", p: 2 },
+                    { n: "1. Introdução à Hepatologia — Peso: 1", p: 1 },
+                    { n: "2. Hepatites Virais — Peso: 3", p: 3 },
                     { n: "3. Hepatopatias Autoimunes — Peso: 1", p: 1 },
-                    { n: "4. Outras Causas de Hepatopatia Crônica — Peso: 2", p: 2 },
+                    { n: "4. Outras Causas de Hepatopatia Crônica — Peso: 1", p: 1 },
                     { n: "5. Cirrose Hepática — Peso: 3", p: 3 },
-                    { n: "6. Complicações da Cirrose Hepática — Peso: 3", p: 3 },
-                    { n: "7. Síndrome Hepatorrenal e Síndrome Hepatopulmonar — Peso: 3", p: 3 },
-                    { n: "8. Tumores Hepáticos — Peso: 4", p: 4 },
+                    { n: "6. Complicações da Cirrose Hepática — Peso: 4", p: 4 },
+                    { n: "7. Síndrome Hepatorrenal e Síndrome Hepatopulmonar — Peso: 1", p: 1 },
+                    { n: "8. Tumores Hepáticos — Peso: 2", p: 2 },
                     { n: "9. Transplante Hepático e Hepatite Fulminante — Peso: 1", p: 1 }
                 ],
                 "Infectologia": [
-                    { n: "1. Meningites (Infecções do SNC) — Peso: 3", p: 3 },
+                    { n: "1. Meningites (Infecções do SNC) — Peso: 1", p: 1 },
                     { n: "2. Leptospirose — Peso: 2", p: 2 },
-                    { n: "3. Malária — Peso: 2", p: 2 },
+                    { n: "3. Malária — Peso: 1", p: 1 },
                     { n: "4. Animais Peçonhentos — Peso: 1", p: 1 },
                     { n: "5. Gripe — Peso: 1", p: 1 },
-                    { n: "6. HIV — Peso: 2", p: 2 },
-                    { n: "7. Antibióticos — Peso: 2", p: 2 },
-                    { n: "8. Arboviroses (Dengue, Chikungunya e Zika) — Peso: 5", p: 5 },
+                    { n: "6. HIV — Peso: 4", p: 4 },
+                    { n: "7. Antibióticos — Peso: 1", p: 1 },
+                    { n: "8. Arboviroses (Dengue, Chikungunya e Zika) — Peso: 4", p: 4 },
                     { n: "9. Micoses Invasivas — Peso: 2", p: 2 },
                     { n: "10. Tuberculose — Peso: 4", p: 4 },
-                    { n: "11. Parasitoses — Peso: 2", p: 2 },
-                    { n: "12. Neutropenia Febril e Febre de Origem Indeterminada — Peso: 2", p: 2 },
-                    { n: "13. Endocardite Bacteriana - Endocardite Infecciosa — Peso: 2", p: 2 },
-                    { n: "14. Hepatoesplenomegalias Infecciosas — Peso: 2", p: 2 },
-                    { n: "15. Síndrome Febril Íctero-Hemorrágica — Peso: 2", p: 2 },
+                    { n: "11. Parasitoses — Peso: 1", p: 1 },
+                    { n: "12. Neutropenia Febril e Febre de Origem Indeterminada — Peso: 1", p: 1 },
+                    { n: "13. Endocardite Bacteriana - Endocardite Infecciosa — Peso: 1", p: 1 },
+                    { n: "14. Hepatoesplenomegalias Infecciosas — Peso: 1", p: 1 },
+                    { n: "15. Síndrome Febril Íctero-Hemorrágica — Peso: 1", p: 1 },
                     { n: "16. Covid 19 — Peso: 1", p: 1 },
-                    { n: "17. Aula Bônus - Sífilis e Outras ISTs — Peso: 5", p: 5 },
-                    { n: "18. Pneumonias Bacterianas — Peso: 5", p: 5 }
+                    { n: "17. Aula Bônus - Sífilis e Outras ISTs — Peso: 4", p: 4 },
+                    { n: "18. Pneumonias Bacterianas — Peso: 4", p: 4 }
                 ],
                 "Nefrologia": [
-                    { n: "1. Doenças Glomerulares — Peso: 3", p: 3 },
+                    { n: "1. Doenças Glomerulares — Peso: 4", p: 4 },
                     { n: "2. Lesão Renal Aguda (LRA) — Peso: 3", p: 3 },
-                    { n: "3. Doença Renal Crônica (RDC) - Parte I — Peso: 2", p: 2 },
-                    { n: "4. Doença Renal Crônica (RDC) - Parte II — Peso: 2", p: 2 },
-                    { n: "5. Distúrbios Ácido-Básicos — Peso: 2", p: 2 },
-                    { n: "6. Análise da Gasometria Arterial — Peso: 2", p: 2 },
+                    { n: "3. Doença Renal Crônica (RDC) - Parte I — Peso: 1", p: 1 },
+                    { n: "4. Doença Renal Crônica (RDC) - Parte II — Peso: 1", p: 1 },
+                    { n: "5. Distúrbios Ácido-Básicos — Peso: 3", p: 3 },
+                    { n: "6. Análise da Gasometria Arterial — Peso: 1", p: 1 },
                     { n: "7. Distúrbios do Sódio - Disnatremias — Peso: 2", p: 2 },
                     { n: "8. Distúrbios do Potássio — Peso: 2", p: 2 },
                     { n: "9. Túbulo-Interstício Renal — Peso: 1", p: 1 },
                     { n: "10. ITU - Infecção do Trato Urinário — Peso: 4", p: 4 },
-                    { n: "11. Nefrolitíase — Peso: 2", p: 2 }
+                    { n: "11. Nefrolitíase — Peso: 3", p: 3 }
                 ],
                 "Neurologia": [
                     { n: "1. Coma e Alterações da Consciência — Peso: 1", p: 1 },
-                    { n: "2. Anatomia, Fisiologia e Semiologia Neurológica — Peso: 1", p: 1 },
-                    { n: "3. Cefaleias — Peso: 2", p: 2 },
+                    { n: "2. Anatomia, Fisiologia e Semiologia Neurológica — Peso: 2", p: 2 },
+                    { n: "3. Cefaleias — Peso: 3", p: 3 },
                     { n: "4. Demências — Peso: 3", p: 3 },
                     { n: "5. Epilepsias — Peso: 2", p: 2 },
-                    { n: "6. Acidentes Vasculares Cerebrais — Peso: 2", p: 2 },
+                    { n: "6. Acidentes Vasculares Cerebrais — Peso: 4", p: 4 },
                     { n: "7. Doenças Neuromusculares — Peso: 1", p: 1 },
                     { n: "8. Distúrbios do Movimento — Peso: 3", p: 3 },
                     { n: "9. Traumatismo Cranioencefálico - TCE — Peso: 4", p: 4 },
@@ -1566,120 +1567,120 @@
                 ],
                 "Pneumologia": [
                     { n: "1. Derrame Pleural — Peso: 4", p: 4 },
-                    { n: "2. Doença Pulmonar Obstrutiva Crônica (DPOC) — Peso: 3", p: 3 },
-                    { n: "3. Tromboembolismo Pulmonar (TEP) — Peso: 1", p: 1 },
-                    { n: "4. Introdução à Pneumologia — Peso: 1", p: 1 },
+                    { n: "2. Doença Pulmonar Obstrutiva Crônica (DPOC) — Peso: 4", p: 4 },
+                    { n: "3. Tromboembolismo Pulmonar (TEP) — Peso: 2", p: 2 },
+                    { n: "4. Introdução à Pneumologia — Peso: 2", p: 2 },
                     { n: "5. Pneumologia Intensiva — Peso: 1", p: 1 },
-                    { n: "6. Asma — Peso: 2", p: 2 },
-                    { n: "7. Miscelânea (Interstício, Bronquiectasias...) — Peso: 1", p: 1 },
-                    { n: "8. Neoplasias Pulmonares — Peso: 4", p: 4 }
+                    { n: "6. Asma — Peso: 4", p: 4 },
+                    { n: "7. Miscelânea (Interstício, Bronquiectasias...) — Peso: 2", p: 2 },
+                    { n: "8. Neoplasias Pulmonares — Peso: 2", p: 2 }
                 ],
                 "Psiquiatria": [
                     { n: "1. Transtornos do Humor — Peso: 3", p: 3 },
-                    { n: "2. Transtornos de Ansiedade — Peso: 3", p: 3 },
+                    { n: "2. Transtornos de Ansiedade — Peso: 2", p: 2 },
                     { n: "3. Transtornos Psicóticos — Peso: 1", p: 1 },
                     { n: "4. Dependência Química — Peso: 3", p: 3 },
                     { n: "5. TOC e Transtornos Relacionados ao Estresse — Peso: 1", p: 1 },
-                    { n: "6. Psiquiatria Infantil — Peso: 1", p: 1 },
+                    { n: "6. Psiquiatria Infantil — Peso: 3", p: 3 },
                     { n: "7. Transtornos de Personalidade — Peso: 1", p: 1 },
-                    { n: "8. Transtornos Alimentares — Peso: 4", p: 4 },
-                    { n: "9. Psicofarmacologia — Peso: 2", p: 2 },
+                    { n: "8. Transtornos Alimentares — Peso: 3", p: 3 },
+                    { n: "9. Psicofarmacologia — Peso: 3", p: 3 },
                     { n: "10. Psicopatologia — Peso: 1", p: 1 },
-                    { n: "11. Psiquiatria Social e Reforma Psiquiátrica — Peso: 1", p: 1 },
-                    { n: "12. Intoxicações Exógenas — Peso: 2", p: 2 }
+                    { n: "11. Psiquiatria Social e Reforma Psiquiátrica — Peso: 2", p: 2 },
+                    { n: "12. Intoxicações Exógenas — Peso: 3", p: 3 }
                 ],
                 "Reumatologia": [
                     { n: "1. Introdução à Reumatologia — Peso: 1", p: 1 },
                     { n: "2. Doenças Autoimunes do Tecido Conjuntivo — Peso: 3", p: 3 },
                     { n: "3. Doenças Inflamatórias do Tecido Conjuntivo II — Peso: 3", p: 3 },
                     { n: "4. Artrite Reumatoide — Peso: 4", p: 4 },
-                    { n: "5. Espondiloartrites — Peso: 3", p: 3 },
+                    { n: "5. Espondiloartrites — Peso: 2", p: 2 },
                     { n: "6. Vasculites — Peso: 2", p: 2 },
-                    { n: "7. Artrites Microcristalinas — Peso: 4", p: 4 },
+                    { n: "7. Artrites Microcristalinas — Peso: 3", p: 3 },
                     { n: "8. Síndromes Dolorosas Crônicas — Peso: 1", p: 1 },
                     { n: "9. Doenças do Osso e da Cartilagem — Peso: 1", p: 1 },
                     { n: "10. Artropatias Infecciosas — Peso: 1", p: 1 },
                     { n: "11. Miscelânea — Peso: 1", p: 1 },
-                    { n: "12. Reumatologia Pediátrica — Peso: 1", p: 1 },
+                    { n: "12. Reumatologia Pediátrica — Peso: 3", p: 3 },
                     { n: "13. Manifestações Reumatológicas e Doenças Sistêmicas — Peso: 1", p: 1 }
                 ],
                 "Dermatologia": [
                     { n: "1. Histologia, Fisiologia da Pele e Lesões Elementares — Peso: 1", p: 1 },
-                    { n: "2. Hanseníase — Peso: 3", p: 3 },
-                    { n: "3. Oncologia Cutânea (Câncer de Pele) — Peso: 2", p: 2 },
+                    { n: "2. Hanseníase — Peso: 2", p: 2 },
+                    { n: "3. Oncologia Cutânea (Câncer de Pele) — Peso: 3", p: 3 },
                     { n: "4. Dermatoses Infecciosas — Peso: 3", p: 3 },
-                    { n: "5. Dermatoses Eczematosas — Peso: 2", p: 2 },
+                    { n: "5. Dermatoses Eczematosas — Peso: 1", p: 1 },
                     { n: "6. Farmacodermias — Peso: 2", p: 2 },
                     { n: "7. Dermatoses Papuloescamosas — Peso: 2", p: 2 },
                     { n: "8. Dermatoses Vesicobolhosas — Peso: 1", p: 1 },
                     { n: "9. Miscelânea Dermatológica — Peso: 3", p: 3 },
-                    { n: "10. Síndromes Verrucosas — Peso: 3", p: 3 },
-                    { n: "11. Piodermites — Peso: 3", p: 3 }
+                    { n: "10. Síndromes Verrucosas — Peso: 2", p: 2 },
+                    { n: "11. Piodermites — Peso: 2", p: 2 }
                 ]
             },
             "Cirurgia": {
                 "Cirurgia Geral": [
-                    { n: "1. Trauma - Avaliação Inicial, Vias Aéreas e Trauma Torácico — Peso: 4", p: 4 },
-                    { n: "2. Trauma - Choque — Peso: 4", p: 4 },
+                    { n: "1. Trauma - Avaliação Inicial, Vias Aéreas e Trauma Torácico — Peso: 5", p: 5 },
+                    { n: "2. Trauma - Choque — Peso: 2", p: 2 },
                     { n: "3. Trauma Abdominal e Pélvico — Peso: 4", p: 4 },
-                    { n: "4. Trauma de Face e Cervical — Peso: 4", p: 4 },
-                    { n: "5. Trauma Vascular de Extremidades e Musculoesquelético — Peso: 4", p: 4 },
-                    { n: "6. Trauma Populações Especiais (Pediátrico, Gestante e Idosos) — Peso: 4", p: 4 },
-                    { n: "7. Queimaduras e Traumas Elétricos — Peso: 1", p: 1 },
-                    { n: "8. Resposta Endócrino-Metabólica ao Trauma — Peso: 3", p: 3 },
+                    { n: "4. Trauma de Face e Cervical — Peso: 3", p: 3 },
+                    { n: "5. Trauma Vascular de Extremidades e Musculoesquelético — Peso: 3", p: 3 },
+                    { n: "6. Trauma Populações Especiais (Pediátrico, Gestante e Idosos) — Peso: 2", p: 2 },
+                    { n: "7. Queimaduras e Traumas Elétricos — Peso: 3", p: 3 },
+                    { n: "8. Resposta Endócrino-Metabólica ao Trauma — Peso: 2", p: 2 },
                     { n: "9. Urgências Abdominais - Abdome Agudo — Peso: 5", p: 5 },
                     { n: "10. Abdome Agudo Inflamatório - Apendicite Aguda — Peso: 5", p: 5 },
                     { n: "11. Abdome Agudo Inflamatório - Colecistite e Colangite Aguda — Peso: 5", p: 5 },
                     { n: "12. Abdome Agudo Inflamatório - Diverticulite Aguda — Peso: 5", p: 5 },
-                    { n: "13. Abdômen Agudo Vascular — Peso: 5", p: 5 },
-                    { n: "14. Abdome Agudo Hemorrágico — Peso: 5", p: 5 },
-                    { n: "15. Abdome Agudo Perfurativo — Peso: 5", p: 5 },
-                    { n: "16. Abdome Agudo Obstrutivo — Peso: 4", p: 4 },
+                    { n: "13. Abdômen Agudo Vascular — Peso: 1", p: 1 },
+                    { n: "14. Abdome Agudo Hemorrágico — Peso: 2", p: 2 },
+                    { n: "15. Abdome Agudo Perfurativo — Peso: 1", p: 1 },
+                    { n: "16. Abdome Agudo Obstrutivo — Peso: 5", p: 5 },
                     { n: "17. Vesícula e Vias Biliares — Peso: 5", p: 5 },
-                    { n: "18. Complicações Pós-Operatórias — Peso: 2", p: 2 },
-                    { n: "19. Hérnias da Parede Abdominal — Peso: 4", p: 4 },
+                    { n: "18. Complicações Pós-Operatórias — Peso: 5", p: 5 },
+                    { n: "19. Hérnias da Parede Abdominal — Peso: 5", p: 5 },
                     { n: "20. Cirurgia Vascular — Peso: 1", p: 1 },
                     { n: "21. Cirurgia Torácica — Peso: 1", p: 1 },
                     { n: "22. Cirurgia Plástica — Peso: 2", p: 2 },
-                    { n: "23. Urologia — Peso: 3", p: 3 },
+                    { n: "23. Urologia — Peso: 5", p: 5 },
                     { n: "24. Cirurgia Infantil - Parte I — Peso: 3", p: 3 },
                     { n: "25. Cirurgia Infantil - Parte II — Peso: 3", p: 3 },
                     { n: "26. Cirurgia Infantil - Parte III — Peso: 3", p: 3 },
-                    { n: "27. Proctologia — Peso: 3", p: 3 },
-                    { n: "28. Neoplasias do Apêndice Cecal — Peso: 4", p: 4 },
-                    { n: "29. Nutrição em Cirurgia e Aceleração da Recuperação... — Peso: 2", p: 2 },
-                    { n: "30. Cicatrização de Feridas — Peso: 3", p: 3 },
+                    { n: "27. Proctologia — Peso: 5", p: 5 },
+                    { n: "28. Neoplasias do Apêndice Cecal — Peso: 2", p: 2 },
+                    { n: "29. Nutrição em Cirurgia e Aceleração da Recuperação... — Peso: 1", p: 1 },
+                    { n: "30. Cicatrização de Feridas — Peso: 2", p: 2 },
                     { n: "31. Cirurgia Bariátrica e Metabólica — Peso: 2", p: 2 },
                     { n: "32. Temas Gerais em Cirurgia — Peso: 3", p: 3 },
-                    { n: "33. Medicina Perioperatória — Peso: 5", p: 5 }
+                    { n: "33. Medicina Perioperatória — Peso: 4", p: 4 }
                 ],
                 "Oftalmologia": [
                     { n: "1. Anatomia e Fisiologia do Aparelho Visual — Peso: 1", p: 1 },
-                    { n: "2. Córnea e Cristalino — Peso: 3", p: 3 },
+                    { n: "2. Córnea e Cristalino — Peso: 2", p: 2 },
                     { n: "3. Glaucoma — Peso: 1", p: 1 },
                     { n: "4. Distúrbios da Refração — Peso: 1", p: 1 },
                     { n: "5. Neurooftalmologia — Peso: 1", p: 1 },
-                    { n: "6. Traumatismos Oculares — Peso: 1", p: 1 },
-                    { n: "7. Tumores Oculares Malignos — Peso: 3", p: 3 },
-                    { n: "8. Síndrome do Olho Vermelho — Peso: 1", p: 1 },
+                    { n: "6. Traumatismos Oculares — Peso: 3", p: 3 },
+                    { n: "7. Tumores Oculares Malignos — Peso: 1", p: 1 },
+                    { n: "8. Síndrome do Olho Vermelho — Peso: 3", p: 3 },
                     { n: "9. Doenças do Polo Posterior — Peso: 1", p: 1 }
                 ],
                 "Ortopedia": [
-                    { n: "1. Quadril Pediátrico — Peso: 3", p: 3 },
+                    { n: "1. Quadril Pediátrico — Peso: 2", p: 2 },
                     { n: "2. Politraumatismo Ortopédico — Peso: 3", p: 3 },
                     { n: "3. Doenças da Coluna Vertebral — Peso: 3", p: 3 },
                     { n: "4. Complicações do Trauma Ortopédico — Peso: 3", p: 3 },
-                    { n: "5. Maus Tratos — Peso: 1", p: 1 },
-                    { n: "6. Oncologia Ortopédica e Osteomielite — Peso: 3", p: 3 },
-                    { n: "7. Fraturas e Luxações — Peso: 3", p: 3 },
+                    { n: "5. Maus Tratos — Peso: 2", p: 2 },
+                    { n: "6. Oncologia Ortopédica e Osteomielite — Peso: 2", p: 2 },
+                    { n: "7. Fraturas e Luxações — Peso: 2", p: 2 },
                     { n: "8. Fratura Exposta — Peso: 3", p: 3 },
-                    { n: "9. Ombro e Joelho Pediátrico — Peso: 3", p: 3 },
-                    { n: "10. Conceitos Básicos do Trauma Ortopédico — Peso: 3", p: 3 },
-                    { n: "11. Conceitos Básicos de Anatomia e Semiologia — Peso: 3", p: 3 },
-                    { n: "12. Desenvolvimento Ortopédico da Criança — Peso: 3", p: 3 },
-                    { n: "13. Doenças do Ombro e Cotovelo — Peso: 3", p: 3 },
-                    { n: "14. Doenças da Mão e Síndromes Compressivas — Peso: 3", p: 3 },
-                    { n: "15. Coluna Pediátrica — Peso: 3", p: 3 },
+                    { n: "9. Ombro e Joelho Pediátrico — Peso: 2", p: 2 },
+                    { n: "10. Conceitos Básicos do Trauma Ortopédico — Peso: 1", p: 1 },
+                    { n: "11. Conceitos Básicos de Anatomia e Semiologia — Peso: 1", p: 1 },
+                    { n: "12. Desenvolvimento Ortopédico da Criança — Peso: 1", p: 1 },
+                    { n: "13. Doenças do Ombro e Cotovelo — Peso: 1", p: 1 },
+                    { n: "14. Doenças da Mão e Síndromes Compressivas — Peso: 1", p: 1 },
+                    { n: "15. Coluna Pediátrica — Peso: 1", p: 1 },
                     { n: "16. Doenças Neuromusculares Pediátricas — Peso: 1", p: 1 },
                     { n: "17. Doenças de Partes Moles — Peso: 1", p: 1 },
                     { n: "18. Miscelânea Ortopédica — Peso: 1", p: 1 }
@@ -1690,35 +1691,35 @@
                     { n: "3. Infecções de Vias Aéreas Superiores - Parte III — Peso: 4", p: 4 },
                     { n: "4. Otoneurologia, Vertigens e Audiologia — Peso: 1", p: 1 },
                     { n: "5. Cirurgia de Cabeça e Pescoço - Laringologia e Apneia — Peso: 1", p: 1 },
-                    { n: "6. Cirurgia de Cabeça e Pescoço - Nódulos de Tireoide... — Peso: 2", p: 2 },
-                    { n: "7. Cirurgia de Cabeça e Pescoço - Neoplasias Benignas e Malignas... — Peso: 2", p: 2 }
+                    { n: "6. Cirurgia de Cabeça e Pescoço - Nódulos de Tireoide... — Peso: 3", p: 3 },
+                    { n: "7. Cirurgia de Cabeça e Pescoço - Neoplasias Benignas e Malignas... — Peso: 1", p: 1 }
                 ]
             },
             "Ginecologia e Obstetrícia": {
                 "Ginecologia": [
-                    { n: "1. Ciclo Menstrual — Peso: 3", p: 3 },
-                    { n: "2. Planejamento Familiar — Peso: 4", p: 4 },
-                    { n: "3. Amenorreia — Peso: 4", p: 4 },
+                    { n: "1. Ciclo Menstrual — Peso: 2", p: 2 },
+                    { n: "2. Planejamento Familiar — Peso: 5", p: 5 },
+                    { n: "3. Amenorreia — Peso: 3", p: 3 },
                     { n: "4. Síndrome dos Ovários Policísticos (SOP) — Peso: 2", p: 2 },
-                    { n: "5. Endometriose — Peso: 2", p: 2 },
+                    { n: "5. Endometriose — Peso: 4", p: 4 },
                     { n: "6. Adenomiose — Peso: 1", p: 1 },
                     { n: "7. Pólipos Uterinos — Peso: 1", p: 1 },
                     { n: "8. Rastreamento do Câncer de Mama — Peso: 4", p: 4 },
                     { n: "9. Sangramento Uterino Anormal (SUA) — Peso: 5", p: 5 },
-                    { n: "10. Doenças Benignas da Mama — Peso: 3", p: 3 },
+                    { n: "10. Doenças Benignas da Mama — Peso: 2", p: 2 },
                     { n: "11. Incontinência Urinária — Peso: 2", p: 2 },
                     { n: "12. Câncer de Mama — Peso: 4", p: 4 },
                     { n: "13. Câncer do Corpo do Útero — Peso: 5", p: 5 },
                     { n: "14. Tumores Anexiais e Câncer de Ovário — Peso: 4", p: 4 },
-                    { n: "15. Doenças da Vulva e Vagina — Peso: 5", p: 5 },
+                    { n: "15. Doenças da Vulva e Vagina — Peso: 4", p: 4 },
                     { n: "16. Vulvovaginites — Peso: 5", p: 5 },
                     { n: "17. Cervicites — Peso: 5", p: 5 },
-                    { n: "18. Doença Inflamatória Pélvica (DIP) — Peso: 5", p: 5 },
+                    { n: "18. Doença Inflamatória Pélvica (DIP) — Peso: 4", p: 4 },
                     { n: "19. Úlceras Genitais — Peso: 5", p: 5 },
-                    { n: "20. Assistência à Vítima de Violência Sexual — Peso: 5", p: 5 },
+                    { n: "20. Assistência à Vítima de Violência Sexual — Peso: 3", p: 3 },
                     { n: "21. Rastreamento do Câncer de Colo Úterino — Peso: 5", p: 5 },
-                    { n: "22. Câncer de Colo do Útero — Peso: 5", p: 5 },
-                    { n: "23. Climatério e Terapia Hormonal — Peso: 3", p: 3 },
+                    { n: "22. Câncer de Colo do Útero — Peso: 3", p: 3 },
+                    { n: "23. Climatério e Terapia Hormonal — Peso: 4", p: 4 },
                     { n: "24. Miomatose Uterina — Peso: 1", p: 1 },
                     { n: "25. Prolapsos de Órgãos Pélvicos — Peso: 2", p: 2 },
                     { n: "26. Anatomia e Embriologia do Trato Genital Feminino — Peso: 1", p: 1 },
@@ -1726,50 +1727,50 @@
                     { n: "28. Dor Pélvica Crônica e Dismenorreia — Peso: 1", p: 1 },
                     { n: "29. Sexualidade — Peso: 1", p: 1 },
                     { n: "30. Síndrome Pré-Menstrual — Peso: 1", p: 1 },
-                    { n: "31. Abdome Agudo em Ginecologia — Peso: 1", p: 1 }
+                    { n: "31. Abdome Agudo em Ginecologia — Peso: 2", p: 2 }
                 ],
                 "Obstetrícia": [
                     { n: "1. TPP - Prematuridade e Trabalho de Parto Prematuro — Peso: 4", p: 4 },
-                    { n: "2. Rotura Prematura de Membranas (RPM) — Peso: 3", p: 3 },
-                    { n: "3. HPP – Hemorragia Pós-Parto — Peso: 3", p: 3 },
-                    { n: "4. Gestação Múltipla — Peso: 2", p: 2 },
-                    { n: "5. Partograma e Distocias — Peso: 5", p: 5 },
-                    { n: "6. Bacia Obstétrica, Pelvimetria e Estática Fetal — Peso: 5", p: 5 },
-                    { n: "7. Infecção Puerperal — Peso: 3", p: 3 },
-                    { n: "8. Sífilis na Gestação e Sífilis Congênitas — Peso: 4", p: 4 },
-                    { n: "9. Infecções Congênitas na Gestação — Peso: 4", p: 4 },
-                    { n: "10. Aloimunização Materna e Doença Hemolítica Perinatal — Peso: 2", p: 2 },
+                    { n: "2. Rotura Prematura de Membranas (RPM) — Peso: 2", p: 2 },
+                    { n: "3. HPP – Hemorragia Pós-Parto — Peso: 4", p: 4 },
+                    { n: "4. Gestação Múltipla — Peso: 1", p: 1 },
+                    { n: "5. Partograma e Distocias — Peso: 3", p: 3 },
+                    { n: "6. Bacia Obstétrica, Pelvimetria e Estática Fetal — Peso: 3", p: 3 },
+                    { n: "7. Infecção Puerperal — Peso: 2", p: 2 },
+                    { n: "8. Sífilis na Gestação e Sífilis Congênitas — Peso: 3", p: 3 },
+                    { n: "9. Infecções Congênitas na Gestação — Peso: 3", p: 3 },
+                    { n: "10. Aloimunização Materna e Doença Hemolítica Perinatal — Peso: 3", p: 3 },
                     { n: "11. Alteração do volume de líquido amniótico — Peso: 2", p: 2 },
-                    { n: "12. Modificações Fisiológicas da Gestação — Peso: 3", p: 3 },
-                    { n: "13. Abortamento de Repetição — Peso: 5", p: 5 },
+                    { n: "12. Modificações Fisiológicas da Gestação — Peso: 2", p: 2 },
+                    { n: "13. Abortamento de Repetição — Peso: 3", p: 3 },
                     { n: "14. Síndromes Hipertensivas da Gestação — Peso: 5", p: 5 },
-                    { n: "15. Vitalidade Fetal — Peso: 4", p: 4 },
-                    { n: "16. Assistência ao Parto — Peso: 5", p: 5 },
-                    { n: "17. Parto Vaginal Operatório — Peso: 5", p: 5 },
-                    { n: "18. Mecanismo de Parto e Fases Clínicas do Parto — Peso: 5", p: 5 },
-                    { n: "19. Indução do Parto e Pós-Datismo — Peso: 5", p: 5 },
-                    { n: "20. Restrição de Crescimento Fetal e Óbito Fetal — Peso: 5", p: 5 },
+                    { n: "15. Vitalidade Fetal — Peso: 5", p: 5 },
+                    { n: "16. Assistência ao Parto — Peso: 3", p: 3 },
+                    { n: "17. Parto Vaginal Operatório — Peso: 3", p: 3 },
+                    { n: "18. Mecanismo de Parto e Fases Clínicas do Parto — Peso: 3", p: 3 },
+                    { n: "19. Indução do Parto e Pós-Datismo — Peso: 2", p: 2 },
+                    { n: "20. Restrição de Crescimento Fetal e Óbito Fetal — Peso: 3", p: 3 },
                     { n: "21. Pré-natal — Peso: 5", p: 5 },
                     { n: "22. Ultrassom em Obstetrícia — Peso: 2", p: 2 },
-                    { n: "23. Diabetes Mellitus na Gestação — Peso: 3", p: 3 },
-                    { n: "24. Sangramento da Primeira Metade — Peso: 4", p: 4 },
-                    { n: "25. Sangramento da Segunda Metade — Peso: 2", p: 2 }
+                    { n: "23. Diabetes Mellitus na Gestação — Peso: 5", p: 5 },
+                    { n: "24. Sangramento da Primeira Metade — Peso: 5", p: 5 },
+                    { n: "25. Sangramento da Segunda Metade — Peso: 5", p: 5 }
                 ]
             },
             "Pediatria": {
                 "Pediatria": [
-                    { n: "1. Puberdade — Peso: 3", p: 3 },
+                    { n: "1. Puberdade — Peso: 2", p: 2 },
                     { n: "2. BRUE SMSL — Peso: 1", p: 1 },
                     { n: "3. Infecção de Trato Urinário em Pediatria (ITU) — Peso: 3", p: 3 },
-                    { n: "4. Alergia Alimentar — Peso: 1", p: 1 },
-                    { n: "5. Obesidade Infantil e na Adolescência — Peso: 1", p: 1 },
+                    { n: "4. Alergia Alimentar — Peso: 2", p: 2 },
+                    { n: "5. Obesidade Infantil e na Adolescência — Peso: 2", p: 2 },
                     { n: "6. Outros distúrbios do período neonatal — Peso: 3", p: 3 },
                     { n: "7. Anafilaxia e Urticária — Peso: 1", p: 1 },
-                    { n: "8. Crescimento — Peso: 3", p: 3 },
-                    { n: "9. Constipação Intestinal — Peso: 1", p: 1 },
+                    { n: "8. Crescimento — Peso: 2", p: 2 },
+                    { n: "9. Constipação Intestinal — Peso: 2", p: 2 },
                     { n: "10. Hiperplasia Adrenal Congênita — Peso: 1", p: 1 },
-                    { n: "11. Distúrbios Respiratórios do Período Neonatal — Peso: 2", p: 2 },
-                    { n: "12. Febre Reumática — Peso: 1", p: 1 },
+                    { n: "11. Distúrbios Respiratórios do Período Neonatal — Peso: 1", p: 1 },
+                    { n: "12. Febre Reumática — Peso: 2", p: 2 },
                     { n: "13. Síndromes Genéticas, Erros Inatos do Metabolismo — Peso: 1", p: 1 },
                     { n: "14. Enurese Noturna — Peso: 1", p: 1 },
                     { n: "15. Infecções Congênitas — Peso: 3", p: 3 },
@@ -1778,57 +1779,57 @@
                     { n: "18. Pneumonias na Infância — Peso: 5", p: 5 },
                     { n: "19. Desnutrição na Infância — Peso: 1", p: 1 },
                     { n: "20. Imunizações — Peso: 5", p: 5 },
-                    { n: "21. Asma em Pediatria — Peso: 2", p: 2 },
-                    { n: "22. Sífilis na Gestação e Sífilis Congênitas — Peso: 3", p: 3 },
-                    { n: "23. Cuidados Neonatais — Peso: 3", p: 3 },
-                    { n: "24. Choque em Pediatria — Peso: 3", p: 3 },
-                    { n: "25. Deficiências Vitamínicas e Profilaxias — Peso: 1", p: 1 },
-                    { n: "26. Convulsão Febril — Peso: 1", p: 1 },
-                    { n: "27. Reanimação Neonatal — Peso: 2", p: 2 },
-                    { n: "28. Doença de Kawasaki — Peso: 1", p: 1 },
+                    { n: "21. Asma em Pediatria — Peso: 4", p: 4 },
+                    { n: "22. Sífilis na Gestação e Sífilis Congênitas — Peso: 2", p: 2 },
+                    { n: "23. Cuidados Neonatais — Peso: 2", p: 2 },
+                    { n: "24. Choque em Pediatria — Peso: 2", p: 2 },
+                    { n: "25. Deficiências Vitamínicas e Profilaxias — Peso: 3", p: 3 },
+                    { n: "26. Convulsão Febril — Peso: 3", p: 3 },
+                    { n: "27. Reanimação Neonatal — Peso: 3", p: 3 },
+                    { n: "28. Doença de Kawasaki — Peso: 2", p: 2 },
                     { n: "29. Hipertensão Arterial na Criança e Adolescente — Peso: 1", p: 1 },
-                    { n: "30. Púrpura de Hennoch Schonlein-Vasculite por IGA — Peso: 1", p: 1 },
+                    { n: "30. Púrpura de Hennoch Schonlein-Vasculite por IGA — Peso: 2", p: 2 },
                     { n: "31. Doenças Exantemáticas — Peso: 4", p: 4 },
-                    { n: "32. Cardiopatias Congênitas — Peso: 2", p: 2 },
-                    { n: "33. Doença Celíaca em Pediatria — Peso: 3", p: 3 },
+                    { n: "32. Cardiopatias Congênitas — Peso: 3", p: 3 },
+                    { n: "33. Doença Celíaca em Pediatria — Peso: 2", p: 2 },
                     { n: "34. Icterícia e Sepse Neonatal — Peso: 3", p: 3 },
                     { n: "35. Diagnóstico Nutricional — Peso: 1", p: 1 },
                     { n: "36. Coqueluche — Peso: 1", p: 1 },
                     { n: "37. Cefaleias na Infância — Peso: 1", p: 1 },
                     { n: "38. Febre na Pediatria — Peso: 1", p: 1 },
                     { n: "39. Segurança em Pediatria — Peso: 3", p: 3 },
-                    { n: "40. Desenvolvimento Neuropsicomotor (DNPM) — Peso: 3", p: 3 },
-                    { n: "41. Doença do Refluxo Gastroesofágico em Pediatria — Peso: 3", p: 3 },
+                    { n: "40. Desenvolvimento Neuropsicomotor (DNPM) — Peso: 4", p: 4 },
+                    { n: "41. Doença do Refluxo Gastroesofágico em Pediatria — Peso: 2", p: 2 },
                     { n: "42. Bronquiolite — Peso: 4", p: 4 },
-                    { n: "43. Emergências Pediátricas — Peso: 3", p: 3 },
+                    { n: "43. Emergências Pediátricas — Peso: 5", p: 5 },
                     { n: "44. Tópicos em Pediatria — Peso: 1", p: 1 },
                     { n: "45. Tuberculose na Infância — Peso: 1", p: 1 },
-                    { n: "46. Fibrose Cística — Peso: 4", p: 4 },
+                    { n: "46. Fibrose Cística — Peso: 2", p: 2 },
                     { n: "47. Artrite Idiopática Juvenil (AIJ) — Peso: 1", p: 1 },
                     { n: "48. Diarreia — Peso: 4", p: 4 }
                 ]
             },
             "Preventiva": {
                 "Medicina Preventiva": [
-                    { n: "1. Sistemas de Informação em Saúde — Peso: 4", p: 4 },
+                    { n: "1. Sistemas de Informação em Saúde — Peso: 3", p: 3 },
                     { n: "2. Ética Médica — Peso: 5", p: 5 },
                     { n: "3. Princípios e Diretrizes do SUS — Peso: 4", p: 4 },
-                    { n: "4. Bases de Saúde do Trabalhador e Normas Regulamentadoras — Peso: 3", p: 3 },
-                    { n: "5. Medidas de Saúde Coletiva - Parte I Indicadores de Morbidade — Peso: 3", p: 3 },
-                    { n: "6. Medidas de Saúde Coletiva - Parte II Indicadores de Mortalidade — Peso: 3", p: 3 },
-                    { n: "7. Medidas de Saúde Coletiva - Parte III Indicadores Demográficos... — Peso: 3", p: 3 },
-                    { n: "8. Processos Epidêmicos e Epidemiologia das Doenças Infecciosas — Peso: 1", p: 1 },
+                    { n: "4. Bases de Saúde do Trabalhador e Normas Regulamentadoras — Peso: 5", p: 5 },
+                    { n: "5. Medidas de Saúde Coletiva - Parte I Indicadores de Morbidade — Peso: 2", p: 2 },
+                    { n: "6. Medidas de Saúde Coletiva - Parte II Indicadores de Mortalidade — Peso: 2", p: 2 },
+                    { n: "7. Medidas de Saúde Coletiva - Parte III Indicadores Demográficos... — Peso: 2", p: 2 },
+                    { n: "8. Processos Epidêmicos e Epidemiologia das Doenças Infecciosas — Peso: 4", p: 4 },
                     { n: "9. Processo Saúde-Doença — Peso: 3", p: 3 },
                     { n: "10. Vigilância em Saúde — Peso: 4", p: 4 },
                     { n: "11. Estatística Médica — Peso: 5", p: 5 },
-                    { n: "12. Pesquisa Epidemiológica e Medidas de Associação — Peso: 3", p: 3 },
-                    { n: "13. Testes Diagnósticos — Peso: 2", p: 2 },
-                    { n: "14. História do SUS — Peso: 4", p: 4 },
+                    { n: "12. Pesquisa Epidemiológica e Medidas de Associação — Peso: 4", p: 4 },
+                    { n: "13. Testes Diagnósticos — Peso: 4", p: 4 },
+                    { n: "14. História do SUS — Peso: 2", p: 2 },
                     { n: "15. Processos de Descentralização e Regionalização do SUS — Peso: 1", p: 1 },
                     { n: "16. Atenção Primária à Saúde — Peso: 5", p: 5 },
-                    { n: "17. Políticas de Saúde — Peso: 5", p: 5 },
+                    { n: "17. Políticas de Saúde — Peso: 3", p: 3 },
                     { n: "18. Medicina de Família e Comunidade — Peso: 5", p: 5 },
-                    { n: "19. Saúde do Idoso — Peso: 2", p: 2 }
+                    { n: "19. Saúde do Idoso — Peso: 3", p: 3 }
                 ]
             }
         };
@@ -2345,8 +2346,7 @@
                 <label>Tempo (min):</label><input type="number" id="modTempo" value="15" required>
                 <label>Feitas:</label><input type="number" id="modFeitas" required>
                 <label>Acertos:</label><input type="number" id="modAcertos" required>
-                <label>Dificuldade:</label><select id="modPerc" required><option value="medio">Médio</option><option value="facil">Fácil</option><option value="dificil">Difícil</option></select>
-                <label>Caderno de Erros (Opcional):</label><textarea id="modErro" placeholder="O que pegou?"></textarea>`;
+                <label>Dificuldade:</label><select id="modPerc" required><option value="medio">Médio</option><option value="facil">Fácil</option><option value="dificil">Difícil</option></select>`;
             }
             document.getElementById("modalRevisao").style.display = "flex";
         }
@@ -2372,7 +2372,7 @@
                 let tx = (a / f) * 100;
                 if (tx < 50) item.easeFactor = Math.max(1.3, item.easeFactor - 0.2); else if (tx >= 85) item.easeFactor += 0.15;
                 item.proximaData = calcularNovaData(hoje, item.peso, p, item.fase + 1, item.easeFactor, f, a);
-                item.historico.push({ fase: `${Math.floor(item.fase)}ª Rev`, tempo: tmp, feitas: f, acertos: a, percepcao: p, notaErro: document.getElementById("modErro").value, data: hoje });
+                item.historico.push({ fase: `${Math.floor(item.fase)}ª Rev`, tempo: tmp, feitas: f, acertos: a, percepcao: p, data: hoje });
                 item.fase += 1;
             }
             salvarEAtualizar(); fecharModal('modalRevisao');
@@ -2381,7 +2381,7 @@
         function abrirDetalhes(idx) {
             let item = listaEstudos[idx]; if (!item.easeFactor) item.easeFactor = 2.5;
             let html = `<h3>${item.tema}</h3><p style="font-size:12px;opacity:0.8;">Fator FSRS: <b>${item.easeFactor.toFixed(2)}</b> | Peso: <b>${item.peso}</b></p><ul style="padding-left:15px;">`;
-            item.historico.forEach(h => html += `<li><b>${h.fase}</b> (${h.data}) ${h.feitas ? `- Acertos: ${h.acertos}/${h.feitas}` : ''} ${h.notaErro ? `<br><i>Erro: ${h.notaErro}</i>` : ''}</li>`);
+            item.historico.forEach(h => html += `<li><b>${h.fase}</b> (${h.data}) ${h.feitas ? `- Acertos: ${h.acertos}/${h.feitas}` : ''}</li>`);
             html += `</ul><h4 style="margin-top:20px;">🔮 Previsão (Fim de Ciclo):</h4><ul style="padding-left:15px; opacity:0.8;">`;
             let tF = Math.max(2, Math.floor(item.fase)); let tD = item.proximaData || new Date().toISOString().split('T')[0];
             let last = item.historico.filter(h => h.feitas > 0).pop() || { feitas: 20, acertos: 16, percepcao: 'medio' };
@@ -2860,7 +2860,7 @@
                     } else if(b.tipo === 'teoria') {
                         bg = getMacroColor(b.macro);
                         
-                        // NOVO: Feedback visual se o tema já foi estudado
+                        // Verifica se já foi estudado na lista de estudos concluídos
                         let jaEstudou = listaEstudos.some(e => e.tema === b.tema);
                         
                         if (jaEstudou) {
