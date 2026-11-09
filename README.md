@@ -6,345 +6,246 @@
     <title>MED MENTORY</title>
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <meta name="theme-color" content="#060912">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
     <style>
-        /* ==========================================================
-           MED MENTORY — TEMA HIGH-TECH
-           Escuro por padrão (HUD clínico); o botão "Modo Escuro"
-           alterna para a variante clara "laboratório".
-           ========================================================== */
         :root {
-            --bg-color: #eaf0f8;
-            --card-bg: #ffffff;
-            --text-color: #0f1b33;
-            --header-bg: #ffffff;
-            --border-color: #d3dcec;
-            --primary-color: #3d6bff;
-            --primary-hover: #2f58de;
-            --accent-color: #0b7fa6;
-            --danger-color: #e5384f;
-            --warning-bg: #e08a00;
-            --sobrevivencia-bg: #7c5cf0;
-            --sidebar-bg: #f8faff;
-            --shadow-soft: 0 14px 32px -18px rgba(20, 40, 90, 0.28);
-            --shadow-btn: 0 2px 6px rgba(20, 40, 90, 0.14);
-            --glow: 0 0 0 rgba(0, 0, 0, 0);
-            --edge: rgba(61, 107, 255, 0.35);
-            --grid-dot: rgba(15, 27, 51, 0.07);
-            --aura-1: rgba(61, 107, 255, 0.10);
-            --aura-2: rgba(11, 127, 166, 0.08);
-            --muted: rgba(15, 27, 51, 0.62);
-            --font-display: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
-            --font-body: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
-            --font-mono: 'JetBrains Mono', ui-monospace, Consolas, monospace;
+            --bg-color: #f4f7f6; 
+            --card-bg: #ffffff; 
+            --text-color: #2c3e50;
+            --header-bg: #ffffff; 
+            --border-color: #e2e8f0;
+            --primary-color: #2ecc71; 
+            --primary-hover: #27ae60;
+            --accent-color: #3498db; 
+            --danger-color: #e74c3c;
+            --warning-bg: #f39c12; 
+            --sobrevivencia-bg: #8e44ad;
+            --sidebar-bg: #ffffff;
+            --shadow-soft: 0 10px 30px -10px rgba(0,0,0,0.08);
+            --shadow-btn: 0 4px 6px rgba(0,0,0,0.06);
         }
 
         .dark-mode {
-            --bg-color: #060912;
-            --card-bg: #0d1424;
-            --text-color: #e6edf8;
-            --header-bg: #0d1424;
-            --border-color: rgba(130, 165, 255, 0.16);
-            --primary-color: #4170ff;
-            --primary-hover: #6a92ff;
-            --accent-color: #22d3ee;
-            --danger-color: #ff4d6a;
-            --warning-bg: #ffb454;
-            --sobrevivencia-bg: #9b7bff;
-            --sidebar-bg: #080d19;
-            --shadow-soft: 0 20px 40px -26px rgba(0, 0, 0, 0.9);
-            --shadow-btn: 0 2px 8px rgba(0, 0, 0, 0.45);
-            --glow: 0 0 22px rgba(34, 211, 238, 0.16);
-            --edge: rgba(34, 211, 238, 0.45);
-            --grid-dot: rgba(160, 190, 255, 0.07);
-            --aura-1: rgba(65, 112, 255, 0.16);
-            --aura-2: rgba(34, 211, 238, 0.08);
-            --muted: rgba(230, 237, 248, 0.62);
-            color-scheme: dark;
+            --bg-color: #121418; 
+            --card-bg: #1e2228; 
+            --text-color: #e2e8f0;
+            --header-bg: #1e2228; 
+            --border-color: #2d3748;
+            --primary-color: #2ecc71; 
+            --sidebar-bg: #1a1d24;
+            --shadow-soft: 0 10px 30px -10px rgba(0,0,0,0.4);
+            --shadow-btn: 0 4px 6px rgba(0,0,0,0.2);
         }
 
-        * { scrollbar-width: thin; scrollbar-color: var(--border-color) transparent; }
-
-        body {
-            font-family: var(--font-body);
-            margin: 0; padding: 0;
-            background:
-                radial-gradient(900px 520px at 88% -8%, var(--aura-1), transparent 62%),
-                radial-gradient(700px 420px at -4% 104%, var(--aura-2), transparent 60%),
-                var(--bg-color);
-            color: var(--text-color);
-            transition: background 0.3s, color 0.3s;
-            height: 100vh;
-            overflow: hidden;
-            -webkit-font-smoothing: antialiased;
+        body { 
+            font-family: 'Segoe UI', system-ui, sans-serif; 
+            margin: 0; padding: 0; 
+            background-color: var(--bg-color); 
+            color: var(--text-color); 
+            transition: background 0.3s; 
+            height: 100vh; 
+            overflow: hidden; 
         }
 
-        h1, h2, h3, h4, .stat-box h3, .sidebar-logo h1 { font-family: var(--font-display); letter-spacing: -0.01em; }
-
-        /* ESTRUTURA GLOBAL */
+        /* ESTRUTURA GLOBAL (SIDEBAR + MAIN) */
         .app-container { display: flex; height: 100vh; width: 100%; position: relative; }
 
-        .sidebar {
-            width: 272px;
-            background: var(--sidebar-bg);
-            border-right: 1px solid var(--border-color);
-            display: flex; flex-direction: column;
-            padding: 24px 16px;
-            box-sizing: border-box;
-            z-index: 100;
+        .sidebar { 
+            width: 280px; 
+            background: var(--sidebar-bg); 
+            border-right: 1px solid var(--border-color); 
+            display: flex; flex-direction: column; 
+            padding: 25px 20px; 
+            box-sizing: border-box; 
+            z-index: 100; 
+            box-shadow: 2px 0 15px rgba(0,0,0,0.02); 
         }
-        .sidebar-logo { margin-bottom: 28px; padding: 0 10px; }
-        .sidebar-logo h1 {
-            font-size: 19px; margin: 0; font-weight: 700; display: flex; align-items: center; gap: 8px;
-            background: linear-gradient(100deg, var(--text-color) 30%, var(--accent-color));
-            -webkit-background-clip: text; background-clip: text; color: transparent;
-        }
-        .sidebar-logo p { margin: 6px 0 0; font-size: 11.5px; color: var(--muted); line-height: 1.4; }
+        
+        .sidebar-logo { margin-bottom: 30px; padding: 0 10px; }
+        .sidebar-logo h1 { font-size: 20px; margin: 0; color: var(--accent-color); font-weight: 800; display:flex; align-items:center; gap:8px;}
+        .sidebar-logo p { margin: 5px 0 0; font-size: 11px; opacity: 0.6; line-height: 1.3;}
 
-        .sidebar-nav { display: flex; flex-direction: column; gap: 4px; flex: 1; overflow-y: auto; padding-right: 4px; }
-        .sidebar-btn {
-            background: transparent; color: var(--muted);
-            border: 1px solid transparent; padding: 11px 14px; border-radius: var(--r-md);
-            text-align: left; font-size: 13.5px; font-weight: 500; font-family: inherit;
-            cursor: pointer; transition: background 0.2s, color 0.2s;
-            width: 100%; margin: 0; box-shadow: none;
+        .sidebar-nav { display: flex; flex-direction: column; gap: 8px; flex: 1; overflow-y:auto; padding-right:5px;}
+        .sidebar-nav::-webkit-scrollbar { width: 4px; }
+        .sidebar-nav::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
+        
+        .sidebar-btn { 
+            background: transparent; color: var(--text-color); 
+            border: none; padding: 12px 15px; border-radius: 10px; 
+            text-align: left; font-size: 14px; font-weight: 600; 
+            cursor: pointer; transition: 0.2s; 
         }
-        .sidebar-btn:hover { background: color-mix(in srgb, var(--primary-color) 9%, transparent); color: var(--text-color); transform: none; filter: none; box-shadow: none; }
-        .sidebar-btn.active {
-            background: color-mix(in srgb, var(--primary-color) 16%, transparent);
-            color: var(--text-color); font-weight: 600;
-            border-color: color-mix(in srgb, var(--primary-color) 38%, transparent);
-            box-shadow: inset 3px 0 0 var(--accent-color), var(--glow);
+        .sidebar-btn:hover { background: var(--bg-color); }
+        .sidebar-btn.active { 
+            background: var(--primary-color); color: white; 
+            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3); 
         }
 
-        .main-content {
-            flex: 1; display: flex; flex-direction: column;
-            height: 100vh; overflow-y: auto; padding: 24px 40px 40px;
-            box-sizing: border-box; scroll-behavior: smooth;
-            background-image: radial-gradient(var(--grid-dot) 1px, transparent 1px);
-            background-size: 26px 26px;
-            background-attachment: local;
+        .main-content { 
+            flex: 1; display: flex; flex-direction: column; 
+            height: 100vh; overflow-y: auto; padding: 25px 40px; 
+            box-sizing: border-box; scroll-behavior: smooth; 
         }
 
-        header {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 24px; padding-bottom: 16px;
-            border-bottom: 1px solid var(--border-color);
+        /* CABEÇALHO DO MAIN */
+        header { 
+            display: flex; justify-content: space-between; align-items: center; 
+            margin-bottom: 25px; padding-bottom: 15px; 
+            border-bottom: 1px solid var(--border-color); 
         }
+        
         #btnMenuMobile { display: none; }
 
-        /* MODO FOCO, LOGIN E ALERTAS */
-        .focus-overlay { display: none; position: fixed; inset: 0; background: radial-gradient(800px 500px at 50% 30%, var(--aura-1), transparent 70%), var(--bg-color); z-index: 99999; flex-direction: column; justify-content: center; align-items: center; gap: 20px; }
+        /* MODO FOCO E ALERTAS */
+        .focus-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-color); z-index: 99999; flex-direction: column; justify-content: center; align-items: center; gap: 20px; }
         body.focus-mode .focus-overlay { display: flex; }
         body.focus-mode .app-container { display: none !important; }
-        .focus-dashboard { display: flex; gap: 28px; background: var(--card-bg); padding: 16px 32px; border-radius: var(--r-lg); border: 1px solid var(--border-color); text-align: center; box-shadow: var(--shadow-soft), var(--glow); }
+        .focus-dashboard { display: flex; gap: 20px; background: var(--card-bg); padding: 15px 30px; border-radius: 12px; border: 1px solid var(--border-color); text-align: center; box-shadow: var(--shadow-soft); }
 
-        #loginOverlay { display: flex; position: fixed; inset: 0; background: radial-gradient(700px 480px at 50% 35%, rgba(65,112,255,0.22), rgba(3,6,14,0.94) 70%); z-index: 100000; flex-direction: column; justify-content: center; align-items: center; backdrop-filter: blur(6px); }
-        .login-box { background: var(--card-bg); color: var(--text-color); padding: 40px; border-radius: var(--r-xl); width: 90%; max-width: 420px; text-align: center; border: 1px solid var(--border-color); box-shadow: 0 30px 70px rgba(0,0,0,0.55), var(--glow); }
+        #loginOverlay { display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 100000; flex-direction: column; justify-content: center; align-items: center; }
+        .login-box { background: var(--card-bg); padding: 40px; border-radius: 16px; width: 90%; max-width: 420px; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
         .login-box h2 { color: var(--accent-color); margin-top: 0; }
+        
+        .alert-bar { background-color: var(--danger-color); color: white; padding: 12px; text-align: center; font-weight: bold; border-radius: 8px; margin-bottom: 20px; box-shadow: var(--shadow-btn);}
 
-        .alert-bar { background-color: var(--danger-color); color: #fff; padding: 12px; text-align: center; font-weight: 600; border-radius: var(--r-md); margin-bottom: 20px; box-shadow: var(--shadow-btn); }
-
-        /* PAINÉIS */
-        .card, .stat-box, .modal-content, .login-box { position: relative; }
-        .card {
-            background: var(--card-bg); padding: 24px;
-            border-radius: var(--r-lg); box-shadow: var(--shadow-soft);
-            margin-bottom: 24px; border: 1px solid var(--border-color);
+        /* CARDS (SOFT UI) */
+        .card { 
+            background: var(--card-bg); padding: 25px; 
+            border-radius: 16px; box-shadow: var(--shadow-soft); 
+            margin-bottom: 25px; border: 1px solid var(--border-color); 
         }
-        .card::before, .stat-box::before {
-            content: ""; position: absolute; inset: 0 14px auto 14px; height: 1px;
-            background: linear-gradient(90deg, transparent, var(--edge), transparent);
-            pointer-events: none;
-        }
-        h2 { font-size: 17px; margin-top: 0; color: var(--text-color); font-weight: 600; }
+        h2 { font-size: 18px; margin-top:0; color: var(--text-color); }
         h3, h4 { color: var(--text-color); }
-
-        /* CAMPOS E BOTÕES */
-        label { font-weight: 500; display: block; margin-top: 10px; font-size: 12.5px; color: var(--muted); }
-        select, input, textarea {
-            width: 100%; padding: 10px 12px; margin-top: 6px; margin-bottom: 12px;
-            border: 1px solid var(--border-color); border-radius: var(--r-md);
-            background: var(--bg-color); color: var(--text-color);
+        
+        /* INPUTS E BOTOES */
+        label { font-weight: 600; display: block; margin-top: 10px; font-size: 13px; color: var(--text-color); opacity: 0.9;}
+        select, input, textarea { 
+            width: 100%; padding: 10px 12px; margin-top: 6px; margin-bottom: 12px; 
+            border: 1px solid var(--border-color); border-radius: 8px; 
+            background: var(--bg-color); color: var(--text-color); 
             box-sizing: border-box; font-family: inherit; font-size: 14px;
-            transition: border-color 0.2s, box-shadow 0.2s;
+            transition: 0.2s;
         }
-        select:focus, input:focus, textarea:focus { outline: none; border-color: var(--accent-color); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-color) 22%, transparent); }
-
-        button {
-            background: linear-gradient(135deg, var(--primary-color), color-mix(in srgb, var(--primary-color) 62%, var(--accent-color)));
-            color: #fff; padding: 12px 18px; border: none; border-radius: var(--r-md);
-            cursor: pointer; font-size: 14px; font-family: inherit; width: 100%; margin-top: 10px;
-            font-weight: 600; transition: filter 0.2s, box-shadow 0.2s, transform 0.1s; box-shadow: var(--shadow-btn);
+        select:focus, input:focus { outline: none; border-color: var(--accent-color); box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.15); }
+        
+        button { 
+            background-color: var(--primary-color); color: white; 
+            padding: 12px 18px; border: none; border-radius: 8px; 
+            cursor: pointer; font-size: 14px; width: 100%; margin-top: 10px; 
+            font-weight: bold; transition: 0.2s; box-shadow: var(--shadow-btn);
         }
-        button:hover { filter: brightness(1.12); box-shadow: var(--shadow-btn), var(--glow); }
-        button:active { transform: scale(0.98); }
-        button:focus-visible, a:focus-visible, .accordion-header:focus-visible { outline: 2px solid var(--accent-color); outline-offset: 2px; }
-
-        .btn-acao { background: var(--primary-color); width: auto; padding: 8px 14px; font-size: 12px; margin: 2px; }
-        .btn-excluir { background: #d92d4b; }
-        .btn-edit { background: #f0a020; color: #1a1200; }
+        button:hover { transform: translateY(-1px); box-shadow: 0 6px 12px rgba(0,0,0,0.1); filter: brightness(1.05); }
+        
+        .btn-acao { background-color: var(--accent-color); width: auto; padding: 8px 14px; font-size: 12px; margin: 2px; }
+        .btn-excluir { background-color: var(--danger-color); }
+        .btn-edit { background-color: #f39c12; }
 
         .sub-nav-abas { display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; }
-        .sub-aba-btn {
-            background: var(--bg-color); color: var(--text-color); border: 1px solid var(--border-color);
-            padding: 8px 14px; cursor: pointer; border-radius: var(--r-sm); font-weight: 500; width: auto; font-size: 13px; margin: 0; box-shadow: none;
+        .sub-aba-btn { 
+            background: var(--bg-color); color: var(--text-color); border: 1px solid var(--border-color); 
+            padding: 8px 14px; cursor: pointer; border-radius: 6px; font-weight: 600; width: auto; font-size: 13px; margin:0; box-shadow:none;
         }
-        .sub-aba-btn:hover { border-color: var(--accent-color); filter: none; box-shadow: none; }
-        .sub-aba-btn.active {
-            background: color-mix(in srgb, var(--primary-color) 20%, var(--bg-color));
-            color: var(--text-color); border-color: var(--primary-color); box-shadow: var(--glow);
-        }
+        .sub-aba-btn.active { background: var(--accent-color); color: white; border-color:var(--accent-color); box-shadow: var(--shadow-btn);}
 
         /* TABELAS */
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; font-variant-numeric: tabular-nums; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
         th, td { border-bottom: 1px solid var(--border-color); padding: 12px 10px; text-align: left; }
-        th { background: transparent; color: var(--muted); font-weight: 600; font-size: 12px; border-top: 1px solid var(--border-color); }
-        tr:hover { background-color: color-mix(in srgb, var(--accent-color) 6%, transparent); }
-        tr.atrasado { background: linear-gradient(90deg, color-mix(in srgb, var(--danger-color) 14%, transparent), transparent 60%); box-shadow: inset 3px 0 0 var(--danger-color); }
-
-        .badge { padding: 4px 9px; border-radius: var(--r-pill); color: #fff; text-shadow: 0 1px 1px rgba(0,0,0,0.35); font-weight: 600; font-size: 11px; display: inline-block; }
+        th { background-color: var(--bg-color); color: var(--text-color); font-weight: bold; border-top: 1px solid var(--border-color); }
+        tr:hover { background-color: rgba(0,0,0,0.01); }
+        tr.atrasado { background-color: rgba(231, 76, 60, 0.05); border-left: 3px solid var(--danger-color); }
+        
+        .badge { padding: 4px 8px; border-radius: 6px; color: white; font-weight: bold; font-size: 11px; display: inline-block; }
         .badge-macro { margin-bottom: 5px; }
 
-        /* DASHBOARD */
-        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px; }
-        .stat-box { background: var(--card-bg); padding: 20px; border-radius: var(--r-lg); border: 1px solid var(--border-color); text-align: center; box-shadow: var(--shadow-soft); }
-        .stat-box h3 { margin: 0; font-size: 32px; font-weight: 700; color: var(--accent-color); font-variant-numeric: tabular-nums; text-shadow: var(--glow); }
-        .stat-box p { margin: 6px 0 0; font-size: 12.5px; color: var(--muted); font-weight: 500; }
+        /* DASHBOARD GRID */
+        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 25px; }
+        .stat-box { background: var(--card-bg); padding: 20px; border-radius: 12px; border: 1px solid var(--border-color); text-align: center; box-shadow: var(--shadow-soft);}
+        .stat-box h3 { margin: 0; font-size: 26px; color: var(--accent-color); }
+        .stat-box p { margin: 5px 0 0; font-size: 13px; opacity: 0.7; font-weight:600;}
 
-        /* POMODORO, SEMANA E KANBAN */
-        .pomodoro-box { display: flex; align-items: center; justify-content: space-between; background: var(--card-bg); padding: 14px 24px; border-radius: var(--r-lg); border: 1px solid var(--border-color); margin-bottom: 24px; flex-wrap: wrap; gap: 12px; box-shadow: var(--shadow-soft); }
-        .timer-display { font-size: 28px; font-weight: 500; font-family: var(--font-mono); color: var(--accent-color); text-shadow: var(--glow); letter-spacing: 0.02em; }
-        body.modo-sobrevivencia .pomodoro-box { border: 1px solid var(--sobrevivencia-bg); box-shadow: 0 0 22px color-mix(in srgb, var(--sobrevivencia-bg) 30%, transparent); }
+        /* POMODORO & KANBAN */
+        .pomodoro-box { display: flex; align-items: center; justify-content: space-between; background: var(--bg-color); padding: 15px 25px; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 25px; flex-wrap: wrap; gap: 10px; }
+        .timer-display { font-size: 26px; font-weight: bold; font-family: monospace; color: var(--accent-color); }
+        body.modo-sobrevivencia .pomodoro-box { border: 2px solid var(--sobrevivencia-bg); box-shadow: 0 0 15px rgba(142, 68, 173, 0.2); }
 
         .semana-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-top: 15px; }
-        .dia-col { background: var(--bg-color); border: 1px solid var(--border-color); border-radius: var(--r-md); padding: 8px; text-align: center; }
-        .dia-col h4 { font-size: 12px; margin: 0 0 8px 0; background: var(--card-bg); color: var(--text-color); padding: 6px; border-radius: var(--r-sm); border: 1px solid var(--border-color); }
-        .sel-turno { font-size: 11px; padding: 4px; width: 100%; border-radius: var(--r-sm); border: 1px solid var(--border-color); margin-bottom: 6px; }
+        .dia-col { background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 8px; text-align: center; }
+        .dia-col h4 { font-size: 12px; margin: 0 0 8px 0; background: var(--card-bg); color: var(--text-color); padding: 6px; border-radius: 6px; border: 1px solid var(--border-color);}
+        .sel-turno { font-size: 11px; padding: 4px; width: 100%; border-radius: 6px; border: 1px solid var(--border-color); margin-bottom: 6px; }
 
         /* MAPA DO RODÍZIO */
-        .accordion-header { background: var(--bg-color); color: var(--text-color); padding: 12px 18px; cursor: pointer; border-radius: var(--r-md); margin-top: 10px; display: flex; justify-content: space-between; align-items: center; font-weight: 600; border: 1px solid var(--border-color); transition: border-color 0.2s; }
+        .accordion-header { background: var(--bg-color); color: var(--text-color); padding: 12px 18px; cursor: pointer; border-radius: 8px; margin-top: 10px; display: flex; justify-content: space-between; align-items: center; font-weight: bold; font-size: 14px; border: 1px solid var(--border-color); transition: 0.2s; }
         .accordion-header:hover { border-color: var(--accent-color); }
-        .accordion-content { display: none; padding: 15px; border: 1px solid var(--border-color); border-top: none; border-radius: 0 0 10px 10px; background: var(--card-bg); overflow-x: auto; margin-top: -4px; }
+        .accordion-content { display: none; padding: 15px; border: 1px solid var(--border-color); border-top: none; border-radius: 0 0 8px 8px; background: var(--card-bg); overflow-x: auto; margin-top: -4px;}
         .accordion-content.active { display: block; }
-        .progress-bar-bg { width: 100%; background: color-mix(in srgb, var(--text-color) 10%, transparent); border-radius: var(--r-pill); height: 8px; overflow: hidden; margin-top: 8px; }
-        .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--primary-color), var(--accent-color)); border-radius: var(--r-pill); box-shadow: var(--glow); transition: width 0.4s ease; }
+        .progress-bar-bg { width: 100%; background: var(--border-color); border-radius: 6px; height: 12px; overflow: hidden; margin-top: 8px; }
+        .progress-bar-fill { height: 100%; background: var(--primary-color); transition: width 0.4s ease; }
 
         /* MODAL */
-        .modal { display: none; position: fixed; inset: 0; background: rgba(3, 6, 14, 0.72); justify-content: center; align-items: center; z-index: 10000; backdrop-filter: blur(8px); }
-        .modal-content { background: var(--card-bg); color: var(--text-color); padding: 30px; border-radius: var(--r-xl); width: 90%; max-width: 550px; max-height: 85vh; overflow-y: auto; border: 1px solid var(--border-color); box-shadow: 0 30px 70px rgba(0,0,0,0.5), var(--glow); }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); justify-content: center; align-items: center; z-index: 10000; backdrop-filter: blur(3px); }
+        .modal-content { background: var(--card-bg); padding: 30px; border-radius: 16px; width: 90%; max-width: 550px; max-height: 85vh; overflow-y: auto; box-shadow: 0 20px 50px rgba(0,0,0,0.3); }
         .grafico-container { position: relative; height: 300px; width: 100%; }
-
+        
         .row-form { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; }
         .col-form { flex: 1; min-width: 150px; }
 
-        /* ABAS */
+        /* Abas Content */
         .tab-content { display: none; animation: fadeIn 0.3s ease; }
         .tab-content.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* MANUAL DE BORDO */
+        /* ESTILOS DO MANUAL DE BORDO */
         .manual-section { margin-bottom: 30px; }
-        .manual-section h3 { color: var(--accent-color); border-bottom: 1px solid var(--border-color); padding-bottom: 8px; margin-bottom: 15px; font-size: 18px; }
-        .manual-box { background: var(--bg-color); border-left: 3px solid var(--accent-color); padding: 15px 20px; border-radius: 0 10px 10px 0; margin-bottom: 15px; font-size: 14px; line-height: 1.65; }
-        .manual-list li { margin-bottom: 10px; font-size: 14px; line-height: 1.65; }
+        .manual-section h3 { color: var(--accent-color); border-bottom: 2px solid var(--border-color); padding-bottom: 8px; margin-bottom: 15px; font-size:18px;}
+        .manual-box { background: var(--bg-color); border-left: 4px solid var(--primary-color); padding: 15px 20px; border-radius: 0 8px 8px 0; margin-bottom: 15px; font-size: 14px; line-height: 1.6;}
+        .manual-list li { margin-bottom: 10px; font-size: 14px; line-height: 1.6; }
         .manual-list b { color: var(--text-color); }
 
         /* ========================================================
-           RESPONSIVIDADE MOBILE
+           RESPONSIVIDADE MOBILE / CELULAR
            ======================================================== */
-        .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(3, 6, 14, 0.62); z-index: 90; backdrop-filter: blur(3px); }
+        .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 90; backdrop-filter: blur(2px); }
         .sidebar-overlay.active { display: block; }
-
+        
         @media (max-width: 850px) {
-            .sidebar { position: fixed; top: 0; left: -320px; height: 100vh; transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 8px 0 30px rgba(0,0,0,0.35); }
-            .sidebar.active { left: 0; }
-            .main-content { padding: 15px; }
-            #btnMenuMobile {
-                display: flex !important; align-items: center; justify-content: center;
-                width: 45px; height: 45px; border-radius: var(--r-md);
-                border: 1px solid var(--border-color); background: var(--card-bg);
-                color: var(--text-color); font-size: 22px; cursor: pointer;
-                padding: 0; margin-right: 12px; margin-top: 0; box-shadow: var(--shadow-btn);
+            .sidebar { 
+                position: fixed; top: 0; left: -320px; height: 100vh; 
+                transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+                box-shadow: 5px 0 25px rgba(0,0,0,0.2); 
             }
+            .sidebar.active { left: 0; }
+            
+            .main-content { padding: 15px; }
+            
+            /* Botão Menu Hambúrguer no Header */
+            #btnMenuMobile { 
+                display: flex !important; align-items: center; justify-content: center; 
+                width: 45px; height: 45px; border-radius: 10px; 
+                border: 1px solid var(--border-color); background: var(--card-bg); 
+                color: var(--text-color); font-size: 22px; cursor: pointer; 
+                padding: 0; margin-right: 12px; margin-top:0; box-shadow: var(--shadow-btn); 
+            }
+            
             header { flex-direction: column; align-items: flex-start; gap: 15px; padding-bottom: 15px; }
             .header-top-row { display: flex; align-items: center; width: 100%; }
             .header-actions { width: 100%; justify-content: space-between; overflow-x: auto; padding-bottom: 5px; }
             #headerAbaTitulo { font-size: 18px !important; }
+            
             .dashboard-grid { grid-template-columns: 1fr 1fr; }
             .pomodoro-box { flex-direction: column; text-align: center; }
+            
+            /* Empilha o Kanban em coluna para leitura perfeita no celular */
             .semana-grid { grid-template-columns: 1fr; }
             .dia-col { margin-bottom: 10px; }
         }
+
         @media (max-width: 480px) {
             .dashboard-grid { grid-template-columns: 1fr; }
             .row-form { flex-direction: column; align-items: stretch; }
         }
 
-        @media (prefers-reduced-motion: reduce) {
-            *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
-        }
-    
-        /* ---------- TOKENS ---------- */
-        :root { --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:24px; --sp-6:32px; --r-sm:8px; --r-md:10px; --r-lg:14px; --r-xl:18px; --r-pill:999px; --fs-xs:12px; --fs-sm:13px; --fs-md:14px; --fs-lg:17px; --fs-xl:22px; --ok-color:#22c55e; }
-
-        /* ---------- ÍCONES SVG ---------- */
-        .ic { width:1.2em; height:1.2em; vertical-align:-0.22em; margin-right:.4em; flex:none; }
-        .ic:only-child { margin:0; }
-        .ic-dot-red { color:var(--danger-color); } .ic-dot-green { color:var(--ok-color); } .ic-dot-gray { color:var(--muted); }
-        .sidebar-logo h1 .ic { color:var(--accent-color); }
-        .empty-ico .ic { width:1em; height:1em; margin:0; }
-
-        /* ---------- PAINEL "REVISÕES DE HOJE" ---------- */
-        .hero-review { border-color:color-mix(in srgb, var(--accent-color) 35%, var(--border-color)); box-shadow:var(--shadow-soft), var(--glow); }
-        .hero-head { display:flex; justify-content:space-between; align-items:center; gap:var(--sp-4); flex-wrap:wrap; margin-bottom:var(--sp-4); }
-        .hero-head h2 { font-size:var(--fs-xl); margin:0 0 var(--sp-1); }
-        .btn-hero { width:auto; margin:0; padding:14px 28px; font-size:15px; border-radius:var(--r-lg); }
-        .btn-hero:disabled { opacity:.45; cursor:not-allowed; filter:none; box-shadow:none; }
-        .rev-list, .alert-list { display:flex; flex-direction:column; gap:var(--sp-2); }
-        .rev-item { display:flex; justify-content:space-between; align-items:center; gap:var(--sp-3); padding:var(--sp-3) var(--sp-4); background:var(--bg-color); border:1px solid var(--border-color); border-left:3px solid var(--macro, var(--accent-color)); border-radius:var(--r-md); cursor:pointer; transition:border-color .2s; }
-        .rev-item:hover { border-color:var(--accent-color); border-left-color:var(--macro, var(--accent-color)); }
-        .rev-item strong { display:block; font-size:var(--fs-md); }
-        .rev-item small, .steps small, .alert-item small { display:block; color:var(--muted); font-size:var(--fs-xs); margin-top:2px; }
-        .tag { padding:3px 10px; border-radius:var(--r-pill); font-size:var(--fs-xs); font-weight:600; white-space:nowrap; }
-        .tag-danger { background:color-mix(in srgb, var(--danger-color) 18%, transparent); color:var(--danger-color); }
-        .tag-ok { background:color-mix(in srgb, var(--accent-color) 16%, transparent); color:var(--accent-color); }
-        .peso-tag { font-size:11px; font-weight:700; padding:2px 7px; border-radius:var(--r-pill); background:color-mix(in srgb, var(--text-color) 10%, transparent); color:var(--muted); margin-left:6px; white-space:nowrap; }
-        .peso-tag.p4, .peso-tag.p5 { background:color-mix(in srgb, var(--warning-bg) 22%, transparent); color:var(--warning-bg); }
-
-        /* ---------- ONBOARDING E ALERTAS ---------- */
-        .steps { list-style:none; padding:0; margin:var(--sp-4) 0 0; display:flex; flex-direction:column; gap:var(--sp-2); }
-        .steps li { display:flex; align-items:center; gap:var(--sp-3); padding:var(--sp-3); background:var(--bg-color); border:1px solid var(--border-color); border-radius:var(--r-md); }
-        .steps li div { flex:1; } .steps li.done { opacity:.6; }
-        .step-n { width:28px; height:28px; border-radius:50%; display:grid; place-items:center; font-weight:700; font-size:var(--fs-sm); background:color-mix(in srgb, var(--accent-color) 18%, transparent); color:var(--accent-color); flex:none; }
-        .step-n .ic { margin:0; }
-        .alert-item { display:flex; align-items:center; gap:var(--sp-3); padding:var(--sp-3) var(--sp-4); border-radius:var(--r-md); border:1px solid var(--border-color); background:var(--bg-color); }
-        .alert-item div { flex:1; }
-        .alert-item.warn { border-left:3px solid var(--warning-bg); } .alert-item.warn .alert-ico { color:var(--warning-bg); }
-        .alert-item.danger { border-left:3px solid var(--danger-color); } .alert-item.danger .alert-ico { color:var(--danger-color); }
-
-        /* ---------- HEATMAP ---------- */
-        .heatmap { display:grid; grid-auto-flow:column; grid-template-rows:repeat(7, 12px); grid-auto-columns:12px; gap:3px; overflow-x:auto; padding:var(--sp-2) 0; }
-        .hm { display:block; width:12px; height:12px; border-radius:3px; background:color-mix(in srgb, var(--text-color) 8%, transparent); }
-        .hm.l1 { background:color-mix(in srgb, var(--accent-color) 28%, transparent); } .hm.l2 { background:color-mix(in srgb, var(--accent-color) 50%, transparent); }
-        .hm.l3 { background:color-mix(in srgb, var(--accent-color) 75%, transparent); } .hm.l4 { background:var(--accent-color); }
-        .heat-legend { display:flex; align-items:center; gap:4px; font-size:var(--fs-xs); color:var(--muted); margin-top:var(--sp-2); }
-
-        /* ---------- UTILITÁRIOS (substituem estilos inline repetidos) ---------- */
-        .ta-c { text-align:center; } .flex-1 { flex:1; } .m-0 { margin:0; } .mt-0 { margin-top:0; } .mt-20 { margin-top:20px; }
-        .hint { font-size:var(--fs-sm); color:var(--muted); }
-        .fx-120 { flex:1; min-width:120px; }
-        .empty-state { text-align:center; padding:var(--sp-5) var(--sp-4); color:var(--muted); }
-        .empty-state b { color:var(--text-color); }
-        .empty-ico { font-size:30px; margin-bottom:10px; color:var(--accent-color); }
-        .list-tight { padding-left:15px; margin:0; }
-        .btn-neutral { background:var(--border-color); color:var(--text-color); }
-</style>
+    </style>
 </head>
-<body class="dark-mode">
+<body>
 
     <!-- OVERLAY ESCURO PARA O MENU MOBILE -->
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
@@ -417,13 +318,13 @@
             <!-- CABEÇALHO DO MAIN (COM BOTÃO MOBILE) -->
             <header>
                 <div class="header-top-row">
-                    <button id="btnMenuMobile" aria-label="Abrir menu" onclick="toggleSidebar()">☰</button>
+                    <button id="btnMenuMobile" onclick="toggleSidebar()">☰</button>
                     <h2 id="headerAbaTitulo" style="margin:0; font-size:22px; font-weight:700;">🏠 Dashboard Inicial</h2>
                 </div>
                 <div class="header-actions" style="display: flex; gap: 8px; align-items:center;">
                     <span id="userInfoHeader" style="font-size:12px; margin-right:15px; font-weight:bold; background:var(--bg-color); padding:6px 12px; border-radius:20px;">Offline (Local)</span>
-                    <button class="sub-aba-btn m-0" onclick="toggleSobrevivencia()" id="btnSobrevivencia">🛡️ Sobrevivência</button>
-                    <button class="sub-aba-btn active m-0" onclick="toggleFocusMode()">🎯 Foco</button>
+                    <button class="sub-aba-btn" onclick="toggleSobrevivencia()" id="btnSobrevivencia" style="margin:0;">🛡️ Sobrevivência</button>
+                    <button class="sub-aba-btn active" onclick="toggleFocusMode()" style="margin:0;">🎯 Foco</button>
                     <button class="sub-aba-btn" onclick="fazerLogout()" style="background:var(--danger-color); color:white; border-color:var(--danger-color); display:none; margin:0;" id="btnLogout">Sair</button>
                 </div>
             </header>
@@ -434,16 +335,15 @@
 
             <!-- ABA 1: PÁGINA INICIAL -->
             <div id="tab-inicio" class="tab-content active">
-
-                <section class="card onboarding" id="onboardingCard" style="display:none;"></section>
-
-                <section class="card hero-review" id="heroRevisoes">
-                    <div class="hero-head">
-                        <div><h2>Revisões de hoje</h2><p class="hint m-0" id="heroResumo">Carregando...</p></div>
-                        <button class="btn-hero" id="btnComecarRevisao" onclick="comecarRevisao()">▶️ Começar revisão</button>
+                <div class="pomodoro-box">
+                    <div style="font-size:14px;">🔥 <strong>Sequência:</strong> <span id="streakCount">0</span> dias | 🎯 <strong>Metas FSRS:</strong> <span id="metaStatus">0/0</span> concluídas.</div>
+                    <div class="timer-display" id="timerDisplay">25:00</div>
+                    <div style="display: flex; gap: 8px; width: auto;">
+                        <button class="btn-acao" style="padding:10px 15px; font-size:14px; margin:0; border-radius:8px;" onclick="iniciarPomodoro()">▶️</button>
+                        <button class="btn-acao" style="padding:10px 15px; font-size:14px; margin:0; border-radius:8px; background:var(--text-color);" onclick="pausarPomodoro()">⏸️</button>
+                        <button class="btn-acao" style="padding:10px 15px; font-size:14px; margin:0; border-radius:8px; background:var(--border-color); color:var(--text-color);" onclick="resetarPomodoro()">🔄</button>
                     </div>
-                    <div id="listaRevisoesHoje" class="rev-list"></div>
-                </section>
+                </div>
 
                 <div class="dashboard-grid">
                     <div class="stat-box"><h3 id="statHoje">0</h3><p>Para Hoje</p></div>
@@ -452,19 +352,6 @@
                     <div class="stat-box">
                         <h3 id="statCarga3Dias">0</h3><p>Carga Próx. 3 dias</p>
                         <div id="burnoutAlert" style="display:none; color:var(--danger-color); font-weight:bold; font-size:12px; margin-top:8px;">⚠️ Risco de Saturação!</div>
-                    </div>
-                </div>
-
-                <section class="card" id="alertasCard"><h2>Alertas inteligentes</h2><div id="alertasInteligentes" class="alert-list"></div></section>
-
-                
-                <div class="pomodoro-box">
-                    <div style="font-size:14px;">🔥 <strong>Sequência:</strong> <span id="streakCount">0</span> dias | 🎯 <strong>Metas FSRS:</strong> <span id="metaStatus">0/0</span> concluídas.</div>
-                    <div class="timer-display" id="timerDisplay">25:00</div>
-                    <div style="display: flex; gap: 8px; width: auto;">
-                        <button class="btn-acao" style="padding:10px 15px; font-size:14px; margin:0; border-radius:8px;" onclick="iniciarPomodoro()" aria-label="Iniciar">▶️</button>
-                        <button class="btn-acao" style="padding:10px 15px; font-size:14px; margin:0; border-radius:8px; background:var(--text-color);" onclick="pausarPomodoro()" aria-label="Pausar">⏸️</button>
-                        <button class="btn-acao" style="padding:10px 15px; font-size:14px; margin:0; border-radius:8px; background:var(--border-color); color:var(--text-color);" onclick="resetarPomodoro()" aria-label="Reiniciar">🔄</button>
                     </div>
                 </div>
 
@@ -506,7 +393,7 @@
             <div id="tab-rastreio" class="tab-content">
                 <div class="card">
                     <h2 style="color:var(--accent-color);">🧭 Auditoria e Rastreio de Temas</h2>
-                    <p class="hint">Visualize facilmente onde cada tema do edital está alocado no seu planejamento de estudos.</p>
+                    <p style="font-size:13px; opacity:0.8;">Visualize facilmente onde cada tema do edital está alocado no seu planejamento de estudos.</p>
                     
                     <div class="row-form" style="margin-bottom:20px; background:var(--bg-color); padding:15px; border-radius:10px; border:1px solid var(--border-color);">
                         <div class="col-form">
@@ -534,7 +421,7 @@
                             <thead>
                                 <tr>
                                     <th>Subtema</th>
-                                    <th class="ta-c">Peso</th>
+                                    <th style="text-align:center;">Peso</th>
                                     <th>Status / Localização no Tempo</th>
                                 </tr>
                             </thead>
@@ -549,7 +436,7 @@
                 
                 <div class="card">
                     <h2>🏥 Data de Rodízios no Internato</h2>
-                    <p class="hint">Cadastre os blocos de rodízio do seu internato. O sistema calculará o número exato de semanas e montará o calendário completo.</p>
+                    <p style="font-size:13px; opacity:0.8;">Cadastre os blocos de rodízio do seu internato. O sistema calculará o número exato de semanas e montará o calendário completo.</p>
                     <form onsubmit="adicionarRodizio(event)" class="row-form">
                         <div class="col-form"><label>Início do Rodízio:</label><input type="date" id="rodInicio" required></div>
                         <div class="col-form"><label>Fim do Rodízio:</label><input type="date" id="rodFim" required></div>
@@ -564,7 +451,7 @@
 
                 <div class="card">
                     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
-                        <h2 class="m-0">📅 Cronograma de Estudos Personalizado</h2>
+                        <h2 style="margin:0;">📅 Cronograma de Estudos Personalizado</h2>
                         <button onclick="gerarTodoORodizio()" style="background:var(--primary-color); width:auto; padding:10px 20px; margin:0;">🚀 Gerar Cronograma do Rodízio</button>
                     </div>
                     <p style="font-size:13px; opacity:0.8; margin-top:10px;">Alterne entre as semanas abaixo. Altere turnos para <b>Ocupado</b> em imprevistos e recalcule estritamente aquela semana sem afetar as demais.</p>
@@ -600,10 +487,10 @@
                         </div>
 
                         <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:12px;">
-                            <button type="button" class="sub-aba-btn btn-neutral" onclick="aplicarLote(['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'], ['m'], 'ocupado')">🏥 Manhãs Ocupadas</button>
-                            <button type="button" class="sub-aba-btn btn-neutral" onclick="aplicarLote(['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'], ['t'], 'ocupado')">🏥 Tardes Ocupadas</button>
-                            <button type="button" class="sub-aba-btn btn-neutral" onclick="aplicarLote(['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'], ['n'], 'ocupado')">🏥 Noites Ocupadas</button>
-                            <button type="button" class="sub-aba-btn btn-neutral" onclick="aplicarLote(['Sáb','Dom'], ['m','t','n'], 'ocupado')">🏥 FDS Ocupado</button>
+                            <button type="button" class="sub-aba-btn" style="background:var(--border-color); color:var(--text-color);" onclick="aplicarLote(['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'], ['m'], 'ocupado')">🏥 Manhãs Ocupadas</button>
+                            <button type="button" class="sub-aba-btn" style="background:var(--border-color); color:var(--text-color);" onclick="aplicarLote(['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'], ['t'], 'ocupado')">🏥 Tardes Ocupadas</button>
+                            <button type="button" class="sub-aba-btn" style="background:var(--border-color); color:var(--text-color);" onclick="aplicarLote(['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'], ['n'], 'ocupado')">🏥 Noites Ocupadas</button>
+                            <button type="button" class="sub-aba-btn" style="background:var(--border-color); color:var(--text-color);" onclick="aplicarLote(['Sáb','Dom'], ['m','t','n'], 'ocupado')">🏥 FDS Ocupado</button>
                         </div>
 
                         <div style="display:flex; gap:10px; flex-wrap:wrap; border-top:1px dashed var(--border-color); padding-top:15px;">
@@ -625,7 +512,7 @@
                 <!-- PAINEL DE BUSCA LIVRE UNIVERSAL -->
                 <div class="card" id="cardResgateEspecial" style="border: 2px dashed var(--accent-color); background: rgba(52, 152, 219, 0.02);">
                     <h2 style="color:var(--accent-color);">🔎 Busca Livre de Temas no Edital</h2>
-                    <p class="hint">Pesquise qualquer assunto do edital para alocar diretamente em um turno livre desta semana (ideal para casos vistos em plantão ou temas de interesse). Adicione e depois edite manualmente no cronograma semanal.</p>
+                    <p style="font-size:13px; opacity:0.8;">Pesquise qualquer assunto do edital para alocar diretamente em um turno livre desta semana (ideal para casos vistos em plantão ou temas de interesse). Adicione e depois edite manualmente no cronograma semanal.</p>
                     <input type="text" id="inputBuscaLivre" placeholder="Digite para buscar no edital (mínimo 3 letras)..." onkeyup="renderizarBuscaLivre()" style="border: 1px solid var(--accent-color); background:white;">
                     <div id="listaBuscaLivre" style="max-height:250px; overflow-y:auto; margin-top:10px;"></div>
                 </div>
@@ -650,7 +537,7 @@
                 <!-- MAPA DO RODÍZIO VIGENTE -->
                 <div class="card" id="cardMapaRodizio">
                     <h2>🗺️ Mapa do Rodízio Vigente</h2>
-                    <p class="hint">Acompanhe o status completo de todos os temas do edital da macro-área atual.</p>
+                    <p style="font-size:13px; opacity:0.8;">Acompanhe o status completo de todos os temas do edital da macro-área atual.</p>
                     <div id="mapaRodizioContainer">
                         <!-- Preenchido via JS -->
                     </div>
@@ -678,8 +565,8 @@
                         </div>
 
                         <div style="display: flex; gap: 15px; margin-top:20px;">
-                            <div class="flex-1"><label>Data da Teoria:</label><input type="date" id="reg_data" required></div>
-                            <div class="flex-1"><label>Tempo Gasto (min):</label><input type="number" id="reg_tempo" placeholder="Ex: 45" required></div>
+                            <div style="flex:1"><label>Data da Teoria:</label><input type="date" id="reg_data" required></div>
+                            <div style="flex:1"><label>Tempo Gasto (min):</label><input type="number" id="reg_tempo" placeholder="Ex: 45" required></div>
                         </div>
 
                         <div style="background: var(--bg-color); padding: 15px; border-radius: 8px; margin: 20px 0; border: 1px solid var(--border-color);">
@@ -690,17 +577,17 @@
                         </div>
 
                         <div id="boxQuestoesIniciais" style="display: flex; gap: 15px;">
-                            <div class="flex-1"><label>Questões Feitas:</label><input type="number" id="reg_feitas" placeholder="Ex: 25"></div>
-                            <div class="flex-1"><label>Acertos:</label><input type="number" id="reg_acertos" placeholder="Ex: 20"></div>
+                            <div style="flex:1"><label>Questões Feitas:</label><input type="number" id="reg_feitas" placeholder="Ex: 25"></div>
+                            <div style="flex:1"><label>Acertos:</label><input type="number" id="reg_acertos" placeholder="Ex: 20"></div>
                         </div>
 
                         <div style="display: flex; gap: 15px; margin-top:10px;">
-                            <div class="flex-1"><label>Dificuldade da Aula/Teoria:</label>
+                            <div style="flex:1"><label>Dificuldade da Aula/Teoria:</label>
                                 <select id="reg_dificuldade" required>
                                     <option value="medio">Médio</option><option value="facil">Fácil</option><option value="dificil">Difícil</option>
                                 </select>
                             </div>
-                            <div class="flex-1"><label>Nível de Energia:</label>
+                            <div style="flex:1"><label>Nível de Energia:</label>
                                 <select id="reg_energia" required>
                                     <option value="alta">⚡ Alta</option><option value="media" selected>🔋 Média</option><option value="baixa">🪫 Baixa</option>
                                 </select>
@@ -713,7 +600,7 @@
 
                 <div class="card">
                     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:20px;">
-                        <h2 class="m-0">🔁 Cronograma de Revisões </h2>
+                        <h2 style="margin:0;">🔁 Cronograma de Revisões </h2>
                         <div style="text-align: right;">
                             <div>
                                 <button class="btn-acao" onclick="ativarSprint()" id="btnSprintConfig" style="background:var(--text-color); box-shadow:none;">⚡ Ativar Sprint</button>
@@ -765,10 +652,6 @@
                     </div>
                 </div>
 
-                <div class="card"><h2>Constância de estudo</h2><p class="hint" id="heatmapResumo"></p><div class="heatmap" id="heatmapEstudo"></div><div class="heat-legend"><span>menos</span><i class="hm l0"></i><i class="hm l1"></i><i class="hm l2"></i><i class="hm l3"></i><i class="hm l4"></i><span>mais</span></div></div>
-
-                <div class="card"><h2>Tendência de acertos por macro-área</h2><p class="hint">Percentual por semana. A linha tracejada marca a meta de 60%.</p><div class="grafico-container"><canvas id="graficoTendencia"></canvas></div></div>
-
                 <div class="card">
                     <h2>📝 Simulados: Registro e Desempenho</h2>
                     <form onsubmit="salvarSimulado(event)" style="display:flex; gap:15px; flex-wrap:wrap; align-items:flex-end; background:var(--bg-color); padding:20px; border-radius:12px;">
@@ -777,11 +660,11 @@
                         <div style="flex:1; min-width:100px;"><label>Total:</label><input type="number" id="simTotal" required></div>
                         
                         <div style="width:100%; display:flex; gap:10px; margin-top:5px; flex-wrap:wrap;">
-                            <input class="fx-120" type="number" id="simCM" placeholder="Acertos Clínica">
-                            <input class="fx-120" type="number" id="simCIR" placeholder="Acertos Cirurgia">
-                            <input class="fx-120" type="number" id="simGO" placeholder="Acertos GO">
-                            <input class="fx-120" type="number" id="simPED" placeholder="Acertos Pediatria">
-                            <input class="fx-120" type="number" id="simPREV" placeholder="Acertos Preventiva">
+                            <input type="number" id="simCM" placeholder="Acertos Clínica" style="flex:1; min-width:120px;">
+                            <input type="number" id="simCIR" placeholder="Acertos Cirurgia" style="flex:1; min-width:120px;">
+                            <input type="number" id="simGO" placeholder="Acertos GO" style="flex:1; min-width:120px;">
+                            <input type="number" id="simPED" placeholder="Acertos Pediatria" style="flex:1; min-width:120px;">
+                            <input type="number" id="simPREV" placeholder="Acertos Preventiva" style="flex:1; min-width:120px;">
                         </div>
                         <button type="submit" style="margin:0; width:auto; padding:12px 25px;">Lançar Simulado</button>
                     </form>
@@ -862,7 +745,7 @@
                     <div class="manual-section">
                         <h3>1. Como Usar a Plataforma (Passo a Passo)</h3>
                         <div class="manual-box">
-                            <ul class="manual-list list-tight">
+                            <ul class="manual-list" style="padding-left:15px; margin:0;">
                                 <li><b>Passo 1: Configuração de Metas e Provas</b><br>Cadastre a data da sua Prova Principal (alvo) na aba de Configurações e defina sua Meta Anual de Questões.</li>
                                 <li><b>Passo 2: Montagem do Internato e Grade Semanal</b><br>Na aba de Cronograma, insira as datas dos seus rodízios hospitalares. Na semana ativa, use as "Ações Rápidas" para preencher com um clique seus horários de plantão ou turnos livres. Depois, clique em <i>Gerar Cronograma</i> para o sistema distribuir os temas do edital nos seus turnos de estudo livres.</li>
                                 <li><b>Passo 3: Registro do Estudo Teórico</b><br>Ao assistir a uma aula ou ler a teoria, vá em <i>Registro de Estudo</i>. Selecione o tema, informe o tempo gasto, sua percepção de dificuldade e o resultado das questões. O sistema agendará a revisão automaticamente.</li>
@@ -875,7 +758,7 @@
                     <div class="manual-section">
                         <h3>2. Como funciona o motor FSRS (Revisões)</h3>
                         <div class="manual-box">
-                            <p class="mt-0">O motor do sistema utiliza uma arquitetura baseada em Repetição Espaçada adaptada para medicina, considerando quatro variáveis:</p>
+                            <p style="margin-top:0;">O motor do sistema utiliza uma arquitetura baseada em Repetição Espaçada adaptada para medicina, considerando quatro variáveis:</p>
                             <ul class="manual-list" style="padding-left:15px; margin-bottom:0;">
                                 <li><b>Incidência em Prova (Pesos 1 a 5):</b> Temas de Peso 5 (ex: Hipertensão, Pré-natal) têm intervalos de repetição mais curtos. Temas Peso 1 demoram mais para voltar.</li>
                                 <li><b>Taxa de Acerto nas Questões:</b> Ao revisar, seu percentual de acertos ajusta a memória. Taxas menores que 50% encurtam o intervalo drasticamente; acima de 85% dão mais fôlego.</li>
@@ -888,7 +771,7 @@
                     <div class="manual-section">
                         <h3>3. Benefícios Práticos da Plataforma</h3>
                         <div class="manual-box">
-                            <ul class="manual-list list-tight">
+                            <ul class="manual-list" style="padding-left:15px; margin:0;">
                                 <li><b>Fim da Fadiga de Decisão:</b> Você não perde energia pensando "o que devo estudar hoje?". A lista de prioridades já está pronta ao abrir o app.</li>
                                 <li><b>Adaptação ao Internato Real:</b> Diferente de PDFs estáticos, a grade semanal é maleável. Mudou a escala do hospital? Basta reconfigurar a semana isoladamente.</li>
                                 <li><b>Flexibilidade com Busca Livre:</b> Permite pesquisar e puxar qualquer tema do edital para estudar no dia, ideal para revisar casos vistos à beira do leito.</li>
@@ -900,7 +783,7 @@
                     <div class="manual-section">
                         <h3>4. Pontos Fortes que Ela Desenvolve no Aluno</h3>
                         <div class="manual-box">
-                            <ul class="manual-list list-tight">
+                            <ul class="manual-list" style="padding-left:15px; margin:0;">
                                 <li><b>Consistência Diária e Ritmo Preditivo:</b> O painel de ritmo calcula a velocidade real de resolução de questões, mostrando se o aluno está no caminho certo para bater a meta antes do exame.</li>
                                 <li><b>Cobertura Equilibrada das 5 Grandes Áreas:</b> O gráfico de Radar e a lista quantitativa impedem o vício comum de estudar apenas a área do rodízio atual e negligenciar as demais.</li>
                                 <li><b>Retenção Ativa de Longo Prazo:</b> Substitui o estudo passivo (apenas assistir aulas) por ciclos programados de questões e flashcards na frequência exata da curva do esquecimento.</li>
@@ -912,7 +795,7 @@
                     <div class="manual-section">
                         <h3>5. Recursos Estratégicos (Avançado)</h3>
                         <div class="manual-box">
-                            <ul class="manual-list list-tight">
+                            <ul class="manual-list" style="padding-left:15px; margin:0;">
                                 <li><b>Modo Sobrevivência:</b> Em dias de plantão pesado, clique no botão "Sobrevivência" no topo da tela. Ele oculta tarefas futuras e foca só no que vence hoje e no que está atrasado.</li>
                                 <li><b>Busca Livre Universal:</b> Permite pesquisar e puxar qualquer tema do edital para estudar no dia atual. Ideal para revisar casos reais atendidos no hospital (Ex: atendeu Asma, puxa a teoria na hora).</li>
                                 <li><b>Espelhamento de MFC e Psiquiatria:</b> Se você cadastrar o rodízio de Psiquiatria ou MFC, o sistema adapta a grade sem desconfigurar o banco de dados oficial de Clínica Médica e Preventiva.</li>
@@ -929,7 +812,7 @@
                 <!-- CALENDÁRIO DE PROVAS -->
                 <div class="card">
                     <h2>🎯 Calendário de Provas</h2>
-                    <p class="hint">Cadastre suas provas. A "Prova Principal" ativará automaticamente o alerta e o bloqueio de revisão curta aos 45 dias.</p>
+                    <p style="font-size:13px; opacity:0.8;">Cadastre suas provas. A "Prova Principal" ativará automaticamente o alerta e o bloqueio de revisão curta aos 45 dias.</p>
                     <form onsubmit="adicionarOuEditarProva(event)" class="row-form" style="background:var(--bg-color); padding:20px; border-radius:12px;">
                         <input type="hidden" id="provaIdEdit">
                         <div class="col-form"><label>Nome da Prova:</label><input type="text" id="provaNome" placeholder="Ex: ENARE 2028" required></div>
@@ -952,11 +835,11 @@
                         <div><label>Fator Peso 2:</label><input type="number" step="0.1" id="configPeso2" value="1.1"></div>
                         <div><label>Fator Peso 1:</label><input type="number" step="0.1" id="configPeso1" value="1.4"></div>
                     </div>
-                    <label class="mt-20">Intervalos Base (Dias):</label>
+                    <label style="margin-top:20px;">Intervalos Base (Dias):</label>
                     <input type="text" id="configIntervalos" value="1, 7, 14, 30, 60, 90">
                     <label>Limite de Saturação (Aviso de Burnout em 3 Dias):</label>
                     <input type="number" id="configBurnout" value="15">
-                    <button class="mt-20" onclick="salvarConfiguracoes()">Salvar Configurações</button>
+                    <button onclick="salvarConfiguracoes()" style="margin-top:20px;">Salvar Configurações</button>
                 </div>
 
                 <div class="card">
@@ -992,7 +875,7 @@
     <!-- MODAL ADIAR TEMA -->
     <div class="modal" id="modalAdiarTema">
         <div class="modal-content" style="max-width: 480px;">
-            <h3 class="mt-0">📦 Adiar Tema</h3>
+            <h3 style="margin-top:0;">📦 Adiar Tema</h3>
             <p id="adiarTemaTitulo" style="font-weight:bold; color:var(--accent-color); margin-bottom: 20px; font-size:14px; background:var(--bg-color); padding:10px; border-radius:8px;"></p>
             
             <label>1. O que fazer com o horário liberado?</label>
@@ -1002,19 +885,19 @@
                 <option value="estudo">📘 Deixar como Horário de Estudo Livre</option>
             </select>
 
-            <label class="mt-20">2. Para onde enviar este tema?</label>
+            <label style="margin-top:20px;">2. Para onde enviar este tema?</label>
             <select id="adiarTemaDestino" onchange="toggleOpcaoRealocar(this.value)">
                 <option value="backlog">📦 Colocar no Temas Adiados (Backlog)</option>
                 <option value="realocar">🗓️ Alocar em outro horário livre nesta semana</option>
             </select>
 
             <div id="boxRealocarTurno" style="display:none; margin-top:15px; padding:15px; background:var(--bg-color); border-radius:8px; border:1px solid var(--border-color);">
-                <label class="mt-0">Selecione o turno vago de destino:</label>
+                <label style="margin-top:0;">Selecione o turno vago de destino:</label>
                 <select id="selSlotRealocar" style="margin-bottom:0;"></select>
             </div>
 
             <div id="boxMotivoBacklog" style="margin-top:15px; padding:15px; background:var(--bg-color); border-radius:8px; border:1px solid var(--border-color);">
-                <label class="mt-0">Motivo do adiamento:</label>
+                <label style="margin-top:0;">Motivo do adiamento:</label>
                 <input type="text" id="adiarMotivoInput" placeholder="Ex: Plantão extra, cansaço, imprevisto..." style="margin-bottom:0;">
             </div>
 
@@ -1134,9 +1017,16 @@
         // UTILITÁRIOS GERAIS (CORES POR MACRO-ÁREA E STATUS)
         // ------------------------------------------------------------------
         function getMacroColor(macro) {
-            // Vermelho (var(--danger-color)) é reservado para alertas e atrasos; nenhuma macro-área usa vermelho.
-            const cores = { 'Clínica Médica': '#3b82f6', 'Cirurgia': '#14b8a6', 'Ginecologia e Obstetrícia': '#a855f7', 'Pediatria': '#ec4899', 'Preventiva': '#16a34a', 'MFC': '#84cc16', 'Psiquiatria': '#eab308' };
-            return cores[macro] || '#3b82f6';
+            switch(macro) {
+                case 'Clínica Médica': return '#3498db'; // Azul
+                case 'Cirurgia': return '#ff260f'; // Vermelho Específico
+                case 'Ginecologia e Obstetrícia': return '#9b59b6'; // Roxo
+                case 'Pediatria': return '#e84393'; // Rosa
+                case 'Preventiva': return '#795548'; // Marrom
+                case 'Psiquiatria': return '#f1c40f'; // Amarelo
+                case 'MFC': return '#795548'; // Marrom (Preventiva)
+                default: return '#3498db';
+            }
         }
 
         // Função de Auditoria: Retorna onde o tema está (Estudado, Alocado, Backlog, Livre)
@@ -1199,7 +1089,7 @@
             let query = document.getElementById("inputBuscaLivre").value.toLowerCase();
             container.innerHTML = "";
             if (query.length < 3) {
-                container.innerHTML = `<div class="empty-state"><div class="empty-ico">🔍</div><b>Digite pelo menos 3 letras para buscar...</b></div>`;
+                container.innerHTML = `<div style="text-align:center; padding:20px; opacity:0.7;"><div style="font-size:30px; margin-bottom:10px;">🔍</div><b>Digite pelo menos 3 letras para buscar...</b></div>`;
                 return;
             }
 
@@ -1215,7 +1105,7 @@
             });
 
             if (resultados.length === 0) {
-                container.innerHTML = `<div class="empty-state"><div class="empty-ico">📭</div><b>Nenhum tema encontrado no edital.</b></div>`;
+                container.innerHTML = `<div style="text-align:center; padding:20px; opacity:0.7;"><div style="font-size:30px; margin-bottom:10px;">📭</div><b>Nenhum tema encontrado no edital.</b></div>`;
                 return;
             }
 
@@ -1333,7 +1223,7 @@
                                   statusObj.type === 'backlog' ? '#e67e22' : '#7f8c8d';
 
                     tbody.innerHTML += `<tr>
-                        <td><small style="opacity:0.7">${esp}</small><br><strong style="font-size:14px; color:var(--text-color);">${sub.n}</strong><span class="peso-tag p${sub.p}">P${sub.p}</span></td>
+                        <td><small style="opacity:0.7">${esp}</small><br><strong style="font-size:14px; color:var(--text-color);">${sub.n}</strong></td>
                         <td style="text-align:center; color:var(--accent-color);"><b>⭐ ${sub.p}</b></td>
                         <td style="color:${corType}; font-weight:bold; font-size:12px;">${statusObj.text}</td>
                     </tr>`;
@@ -1462,15 +1352,15 @@
                     
                     if(mostrar) {
                         trs += `<tr>
-                            <td><b style="color:var(--text-color);">${sub.n}</b><span class="peso-tag p${sub.p}">P${sub.p}</span></td>
-                            <td class="ta-c">⭐ ${sub.p}</td>
+                            <td><b style="color:var(--text-color);">${sub.n}</b></td>
+                            <td style="text-align:center;">⭐ ${sub.p}</td>
                             <td style="font-size:12px; color:#555;">${statusK}</td>
-                            <td class="ta-c">${teoria}</td>
-                            <td class="ta-c">${anki}</td>
-                            <td class="ta-c">${feitas}</td>
-                            <td class="ta-c">${desempStr}</td>
+                            <td style="text-align:center;">${teoria}</td>
+                            <td style="text-align:center;">${anki}</td>
+                            <td style="text-align:center;">${feitas}</td>
+                            <td style="text-align:center;">${desempStr}</td>
                             <td style="text-align:center; font-size:12px;">${faseStr}</td>
-                            <td class="ta-c"><button class="btn-acao" style="margin:0; padding:6px 12px; font-size:11px; box-shadow:var(--shadow-btn);" onclick="${clickAcao}">${est ? 'Ver Histórico' : 'Estudar'}</button></td>
+                            <td style="text-align:center;"><button class="btn-acao" style="margin:0; padding:6px 12px; font-size:11px; box-shadow:var(--shadow-btn);" onclick="${clickAcao}">${est ? 'Ver Histórico' : 'Estudar'}</button></td>
                         </tr>`;
                     }
                 });
@@ -1486,10 +1376,10 @@
                         <div class="accordion-content" id="${accId}">
                             <table>
                                 <thead><tr>
-                                    <th>Subtema</th><th class="ta-c">Peso</th><th>Status</th>
-                                    <th class="ta-c">Teoria</th><th class="ta-c">Flashcards</th>
-                                    <th class="ta-c">Qts.</th><th class="ta-c">Desemp.</th>
-                                    <th class="ta-c">Fase FSRS</th><th class="ta-c">Ação</th>
+                                    <th>Subtema</th><th style="text-align:center;">Peso</th><th>Status</th>
+                                    <th style="text-align:center;">Teoria</th><th style="text-align:center;">Flashcards</th>
+                                    <th style="text-align:center;">Qts.</th><th style="text-align:center;">Desemp.</th>
+                                    <th style="text-align:center;">Fase FSRS</th><th style="text-align:center;">Ação</th>
                                 </tr></thead>
                                 <tbody>${trs}</tbody>
                             </table>
@@ -1535,429 +1425,417 @@
         const taxonomia = {
             "Clínica Médica": {
                 "Cardiologia": [
-                    { num: 1, nome: "Parada Cardiorrespiratória (PCR)", peso: 4 },
-                    { num: 2, nome: "Bradicardias", peso: 1 },
-                    { num: 3, nome: "Taquiarritmias", peso: 2 },
-                    { num: 4, nome: "Fibrilação e Flutter Atrial", peso: 2 },
-                    { num: 5, nome: "Síncope", peso: 1 },
-                    { num: 6, nome: "Dislipidemia e Estratificação de Risco Cardiovascular", peso: 3 },
-                    { num: 7, nome: "Doença Arterial Coronariana Estável (DAC Estável)", peso: 3 },
-                    { num: 8, nome: "SCASSST - Síndrome Coronária Aguda Sem Supra do Segmento ST", peso: 3 },
-                    { num: 9, nome: "IAMCSST (Infarto Agudo do Miocárdio com Supradesnivelamento do ST)", peso: 3 },
-                    { num: 10, nome: "Síndromes Aórticas Agudas", peso: 2 },
-                    { num: 11, nome: "Hipertensão Arterial Sistêmica (Parte 1) Diagnóstico...", peso: 5 },
-                    { num: 12, nome: "Hipertensão Arterial Sistêmica (Parte 2) Tratamento", peso: 5 },
-                    { num: 13, nome: "Hipertensão Arterial Sistêmica (Parte 3) Secundária...", peso: 5 },
-                    { num: 14, nome: "Insuficiência Cardíaca (Parte 1) Classificação...", peso: 3 },
-                    { num: 15, nome: "Insuficiência Cardíaca (Parte 2) Tratamento", peso: 4 },
-                    { num: 16, nome: "Insuficiência Cardíaca Aguda", peso: 3 },
-                    { num: 17, nome: "Choque", peso: 3 },
-                    { num: 18, nome: "Semiologia Cardíaca", peso: 3 },
-                    { num: 19, nome: "Valvopatias", peso: 2 },
-                    { num: 20, nome: "Cardiomiopatias", peso: 3 },
-                    { num: 21, nome: "Pericardiopatias", peso: 3 },
-                    { num: 22, nome: "Eletrocardiograma", peso: 4 }
+                    { n: "1. Parada Cardiorrespiratória (PCR) — Peso: 4", p: 4 },
+                    { n: "2. Bradicardias — Peso: 1", p: 1 },
+                    { n: "3. Taquiarritmias — Peso: 2", p: 2 },
+                    { n: "4. Fibrilação e Flutter Atrial — Peso: 2", p: 2 },
+                    { n: "5. Síncope — Peso: 1", p: 1 },
+                    { n: "6. Dislipidemia e Estratificação de Risco Cardiovascular — Peso: 3", p: 3 },
+                    { n: "7. Doença Arterial Coronariana Estável (DAC Estável) — Peso: 3", p: 3 },
+                    { n: "8. SCASSST - Síndrome Coronária Aguda Sem Supra do Segmento ST — Peso: 3", p: 3 },
+                    { n: "9. IAMCSST (Infarto Agudo do Miocárdio com Supradesnivelamento do ST) — Peso: 3", p: 3 },
+                    { n: "10. Síndromes Aórticas Agudas — Peso: 2", p: 2 },
+                    { n: "11. Hipertensão Arterial Sistêmica (Parte 1) Diagnóstico... — Peso: 5", p: 5 },
+                    { n: "12. Hipertensão Arterial Sistêmica (Parte 2) Tratamento — Peso: 5", p: 5 },
+                    { n: "13. Hipertensão Arterial Sistêmica (Parte 3) Secundária... — Peso: 5", p: 5 },
+                    { n: "14. Insuficiência Cardíaca (Parte 1) Classificação... — Peso: 3", p: 3 },
+                    { n: "15. Insuficiência Cardíaca (Parte 2) Tratamento — Peso: 4", p: 4 },
+                    { n: "16. Insuficiência Cardíaca Aguda — Peso: 3", p: 3 },
+                    { n: "17. Choque — Peso: 3", p: 3 },
+                    { n: "18. Semiologia Cardíaca — Peso: 3", p: 3 },
+                    { n: "19. Valvopatias — Peso: 2", p: 2 },
+                    { n: "20. Cardiomiopatias — Peso: 3", p: 3 },
+                    { n: "21. Pericardiopatias — Peso: 3", p: 3 },
+                    { n: "22. Eletrocardiograma — Peso: 4", p: 4 }
                 ],
                 "Endocrinologia": [
-                    { num: 1, nome: "Introdução ao Diabetes Mellitus", peso: 4 },
-                    { num: 2, nome: "Diabetes Mellitus Tipo 2", peso: 4 },
-                    { num: 3, nome: "Diabetes Mellitus - Insulinoterapia e Cirurgia Metabólica", peso: 4 },
-                    { num: 4, nome: "Diabetes Mellitus - Complicações Agudas", peso: 5 },
-                    { num: 5, nome: "Diabetes Mellitus - Complicações Crônicas", peso: 2 },
-                    { num: 6, nome: "Diabetes Mellitus - Hiperglicemia Hospitalar", peso: 2 },
-                    { num: 7, nome: "Tireoide - Hipotireoidismo", peso: 5 },
-                    { num: 8, nome: "Tireoide - Tireotoxicose Diagnóstico, Etiologia, Tratamento", peso: 4 },
-                    { num: 9, nome: "Obesidade - Obesidade e Síndrome Metabólica", peso: 2 },
-                    { num: 10, nome: "Cirurgia Bariátrica e Metabólica", peso: 4 },
-                    { num: 11, nome: "Metabolismo Ósseo e Mineral - Princípios e Fisiologia", peso: 1 },
-                    { num: 12, nome: "Metabolismo Ósseo e Mineral - Hipercalcemia", peso: 2 },
-                    { num: 13, nome: "Metabolismo Ósseo e Mineral - Hipocalcemia", peso: 2 },
-                    { num: 14, nome: "Metabolismo Ósseo e Mineral - Magnésio e Fosfato", peso: 1 },
-                    { num: 15, nome: "Metabolismo Ósseo e Mineral - Vitamina D e Osteomalácia", peso: 1 },
-                    { num: 16, nome: "Raquitismo", peso: 2 },
-                    { num: 17, nome: "Metabolismo Ósseo e Mineral - Osteoporose e Paget", peso: 2 },
-                    { num: 18, nome: "Adrenal - Morfofisiologia Adrenal", peso: 2 },
-                    { num: 19, nome: "Adrenal - Hipocortisolismo (Insuficiência Adrenal)", peso: 1 },
-                    { num: 20, nome: "Adrenal - Hipercortisolismo (Síndrome de Cushing)", peso: 1 },
-                    { num: 21, nome: "Adrenal - Feocromocitoma e Hiperaldosteronismo", peso: 1 },
-                    { num: 22, nome: "Perioperatório - Controle Glicêmico e Glicocorticóides", peso: 3 },
-                    { num: 23, nome: "Hipófise - Fisiologia da Hipófise e Hipopituitarismo", peso: 2 },
-                    { num: 24, nome: "Hipófise - Acromegalia e Incidentaloma Hipofisário", peso: 1 },
-                    { num: 25, nome: "Hipófise - Hiperprolactinemia", peso: 2 },
-                    { num: 26, nome: "Neoplasias Endócrinas Múltiplas", peso: 1 },
-                    { num: 27, nome: "Hipoglicemia no Paciente não Diabético", peso: 2 },
-                    { num: 28, nome: "Doenças das Adrenais e Hipófise e Noções de Obesidade", peso: 2 },
-                    { num: 29, nome: "Incongruência de Gênero", peso: 1 }
+                    { n: "1. Introdução ao Diabetes Mellitus — Peso: 4", p: 4 },
+                    { n: "2. Diabetes Mellitus Tipo 2 — Peso: 4", p: 4 },
+                    { n: "3. Diabetes Mellitus - Insulinoterapia e Cirurgia Metabólica — Peso: 4", p: 4 },
+                    { n: "4. Diabetes Mellitus - Complicações Agudas — Peso: 5", p: 5 },
+                    { n: "5. Diabetes Mellitus - Complicações Crônicas — Peso: 2", p: 2 },
+                    { n: "6. Diabetes Mellitus - Hiperglicemia Hospitalar — Peso: 2", p: 2 },
+                    { n: "7. Tireoide - Hipotireoidismo — Peso: 5", p: 5 },
+                    { n: "8. Tireoide - Tireotoxicose Diagnóstico, Etiologia, Tratamento — Peso: 4", p: 4 },
+                    { n: "9. Obesidade - Obesidade e Síndrome Metabólica — Peso: 2", p: 2 },
+                    { n: "10. Cirurgia Bariátrica e Metabólica — Peso: 4", p: 4 },
+                    { n: "11. Metabolismo Ósseo e Mineral - Princípios e Fisiologia — Peso: 1", p: 1 },
+                    { n: "12. Metabolismo Ósseo e Mineral - Hipercalcemia — Peso: 2", p: 2 },
+                    { n: "13. Metabolismo Ósseo e Mineral - Hipocalcemia — Peso: 2", p: 2 },
+                    { n: "14. Metabolismo Ósseo e Mineral - Magnésio e Fosfato — Peso: 1", p: 1 },
+                    { n: "15. Metabolismo Ósseo e Mineral - Vitamina D e Osteomalácia — Peso: 1", p: 1 },
+                    { n: "16. Raquitismo — Peso: 2", p: 2 },
+                    { n: "17. Metabolismo Ósseo e Mineral - Osteoporose e Paget — Peso: 2", p: 2 },
+                    { n: "18. Adrenal - Morfofisiologia Adrenal — Peso: 2", p: 2 },
+                    { n: "19. Adrenal - Hipocortisolismo (Insuficiência Adrenal) — Peso: 1", p: 1 },
+                    { n: "20. Adrenal - Hipercortisolismo (Síndrome de Cushing) — Peso: 1", p: 1 },
+                    { n: "21. Adrenal - Feocromocitoma e Hiperaldosteronismo — Peso: 1", p: 1 },
+                    { n: "22. Perioperatório - Controle Glicêmico e Glicocorticóides — Peso: 3", p: 3 },
+                    { n: "23. Hipófise - Fisiologia da Hipófise e Hipopituitarismo — Peso: 2", p: 2 },
+                    { n: "24. Hipófise - Acromegalia e Incidentaloma Hipofisário — Peso: 1", p: 1 },
+                    { n: "25. Hipófise - Hiperprolactinemia — Peso: 2", p: 2 },
+                    { n: "26. Neoplasias Endócrinas Múltiplas — Peso: 1", p: 1 },
+                    { n: "27. Hipoglicemia no Paciente não Diabético — Peso: 2", p: 2 },
+                    { n: "28. Doenças das Adrenais e Hipófise e Noções de Obesidade — Peso: 2", p: 2 },
+                    { n: "29. Incongruência de Gênero — Peso: 1", p: 1 }
                 ],
                 "Gastroenterologia": [
-                    { num: 1, nome: "Hemorragia Digestiva Alta Não Varicosa", peso: 2 },
-                    { num: 2, nome: "Hemorragia Digestiva Alta Varicosa", peso: 2 },
-                    { num: 3, nome: "Hemorragia Digestiva Baixa", peso: 2 },
-                    { num: 4, nome: "Doença do Refluxo Gastroesofágico e Esofagites", peso: 4 },
-                    { num: 5, nome: "Disfagia, Alterações Estruturais e Motilidade", peso: 2 },
-                    { num: 6, nome: "Anatomofisiologia Gástrica, Gastrites e Dispepsia", peso: 4 },
-                    { num: 7, nome: "Doença Ulcerosa Péptica e Inibidores de Bomba de Prótons", peso: 4 },
-                    { num: 8, nome: "Pancreatite Aguda e Crônica (Pancreatites)", peso: 4 },
-                    { num: 9, nome: "Anatomia/Fisiologia do Cólon e Síndrome do Intestino Irritável", peso: 2 },
-                    { num: 10, nome: "Doença Inflamatória Intestinal", peso: 5 },
-                    { num: 11, nome: "Distúrbios Disabsortivos", peso: 3 },
-                    { num: 12, nome: "Divertículos Colônicos e Divertículo de Meckel", peso: 5 },
-                    { num: 13, nome: "Polipose Intestinal e Câncer Colorretal", peso: 5 },
-                    { num: 14, nome: "Neoplasias de Estômago e Esôfago", peso: 4 },
-                    { num: 15, nome: "Anatomia e Fisiologia do Pâncreas e Neoplasias Pancreáticas", peso: 2 },
-                    { num: 16, nome: "Tumores Neuroendócrinos", peso: 1 }
+                    { n: "1. Hemorragia Digestiva Alta Não Varicosa — Peso: 2", p: 2 },
+                    { n: "2. Hemorragia Digestiva Alta Varicosa — Peso: 2", p: 2 },
+                    { n: "3. Hemorragia Digestiva Baixa — Peso: 2", p: 2 },
+                    { n: "4. Doença do Refluxo Gastroesofágico e Esofagites — Peso: 4", p: 4 },
+                    { n: "5. Disfagia, Alterações Estruturais e Motilidade — Peso: 2", p: 2 },
+                    { n: "6. Anatomofisiologia Gástrica, Gastrites e Dispepsia — Peso: 4", p: 4 },
+                    { n: "7. Doença Ulcerosa Péptica e Inibidores de Bomba de Prótons — Peso: 4", p: 4 },
+                    { n: "8. Pancreatite Aguda e Crônica (Pancreatites) — Peso: 4", p: 4 },
+                    { n: "9. Anatomia/Fisiologia do Cólon e Síndrome do Intestino Irritável — Peso: 2", p: 2 },
+                    { n: "10. Doença Inflamatória Intestinal — Peso: 5", p: 5 },
+                    { n: "11. Distúrbios Disabsortivos — Peso: 3", p: 3 },
+                    { n: "12. Divertículos Colônicos e Divertículo de Meckel — Peso: 5", p: 5 },
+                    { n: "13. Polipose Intestinal e Câncer Colorretal — Peso: 5", p: 5 },
+                    { n: "14. Neoplasias de Estômago e Esôfago — Peso: 4", p: 4 },
+                    { n: "15. Anatomia e Fisiologia do Pâncreas e Neoplasias Pancreáticas — Peso: 2", p: 2 },
+                    { n: "16. Tumores Neuroendócrinos — Peso: 1", p: 1 }
                 ],
                 "Hematologia": [
-                    { num: 1, nome: "Introdução ao Estudo das Anemias", peso: 3 },
-                    { num: 2, nome: "Anemias Microcíticas", peso: 4 },
-                    { num: 3, nome: "Anemias Macrocíticas", peso: 2 },
-                    { num: 4, nome: "Anemias Hemolíticas", peso: 4 },
-                    { num: 5, nome: "Anemias Associadas a Condições Não Hematológicas", peso: 4 },
-                    { num: 6, nome: "Leucemias Agudas", peso: 3 },
-                    { num: 7, nome: "Leucemias Crônicas, Linfomas, Mielodisplasias", peso: 1 },
-                    { num: 8, nome: "Mieloma Múltiplo (Gamopatias Monoclonais)", peso: 1 },
-                    { num: 9, nome: "Hemostasia I - Conceitos Básicos e Anticoagulantes", peso: 3 },
-                    { num: 10, nome: "Hemostasia II - Doenças Hemostáticas", peso: 3 },
-                    { num: 11, nome: "Medicina Transfusional", peso: 2 }
+                    { n: "1. Introdução ao Estudo das Anemias — Peso: 3", p: 3 },
+                    { n: "2. Anemias Microcíticas — Peso: 4", p: 4 },
+                    { n: "3. Anemias Macrocíticas — Peso: 2", p: 2 },
+                    { n: "4. Anemias Hemolíticas — Peso: 4", p: 4 },
+                    { n: "5. Anemias Associadas a Condições Não Hematológicas — Peso: 4", p: 4 },
+                    { n: "6. Leucemias Agudas — Peso: 3", p: 3 },
+                    { n: "7. Leucemias Crônicas, Linfomas, Mielodisplasias — Peso: 1", p: 1 },
+                    { n: "8. Mieloma Múltiplo (Gamopatias Monoclonais) — Peso: 1", p: 1 },
+                    { n: "9. Hemostasia I - Conceitos Básicos e Anticoagulantes — Peso: 3", p: 3 },
+                    { n: "10. Hemostasia II - Doenças Hemostáticas — Peso: 3", p: 3 },
+                    { n: "11. Medicina Transfusional — Peso: 2", p: 2 }
                 ],
                 "Hepatologia": [
-                    { num: 1, nome: "Introdução à Hepatologia", peso: 1 },
-                    { num: 2, nome: "Hepatites Virais", peso: 3 },
-                    { num: 3, nome: "Hepatopatias Autoimunes", peso: 1 },
-                    { num: 4, nome: "Outras Causas de Hepatopatia Crônica", peso: 1 },
-                    { num: 5, nome: "Cirrose Hepática", peso: 3 },
-                    { num: 6, nome: "Complicações da Cirrose Hepática", peso: 4 },
-                    { num: 7, nome: "Síndrome Hepatorrenal e Síndrome Hepatopulmonar", peso: 1 },
-                    { num: 8, nome: "Tumores Hepáticos", peso: 2 },
-                    { num: 9, nome: "Transplante Hepático e Hepatite Fulminante", peso: 1 }
+                    { n: "1. Introdução à Hepatologia — Peso: 1", p: 1 },
+                    { n: "2. Hepatites Virais — Peso: 3", p: 3 },
+                    { n: "3. Hepatopatias Autoimunes — Peso: 1", p: 1 },
+                    { n: "4. Outras Causas de Hepatopatia Crônica — Peso: 1", p: 1 },
+                    { n: "5. Cirrose Hepática — Peso: 3", p: 3 },
+                    { n: "6. Complicações da Cirrose Hepática — Peso: 4", p: 4 },
+                    { n: "7. Síndrome Hepatorrenal e Síndrome Hepatopulmonar — Peso: 1", p: 1 },
+                    { n: "8. Tumores Hepáticos — Peso: 2", p: 2 },
+                    { n: "9. Transplante Hepático e Hepatite Fulminante — Peso: 1", p: 1 }
                 ],
                 "Infectologia": [
-                    { num: 1, nome: "Meningites (Infecções do SNC)", peso: 1 },
-                    { num: 2, nome: "Leptospirose", peso: 2 },
-                    { num: 3, nome: "Malária", peso: 1 },
-                    { num: 4, nome: "Animais Peçonhentos", peso: 1 },
-                    { num: 5, nome: "Gripe", peso: 1 },
-                    { num: 6, nome: "HIV", peso: 4 },
-                    { num: 7, nome: "Antibióticos", peso: 1 },
-                    { num: 8, nome: "Arboviroses (Dengue, Chikungunya e Zika)", peso: 4 },
-                    { num: 9, nome: "Micoses Invasivas", peso: 2 },
-                    { num: 10, nome: "Tuberculose", peso: 4 },
-                    { num: 11, nome: "Parasitoses", peso: 1 },
-                    { num: 12, nome: "Neutropenia Febril e Febre de Origem Indeterminada", peso: 1 },
-                    { num: 13, nome: "Endocardite Bacteriana - Endocardite Infecciosa", peso: 1 },
-                    { num: 14, nome: "Hepatoesplenomegalias Infecciosas", peso: 1 },
-                    { num: 15, nome: "Síndrome Febril Íctero-Hemorrágica", peso: 1 },
-                    { num: 16, nome: "Covid 19", peso: 1 },
-                    { num: 17, nome: "Aula Bônus - Sífilis e Outras ISTs", peso: 4 },
-                    { num: 18, nome: "Pneumonias Bacterianas", peso: 4 }
+                    { n: "1. Meningites (Infecções do SNC) — Peso: 1", p: 1 },
+                    { n: "2. Leptospirose — Peso: 2", p: 2 },
+                    { n: "3. Malária — Peso: 1", p: 1 },
+                    { n: "4. Animais Peçonhentos — Peso: 1", p: 1 },
+                    { n: "5. Gripe — Peso: 1", p: 1 },
+                    { n: "6. HIV — Peso: 4", p: 4 },
+                    { n: "7. Antibióticos — Peso: 1", p: 1 },
+                    { n: "8. Arboviroses (Dengue, Chikungunya e Zika) — Peso: 4", p: 4 },
+                    { n: "9. Micoses Invasivas — Peso: 2", p: 2 },
+                    { n: "10. Tuberculose — Peso: 4", p: 4 },
+                    { n: "11. Parasitoses — Peso: 1", p: 1 },
+                    { n: "12. Neutropenia Febril e Febre de Origem Indeterminada — Peso: 1", p: 1 },
+                    { n: "13. Endocardite Bacteriana - Endocardite Infecciosa — Peso: 1", p: 1 },
+                    { n: "14. Hepatoesplenomegalias Infecciosas — Peso: 1", p: 1 },
+                    { n: "15. Síndrome Febril Íctero-Hemorrágica — Peso: 1", p: 1 },
+                    { n: "16. Covid 19 — Peso: 1", p: 1 },
+                    { n: "17. Aula Bônus - Sífilis e Outras ISTs — Peso: 4", p: 4 },
+                    { n: "18. Pneumonias Bacterianas — Peso: 4", p: 4 }
                 ],
                 "Nefrologia": [
-                    { num: 1, nome: "Doenças Glomerulares", peso: 4 },
-                    { num: 2, nome: "Lesão Renal Aguda (LRA)", peso: 3 },
-                    { num: 3, nome: "Doença Renal Crônica (RDC) - Parte I", peso: 1 },
-                    { num: 4, nome: "Doença Renal Crônica (RDC) - Parte II", peso: 1 },
-                    { num: 5, nome: "Distúrbios Ácido-Básicos", peso: 3 },
-                    { num: 6, nome: "Análise da Gasometria Arterial", peso: 1 },
-                    { num: 7, nome: "Distúrbios do Sódio - Disnatremias", peso: 2 },
-                    { num: 8, nome: "Distúrbios do Potássio", peso: 2 },
-                    { num: 9, nome: "Túbulo-Interstício Renal", peso: 1 },
-                    { num: 10, nome: "ITU - Infecção do Trato Urinário", peso: 4 },
-                    { num: 11, nome: "Nefrolitíase", peso: 3 }
+                    { n: "1. Doenças Glomerulares — Peso: 4", p: 4 },
+                    { n: "2. Lesão Renal Aguda (LRA) — Peso: 3", p: 3 },
+                    { n: "3. Doença Renal Crônica (RDC) - Parte I — Peso: 1", p: 1 },
+                    { n: "4. Doença Renal Crônica (RDC) - Parte II — Peso: 1", p: 1 },
+                    { n: "5. Distúrbios Ácido-Básicos — Peso: 3", p: 3 },
+                    { n: "6. Análise da Gasometria Arterial — Peso: 1", p: 1 },
+                    { n: "7. Distúrbios do Sódio - Disnatremias — Peso: 2", p: 2 },
+                    { n: "8. Distúrbios do Potássio — Peso: 2", p: 2 },
+                    { n: "9. Túbulo-Interstício Renal — Peso: 1", p: 1 },
+                    { n: "10. ITU - Infecção do Trato Urinário — Peso: 4", p: 4 },
+                    { n: "11. Nefrolitíase — Peso: 3", p: 3 }
                 ],
                 "Neurologia": [
-                    { num: 1, nome: "Coma e Alterações da Consciência", peso: 1 },
-                    { num: 2, nome: "Anatomia, Fisiologia e Semiologia Neurológica", peso: 2 },
-                    { num: 3, nome: "Cefaleias", peso: 3 },
-                    { num: 4, nome: "Demências", peso: 3 },
-                    { num: 5, nome: "Epilepsias", peso: 2 },
-                    { num: 6, nome: "Acidentes Vasculares Cerebrais", peso: 4 },
-                    { num: 7, nome: "Doenças Neuromusculares", peso: 1 },
-                    { num: 8, nome: "Distúrbios do Movimento", peso: 3 },
-                    { num: 9, nome: "Traumatismo Cranioencefálico - TCE", peso: 4 },
-                    { num: 10, nome: "Distúrbios do Sono", peso: 1 },
-                    { num: 11, nome: "Doenças Desmielinizantes e Encefalites Autoimunes", peso: 1 },
-                    { num: 12, nome: "Tumores Intracranianos", peso: 1 }
+                    { n: "1. Coma e Alterações da Consciência — Peso: 1", p: 1 },
+                    { n: "2. Anatomia, Fisiologia e Semiologia Neurológica — Peso: 2", p: 2 },
+                    { n: "3. Cefaleias — Peso: 3", p: 3 },
+                    { n: "4. Demências — Peso: 3", p: 3 },
+                    { n: "5. Epilepsias — Peso: 2", p: 2 },
+                    { n: "6. Acidentes Vasculares Cerebrais — Peso: 4", p: 4 },
+                    { n: "7. Doenças Neuromusculares — Peso: 1", p: 1 },
+                    { n: "8. Distúrbios do Movimento — Peso: 3", p: 3 },
+                    { n: "9. Traumatismo Cranioencefálico - TCE — Peso: 4", p: 4 },
+                    { n: "10. Distúrbios do Sono — Peso: 1", p: 1 },
+                    { n: "11. Doenças Desmielinizantes e Encefalites Autoimunes — Peso: 1", p: 1 },
+                    { n: "12. Tumores Intracranianos — Peso: 1", p: 1 }
                 ],
                 "Pneumologia": [
-                    { num: 1, nome: "Derrame Pleural", peso: 4 },
-                    { num: 2, nome: "Doença Pulmonar Obstrutiva Crônica (DPOC)", peso: 4 },
-                    { num: 3, nome: "Tromboembolismo Pulmonar (TEP)", peso: 2 },
-                    { num: 4, nome: "Introdução à Pneumologia", peso: 2 },
-                    { num: 5, nome: "Pneumologia Intensiva", peso: 1 },
-                    { num: 6, nome: "Asma", peso: 4 },
-                    { num: 7, nome: "Miscelânea (Interstício, Bronquiectasias...)", peso: 2 },
-                    { num: 8, nome: "Neoplasias Pulmonares", peso: 2 }
+                    { n: "1. Derrame Pleural — Peso: 4", p: 4 },
+                    { n: "2. Doença Pulmonar Obstrutiva Crônica (DPOC) — Peso: 4", p: 4 },
+                    { n: "3. Tromboembolismo Pulmonar (TEP) — Peso: 2", p: 2 },
+                    { n: "4. Introdução à Pneumologia — Peso: 2", p: 2 },
+                    { n: "5. Pneumologia Intensiva — Peso: 1", p: 1 },
+                    { n: "6. Asma — Peso: 4", p: 4 },
+                    { n: "7. Miscelânea (Interstício, Bronquiectasias...) — Peso: 2", p: 2 },
+                    { n: "8. Neoplasias Pulmonares — Peso: 2", p: 2 }
                 ],
                 "Psiquiatria": [
-                    { num: 1, nome: "Transtornos do Humor", peso: 3 },
-                    { num: 2, nome: "Transtornos de Ansiedade", peso: 2 },
-                    { num: 3, nome: "Transtornos Psicóticos", peso: 1 },
-                    { num: 4, nome: "Dependência Química", peso: 3 },
-                    { num: 5, nome: "TOC e Transtornos Relacionados ao Estresse", peso: 1 },
-                    { num: 6, nome: "Psiquiatria Infantil", peso: 3 },
-                    { num: 7, nome: "Transtornos de Personalidade", peso: 1 },
-                    { num: 8, nome: "Transtornos Alimentares", peso: 3 },
-                    { num: 9, nome: "Psicofarmacologia", peso: 3 },
-                    { num: 10, nome: "Psicopatologia", peso: 1 },
-                    { num: 11, nome: "Psiquiatria Social e Reforma Psiquiátrica", peso: 2 },
-                    { num: 12, nome: "Intoxicações Exógenas", peso: 3 }
+                    { n: "1. Transtornos do Humor — Peso: 3", p: 3 },
+                    { n: "2. Transtornos de Ansiedade — Peso: 2", p: 2 },
+                    { n: "3. Transtornos Psicóticos — Peso: 1", p: 1 },
+                    { n: "4. Dependência Química — Peso: 3", p: 3 },
+                    { n: "5. TOC e Transtornos Relacionados ao Estresse — Peso: 1", p: 1 },
+                    { n: "6. Psiquiatria Infantil — Peso: 3", p: 3 },
+                    { n: "7. Transtornos de Personalidade — Peso: 1", p: 1 },
+                    { n: "8. Transtornos Alimentares — Peso: 3", p: 3 },
+                    { n: "9. Psicofarmacologia — Peso: 3", p: 3 },
+                    { n: "10. Psicopatologia — Peso: 1", p: 1 },
+                    { n: "11. Psiquiatria Social e Reforma Psiquiátrica — Peso: 2", p: 2 },
+                    { n: "12. Intoxicações Exógenas — Peso: 3", p: 3 }
                 ],
                 "Reumatologia": [
-                    { num: 1, nome: "Introdução à Reumatologia", peso: 1 },
-                    { num: 2, nome: "Doenças Autoimunes do Tecido Conjuntivo", peso: 3 },
-                    { num: 3, nome: "Doenças Inflamatórias do Tecido Conjuntivo II", peso: 3 },
-                    { num: 4, nome: "Artrite Reumatoide", peso: 4 },
-                    { num: 5, nome: "Espondiloartrites", peso: 2 },
-                    { num: 6, nome: "Vasculites", peso: 2 },
-                    { num: 7, nome: "Artrites Microcristalinas", peso: 3 },
-                    { num: 8, nome: "Síndromes Dolorosas Crônicas", peso: 1 },
-                    { num: 9, nome: "Doenças do Osso e da Cartilagem", peso: 1 },
-                    { num: 10, nome: "Artropatias Infecciosas", peso: 1 },
-                    { num: 11, nome: "Miscelânea", peso: 1 },
-                    { num: 12, nome: "Reumatologia Pediátrica", peso: 3 },
-                    { num: 13, nome: "Manifestações Reumatológicas e Doenças Sistêmicas", peso: 1 }
+                    { n: "1. Introdução à Reumatologia — Peso: 1", p: 1 },
+                    { n: "2. Doenças Autoimunes do Tecido Conjuntivo — Peso: 3", p: 3 },
+                    { n: "3. Doenças Inflamatórias do Tecido Conjuntivo II — Peso: 3", p: 3 },
+                    { n: "4. Artrite Reumatoide — Peso: 4", p: 4 },
+                    { n: "5. Espondiloartrites — Peso: 2", p: 2 },
+                    { n: "6. Vasculites — Peso: 2", p: 2 },
+                    { n: "7. Artrites Microcristalinas — Peso: 3", p: 3 },
+                    { n: "8. Síndromes Dolorosas Crônicas — Peso: 1", p: 1 },
+                    { n: "9. Doenças do Osso e da Cartilagem — Peso: 1", p: 1 },
+                    { n: "10. Artropatias Infecciosas — Peso: 1", p: 1 },
+                    { n: "11. Miscelânea — Peso: 1", p: 1 },
+                    { n: "12. Reumatologia Pediátrica — Peso: 3", p: 3 },
+                    { n: "13. Manifestações Reumatológicas e Doenças Sistêmicas — Peso: 1", p: 1 }
                 ],
                 "Dermatologia": [
-                    { num: 1, nome: "Histologia, Fisiologia da Pele e Lesões Elementares", peso: 1 },
-                    { num: 2, nome: "Hanseníase", peso: 2 },
-                    { num: 3, nome: "Oncologia Cutânea (Câncer de Pele)", peso: 3 },
-                    { num: 4, nome: "Dermatoses Infecciosas", peso: 3 },
-                    { num: 5, nome: "Dermatoses Eczematosas", peso: 1 },
-                    { num: 6, nome: "Farmacodermias", peso: 2 },
-                    { num: 7, nome: "Dermatoses Papuloescamosas", peso: 2 },
-                    { num: 8, nome: "Dermatoses Vesicobolhosas", peso: 1 },
-                    { num: 9, nome: "Miscelânea Dermatológica", peso: 3 },
-                    { num: 10, nome: "Síndromes Verrucosas", peso: 2 },
-                    { num: 11, nome: "Piodermites", peso: 2 }
+                    { n: "1. Histologia, Fisiologia da Pele e Lesões Elementares — Peso: 1", p: 1 },
+                    { n: "2. Hanseníase — Peso: 2", p: 2 },
+                    { n: "3. Oncologia Cutânea (Câncer de Pele) — Peso: 3", p: 3 },
+                    { n: "4. Dermatoses Infecciosas — Peso: 3", p: 3 },
+                    { n: "5. Dermatoses Eczematosas — Peso: 1", p: 1 },
+                    { n: "6. Farmacodermias — Peso: 2", p: 2 },
+                    { n: "7. Dermatoses Papuloescamosas — Peso: 2", p: 2 },
+                    { n: "8. Dermatoses Vesicobolhosas — Peso: 1", p: 1 },
+                    { n: "9. Miscelânea Dermatológica — Peso: 3", p: 3 },
+                    { n: "10. Síndromes Verrucosas — Peso: 2", p: 2 },
+                    { n: "11. Piodermites — Peso: 2", p: 2 }
                 ]
             },
             "Cirurgia": {
                 "Cirurgia Geral": [
-                    { num: 1, nome: "Trauma - Avaliação Inicial, Vias Aéreas e Trauma Torácico", peso: 5 },
-                    { num: 2, nome: "Trauma - Choque", peso: 2 },
-                    { num: 3, nome: "Trauma Abdominal e Pélvico", peso: 4 },
-                    { num: 4, nome: "Trauma de Face e Cervical", peso: 3 },
-                    { num: 5, nome: "Trauma Vascular de Extremidades e Musculoesquelético", peso: 3 },
-                    { num: 6, nome: "Trauma Populações Especiais (Pediátrico, Gestante e Idosos)", peso: 2 },
-                    { num: 7, nome: "Queimaduras e Traumas Elétricos", peso: 3 },
-                    { num: 8, nome: "Resposta Endócrino-Metabólica ao Trauma", peso: 2 },
-                    { num: 9, nome: "Urgências Abdominais - Abdome Agudo", peso: 5 },
-                    { num: 10, nome: "Abdome Agudo Inflamatório - Apendicite Aguda", peso: 5 },
-                    { num: 11, nome: "Abdome Agudo Inflamatório - Colecistite e Colangite Aguda", peso: 5 },
-                    { num: 12, nome: "Abdome Agudo Inflamatório - Diverticulite Aguda", peso: 5 },
-                    { num: 13, nome: "Abdômen Agudo Vascular", peso: 1 },
-                    { num: 14, nome: "Abdome Agudo Hemorrágico", peso: 2 },
-                    { num: 15, nome: "Abdome Agudo Perfurativo", peso: 1 },
-                    { num: 16, nome: "Abdome Agudo Obstrutivo", peso: 5 },
-                    { num: 17, nome: "Vesícula e Vias Biliares", peso: 5 },
-                    { num: 18, nome: "Complicações Pós-Operatórias", peso: 5 },
-                    { num: 19, nome: "Hérnias da Parede Abdominal", peso: 5 },
-                    { num: 20, nome: "Cirurgia Vascular", peso: 1 },
-                    { num: 21, nome: "Cirurgia Torácica", peso: 1 },
-                    { num: 22, nome: "Cirurgia Plástica", peso: 2 },
-                    { num: 23, nome: "Urologia", peso: 5 },
-                    { num: 24, nome: "Cirurgia Infantil - Parte I", peso: 3 },
-                    { num: 25, nome: "Cirurgia Infantil - Parte II", peso: 3 },
-                    { num: 26, nome: "Cirurgia Infantil - Parte III", peso: 3 },
-                    { num: 27, nome: "Proctologia", peso: 5 },
-                    { num: 28, nome: "Neoplasias do Apêndice Cecal", peso: 2 },
-                    { num: 29, nome: "Nutrição em Cirurgia e Aceleração da Recuperação...", peso: 1 },
-                    { num: 30, nome: "Cicatrização de Feridas", peso: 2 },
-                    { num: 31, nome: "Cirurgia Bariátrica e Metabólica", peso: 2 },
-                    { num: 32, nome: "Temas Gerais em Cirurgia", peso: 3 },
-                    { num: 33, nome: "Medicina Perioperatória", peso: 4 }
+                    { n: "1. Trauma - Avaliação Inicial, Vias Aéreas e Trauma Torácico — Peso: 5", p: 5 },
+                    { n: "2. Trauma - Choque — Peso: 2", p: 2 },
+                    { n: "3. Trauma Abdominal e Pélvico — Peso: 4", p: 4 },
+                    { n: "4. Trauma de Face e Cervical — Peso: 3", p: 3 },
+                    { n: "5. Trauma Vascular de Extremidades e Musculoesquelético — Peso: 3", p: 3 },
+                    { n: "6. Trauma Populações Especiais (Pediátrico, Gestante e Idosos) — Peso: 2", p: 2 },
+                    { n: "7. Queimaduras e Traumas Elétricos — Peso: 3", p: 3 },
+                    { n: "8. Resposta Endócrino-Metabólica ao Trauma — Peso: 2", p: 2 },
+                    { n: "9. Urgências Abdominais - Abdome Agudo — Peso: 5", p: 5 },
+                    { n: "10. Abdome Agudo Inflamatório - Apendicite Aguda — Peso: 5", p: 5 },
+                    { n: "11. Abdome Agudo Inflamatório - Colecistite e Colangite Aguda — Peso: 5", p: 5 },
+                    { n: "12. Abdome Agudo Inflamatório - Diverticulite Aguda — Peso: 5", p: 5 },
+                    { n: "13. Abdômen Agudo Vascular — Peso: 1", p: 1 },
+                    { n: "14. Abdome Agudo Hemorrágico — Peso: 2", p: 2 },
+                    { n: "15. Abdome Agudo Perfurativo — Peso: 1", p: 1 },
+                    { n: "16. Abdome Agudo Obstrutivo — Peso: 5", p: 5 },
+                    { n: "17. Vesícula e Vias Biliares — Peso: 5", p: 5 },
+                    { n: "18. Complicações Pós-Operatórias — Peso: 5", p: 5 },
+                    { n: "19. Hérnias da Parede Abdominal — Peso: 5", p: 5 },
+                    { n: "20. Cirurgia Vascular — Peso: 1", p: 1 },
+                    { n: "21. Cirurgia Torácica — Peso: 1", p: 1 },
+                    { n: "22. Cirurgia Plástica — Peso: 2", p: 2 },
+                    { n: "23. Urologia — Peso: 5", p: 5 },
+                    { n: "24. Cirurgia Infantil - Parte I — Peso: 3", p: 3 },
+                    { n: "25. Cirurgia Infantil - Parte II — Peso: 3", p: 3 },
+                    { n: "26. Cirurgia Infantil - Parte III — Peso: 3", p: 3 },
+                    { n: "27. Proctologia — Peso: 5", p: 5 },
+                    { n: "28. Neoplasias do Apêndice Cecal — Peso: 2", p: 2 },
+                    { n: "29. Nutrição em Cirurgia e Aceleração da Recuperação... — Peso: 1", p: 1 },
+                    { n: "30. Cicatrização de Feridas — Peso: 2", p: 2 },
+                    { n: "31. Cirurgia Bariátrica e Metabólica — Peso: 2", p: 2 },
+                    { n: "32. Temas Gerais em Cirurgia — Peso: 3", p: 3 },
+                    { n: "33. Medicina Perioperatória — Peso: 4", p: 4 }
                 ],
                 "Oftalmologia": [
-                    { num: 1, nome: "Anatomia e Fisiologia do Aparelho Visual", peso: 1 },
-                    { num: 2, nome: "Córnea e Cristalino", peso: 2 },
-                    { num: 3, nome: "Glaucoma", peso: 1 },
-                    { num: 4, nome: "Distúrbios da Refração", peso: 1 },
-                    { num: 5, nome: "Neurooftalmologia", peso: 1 },
-                    { num: 6, nome: "Traumatismos Oculares", peso: 3 },
-                    { num: 7, nome: "Tumores Oculares Malignos", peso: 1 },
-                    { num: 8, nome: "Síndrome do Olho Vermelho", peso: 3 },
-                    { num: 9, nome: "Doenças do Polo Posterior", peso: 1 }
+                    { n: "1. Anatomia e Fisiologia do Aparelho Visual — Peso: 1", p: 1 },
+                    { n: "2. Córnea e Cristalino — Peso: 2", p: 2 },
+                    { n: "3. Glaucoma — Peso: 1", p: 1 },
+                    { n: "4. Distúrbios da Refração — Peso: 1", p: 1 },
+                    { n: "5. Neurooftalmologia — Peso: 1", p: 1 },
+                    { n: "6. Traumatismos Oculares — Peso: 3", p: 3 },
+                    { n: "7. Tumores Oculares Malignos — Peso: 1", p: 1 },
+                    { n: "8. Síndrome do Olho Vermelho — Peso: 3", p: 3 },
+                    { n: "9. Doenças do Polo Posterior — Peso: 1", p: 1 }
                 ],
                 "Ortopedia": [
-                    { num: 1, nome: "Quadril Pediátrico", peso: 2 },
-                    { num: 2, nome: "Politraumatismo Ortopédico", peso: 3 },
-                    { num: 3, nome: "Doenças da Coluna Vertebral", peso: 3 },
-                    { num: 4, nome: "Complicações do Trauma Ortopédico", peso: 3 },
-                    { num: 5, nome: "Maus Tratos", peso: 2 },
-                    { num: 6, nome: "Oncologia Ortopédica e Osteomielite", peso: 2 },
-                    { num: 7, nome: "Fraturas e Luxações", peso: 2 },
-                    { num: 8, nome: "Fratura Exposta", peso: 3 },
-                    { num: 9, nome: "Ombro e Joelho Pediátrico", peso: 2 },
-                    { num: 10, nome: "Conceitos Básicos do Trauma Ortopédico", peso: 1 },
-                    { num: 11, nome: "Conceitos Básicos de Anatomia e Semiologia", peso: 1 },
-                    { num: 12, nome: "Desenvolvimento Ortopédico da Criança", peso: 1 },
-                    { num: 13, nome: "Doenças do Ombro e Cotovelo", peso: 1 },
-                    { num: 14, nome: "Doenças da Mão e Síndromes Compressivas", peso: 1 },
-                    { num: 15, nome: "Coluna Pediátrica", peso: 1 },
-                    { num: 16, nome: "Doenças Neuromusculares Pediátricas", peso: 1 },
-                    { num: 17, nome: "Doenças de Partes Moles", peso: 1 },
-                    { num: 18, nome: "Miscelânea Ortopédica", peso: 1 }
+                    { n: "1. Quadril Pediátrico — Peso: 2", p: 2 },
+                    { n: "2. Politraumatismo Ortopédico — Peso: 3", p: 3 },
+                    { n: "3. Doenças da Coluna Vertebral — Peso: 3", p: 3 },
+                    { n: "4. Complicações do Trauma Ortopédico — Peso: 3", p: 3 },
+                    { n: "5. Maus Tratos — Peso: 2", p: 2 },
+                    { n: "6. Oncologia Ortopédica e Osteomielite — Peso: 2", p: 2 },
+                    { n: "7. Fraturas e Luxações — Peso: 2", p: 2 },
+                    { n: "8. Fratura Exposta — Peso: 3", p: 3 },
+                    { n: "9. Ombro e Joelho Pediátrico — Peso: 2", p: 2 },
+                    { n: "10. Conceitos Básicos do Trauma Ortopédico — Peso: 1", p: 1 },
+                    { n: "11. Conceitos Básicos de Anatomia e Semiologia — Peso: 1", p: 1 },
+                    { n: "12. Desenvolvimento Ortopédico da Criança — Peso: 1", p: 1 },
+                    { n: "13. Doenças do Ombro e Cotovelo — Peso: 1", p: 1 },
+                    { n: "14. Doenças da Mão e Síndromes Compressivas — Peso: 1", p: 1 },
+                    { n: "15. Coluna Pediátrica — Peso: 1", p: 1 },
+                    { n: "16. Doenças Neuromusculares Pediátricas — Peso: 1", p: 1 },
+                    { n: "17. Doenças de Partes Moles — Peso: 1", p: 1 },
+                    { n: "18. Miscelânea Ortopédica — Peso: 1", p: 1 }
                 ],
                 "Otorrinolaringologia": [
-                    { num: 1, nome: "Infecções de Vias Aéreas Superiores - Parte I", peso: 4 },
-                    { num: 2, nome: "Infecções das Vias Aéreas Superiores - Parte II", peso: 4 },
-                    { num: 3, nome: "Infecções de Vias Aéreas Superiores - Parte III", peso: 4 },
-                    { num: 4, nome: "Otoneurologia, Vertigens e Audiologia", peso: 1 },
-                    { num: 5, nome: "Cirurgia de Cabeça e Pescoço - Laringologia e Apneia", peso: 1 },
-                    { num: 6, nome: "Cirurgia de Cabeça e Pescoço - Nódulos de Tireoide...", peso: 3 },
-                    { num: 7, nome: "Cirurgia de Cabeça e Pescoço - Neoplasias Benignas e Malignas...", peso: 1 }
+                    { n: "1. Infecções de Vias Aéreas Superiores - Parte I — Peso: 4", p: 4 },
+                    { n: "2. Infecções das Vias Aéreas Superiores - Parte II — Peso: 4", p: 4 },
+                    { n: "3. Infecções de Vias Aéreas Superiores - Parte III — Peso: 4", p: 4 },
+                    { n: "4. Otoneurologia, Vertigens e Audiologia — Peso: 1", p: 1 },
+                    { n: "5. Cirurgia de Cabeça e Pescoço - Laringologia e Apneia — Peso: 1", p: 1 },
+                    { n: "6. Cirurgia de Cabeça e Pescoço - Nódulos de Tireoide... — Peso: 3", p: 3 },
+                    { n: "7. Cirurgia de Cabeça e Pescoço - Neoplasias Benignas e Malignas... — Peso: 1", p: 1 }
                 ]
             },
             "Ginecologia e Obstetrícia": {
                 "Ginecologia": [
-                    { num: 1, nome: "Ciclo Menstrual", peso: 2 },
-                    { num: 2, nome: "Planejamento Familiar", peso: 5 },
-                    { num: 3, nome: "Amenorreia", peso: 3 },
-                    { num: 4, nome: "Síndrome dos Ovários Policísticos (SOP)", peso: 2 },
-                    { num: 5, nome: "Endometriose", peso: 4 },
-                    { num: 6, nome: "Adenomiose", peso: 1 },
-                    { num: 7, nome: "Pólipos Uterinos", peso: 1 },
-                    { num: 8, nome: "Rastreamento do Câncer de Mama", peso: 4 },
-                    { num: 9, nome: "Sangramento Uterino Anormal (SUA)", peso: 5 },
-                    { num: 10, nome: "Doenças Benignas da Mama", peso: 2 },
-                    { num: 11, nome: "Incontinência Urinária", peso: 2 },
-                    { num: 12, nome: "Câncer de Mama", peso: 4 },
-                    { num: 13, nome: "Câncer do Corpo do Útero", peso: 5 },
-                    { num: 14, nome: "Tumores Anexiais e Câncer de Ovário", peso: 4 },
-                    { num: 15, nome: "Doenças da Vulva e Vagina", peso: 4 },
-                    { num: 16, nome: "Vulvovaginites", peso: 5 },
-                    { num: 17, nome: "Cervicites", peso: 5 },
-                    { num: 18, nome: "Doença Inflamatória Pélvica (DIP)", peso: 4 },
-                    { num: 19, nome: "Úlceras Genitais", peso: 5 },
-                    { num: 20, nome: "Assistência à Vítima de Violência Sexual", peso: 3 },
-                    { num: 21, nome: "Rastreamento do Câncer de Colo Úterino", peso: 5 },
-                    { num: 22, nome: "Câncer de Colo do Útero", peso: 3 },
-                    { num: 23, nome: "Climatério e Terapia Hormonal", peso: 4 },
-                    { num: 24, nome: "Miomatose Uterina", peso: 1 },
-                    { num: 25, nome: "Prolapsos de Órgãos Pélvicos", peso: 2 },
-                    { num: 26, nome: "Anatomia e Embriologia do Trato Genital Feminino", peso: 1 },
-                    { num: 27, nome: "Infertilidade Conjugal", peso: 1 },
-                    { num: 28, nome: "Dor Pélvica Crônica e Dismenorreia", peso: 1 },
-                    { num: 29, nome: "Sexualidade", peso: 1 },
-                    { num: 30, nome: "Síndrome Pré-Menstrual", peso: 1 },
-                    { num: 31, nome: "Abdome Agudo em Ginecologia", peso: 2 }
+                    { n: "1. Ciclo Menstrual — Peso: 2", p: 2 },
+                    { n: "2. Planejamento Familiar — Peso: 5", p: 5 },
+                    { n: "3. Amenorreia — Peso: 3", p: 3 },
+                    { n: "4. Síndrome dos Ovários Policísticos (SOP) — Peso: 2", p: 2 },
+                    { n: "5. Endometriose — Peso: 4", p: 4 },
+                    { n: "6. Adenomiose — Peso: 1", p: 1 },
+                    { n: "7. Pólipos Uterinos — Peso: 1", p: 1 },
+                    { n: "8. Rastreamento do Câncer de Mama — Peso: 4", p: 4 },
+                    { n: "9. Sangramento Uterino Anormal (SUA) — Peso: 5", p: 5 },
+                    { n: "10. Doenças Benignas da Mama — Peso: 2", p: 2 },
+                    { n: "11. Incontinência Urinária — Peso: 2", p: 2 },
+                    { n: "12. Câncer de Mama — Peso: 4", p: 4 },
+                    { n: "13. Câncer do Corpo do Útero — Peso: 5", p: 5 },
+                    { n: "14. Tumores Anexiais e Câncer de Ovário — Peso: 4", p: 4 },
+                    { n: "15. Doenças da Vulva e Vagina — Peso: 4", p: 4 },
+                    { n: "16. Vulvovaginites — Peso: 5", p: 5 },
+                    { n: "17. Cervicites — Peso: 5", p: 5 },
+                    { n: "18. Doença Inflamatória Pélvica (DIP) — Peso: 4", p: 4 },
+                    { n: "19. Úlceras Genitais — Peso: 5", p: 5 },
+                    { n: "20. Assistência à Vítima de Violência Sexual — Peso: 3", p: 3 },
+                    { n: "21. Rastreamento do Câncer de Colo Úterino — Peso: 5", p: 5 },
+                    { n: "22. Câncer de Colo do Útero — Peso: 3", p: 3 },
+                    { n: "23. Climatério e Terapia Hormonal — Peso: 4", p: 4 },
+                    { n: "24. Miomatose Uterina — Peso: 1", p: 1 },
+                    { n: "25. Prolapsos de Órgãos Pélvicos — Peso: 2", p: 2 },
+                    { n: "26. Anatomia e Embriologia do Trato Genital Feminino — Peso: 1", p: 1 },
+                    { n: "27. Infertilidade Conjugal — Peso: 1", p: 1 },
+                    { n: "28. Dor Pélvica Crônica e Dismenorreia — Peso: 1", p: 1 },
+                    { n: "29. Sexualidade — Peso: 1", p: 1 },
+                    { n: "30. Síndrome Pré-Menstrual — Peso: 1", p: 1 },
+                    { n: "31. Abdome Agudo em Ginecologia — Peso: 2", p: 2 }
                 ],
                 "Obstetrícia": [
-                    { num: 1, nome: "TPP - Prematuridade e Trabalho de Parto Prematuro", peso: 4 },
-                    { num: 2, nome: "Rotura Prematura de Membranas (RPM)", peso: 2 },
-                    { num: 3, nome: "HPP – Hemorragia Pós-Parto", peso: 4 },
-                    { num: 4, nome: "Gestação Múltipla", peso: 1 },
-                    { num: 5, nome: "Partograma e Distocias", peso: 3 },
-                    { num: 6, nome: "Bacia Obstétrica, Pelvimetria e Estática Fetal", peso: 3 },
-                    { num: 7, nome: "Infecção Puerperal", peso: 2 },
-                    { num: 8, nome: "Sífilis na Gestação e Sífilis Congênitas", peso: 3 },
-                    { num: 9, nome: "Infecções Congênitas na Gestação", peso: 3 },
-                    { num: 10, nome: "Aloimunização Materna e Doença Hemolítica Perinatal", peso: 3 },
-                    { num: 11, nome: "Alteração do volume de líquido amniótico", peso: 2 },
-                    { num: 12, nome: "Modificações Fisiológicas da Gestação", peso: 2 },
-                    { num: 13, nome: "Abortamento de Repetição", peso: 3 },
-                    { num: 14, nome: "Síndromes Hipertensivas da Gestação", peso: 5 },
-                    { num: 15, nome: "Vitalidade Fetal", peso: 5 },
-                    { num: 16, nome: "Assistência ao Parto", peso: 3 },
-                    { num: 17, nome: "Parto Vaginal Operatório", peso: 3 },
-                    { num: 18, nome: "Mecanismo de Parto e Fases Clínicas do Parto", peso: 3 },
-                    { num: 19, nome: "Indução do Parto e Pós-Datismo", peso: 2 },
-                    { num: 20, nome: "Restrição de Crescimento Fetal e Óbito Fetal", peso: 3 },
-                    { num: 21, nome: "Pré-natal", peso: 5 },
-                    { num: 22, nome: "Ultrassom em Obstetrícia", peso: 2 },
-                    { num: 23, nome: "Diabetes Mellitus na Gestação", peso: 5 },
-                    { num: 24, nome: "Sangramento da Primeira Metade", peso: 5 },
-                    { num: 25, nome: "Sangramento da Segunda Metade", peso: 5 }
+                    { n: "1. TPP - Prematuridade e Trabalho de Parto Prematuro — Peso: 4", p: 4 },
+                    { n: "2. Rotura Prematura de Membranas (RPM) — Peso: 2", p: 2 },
+                    { n: "3. HPP – Hemorragia Pós-Parto — Peso: 4", p: 4 },
+                    { n: "4. Gestação Múltipla — Peso: 1", p: 1 },
+                    { n: "5. Partograma e Distocias — Peso: 3", p: 3 },
+                    { n: "6. Bacia Obstétrica, Pelvimetria e Estática Fetal — Peso: 3", p: 3 },
+                    { n: "7. Infecção Puerperal — Peso: 2", p: 2 },
+                    { n: "8. Sífilis na Gestação e Sífilis Congênitas — Peso: 3", p: 3 },
+                    { n: "9. Infecções Congênitas na Gestação — Peso: 3", p: 3 },
+                    { n: "10. Aloimunização Materna e Doença Hemolítica Perinatal — Peso: 3", p: 3 },
+                    { n: "11. Alteração do volume de líquido amniótico — Peso: 2", p: 2 },
+                    { n: "12. Modificações Fisiológicas da Gestação — Peso: 2", p: 2 },
+                    { n: "13. Abortamento de Repetição — Peso: 3", p: 3 },
+                    { n: "14. Síndromes Hipertensivas da Gestação — Peso: 5", p: 5 },
+                    { n: "15. Vitalidade Fetal — Peso: 5", p: 5 },
+                    { n: "16. Assistência ao Parto — Peso: 3", p: 3 },
+                    { n: "17. Parto Vaginal Operatório — Peso: 3", p: 3 },
+                    { n: "18. Mecanismo de Parto e Fases Clínicas do Parto — Peso: 3", p: 3 },
+                    { n: "19. Indução do Parto e Pós-Datismo — Peso: 2", p: 2 },
+                    { n: "20. Restrição de Crescimento Fetal e Óbito Fetal — Peso: 3", p: 3 },
+                    { n: "21. Pré-natal — Peso: 5", p: 5 },
+                    { n: "22. Ultrassom em Obstetrícia — Peso: 2", p: 2 },
+                    { n: "23. Diabetes Mellitus na Gestação — Peso: 5", p: 5 },
+                    { n: "24. Sangramento da Primeira Metade — Peso: 5", p: 5 },
+                    { n: "25. Sangramento da Segunda Metade — Peso: 5", p: 5 }
                 ]
             },
             "Pediatria": {
                 "Pediatria": [
-                    { num: 1, nome: "Puberdade", peso: 2 },
-                    { num: 2, nome: "BRUE SMSL", peso: 1 },
-                    { num: 3, nome: "Infecção de Trato Urinário em Pediatria (ITU)", peso: 3 },
-                    { num: 4, nome: "Alergia Alimentar", peso: 2 },
-                    { num: 5, nome: "Obesidade Infantil e na Adolescência", peso: 2 },
-                    { num: 6, nome: "Outros distúrbios do período neonatal", peso: 3 },
-                    { num: 7, nome: "Anafilaxia e Urticária", peso: 1 },
-                    { num: 8, nome: "Crescimento", peso: 2 },
-                    { num: 9, nome: "Constipação Intestinal", peso: 2 },
-                    { num: 10, nome: "Hiperplasia Adrenal Congênita", peso: 1 },
-                    { num: 11, nome: "Distúrbios Respiratórios do Período Neonatal", peso: 1 },
-                    { num: 12, nome: "Febre Reumática", peso: 2 },
-                    { num: 13, nome: "Síndromes Genéticas, Erros Inatos do Metabolismo", peso: 1 },
-                    { num: 14, nome: "Enurese Noturna", peso: 1 },
-                    { num: 15, nome: "Infecções Congênitas", peso: 3 },
-                    { num: 16, nome: "Hipotireoidismo Congênito", peso: 1 },
-                    { num: 17, nome: "Aleitamento Materno", peso: 4 },
-                    { num: 18, nome: "Pneumonias na Infância", peso: 5 },
-                    { num: 19, nome: "Desnutrição na Infância", peso: 1 },
-                    { num: 20, nome: "Imunizações", peso: 5 },
-                    { num: 21, nome: "Asma em Pediatria", peso: 4 },
-                    { num: 22, nome: "Sífilis na Gestação e Sífilis Congênitas", peso: 2 },
-                    { num: 23, nome: "Cuidados Neonatais", peso: 2 },
-                    { num: 24, nome: "Choque em Pediatria", peso: 2 },
-                    { num: 25, nome: "Deficiências Vitamínicas e Profilaxias", peso: 3 },
-                    { num: 26, nome: "Convulsão Febril", peso: 3 },
-                    { num: 27, nome: "Reanimação Neonatal", peso: 3 },
-                    { num: 28, nome: "Doença de Kawasaki", peso: 2 },
-                    { num: 29, nome: "Hipertensão Arterial na Criança e Adolescente", peso: 1 },
-                    { num: 30, nome: "Púrpura de Hennoch Schonlein-Vasculite por IGA", peso: 2 },
-                    { num: 31, nome: "Doenças Exantemáticas", peso: 4 },
-                    { num: 32, nome: "Cardiopatias Congênitas", peso: 3 },
-                    { num: 33, nome: "Doença Celíaca em Pediatria", peso: 2 },
-                    { num: 34, nome: "Icterícia e Sepse Neonatal", peso: 3 },
-                    { num: 35, nome: "Diagnóstico Nutricional", peso: 1 },
-                    { num: 36, nome: "Coqueluche", peso: 1 },
-                    { num: 37, nome: "Cefaleias na Infância", peso: 1 },
-                    { num: 38, nome: "Febre na Pediatria", peso: 1 },
-                    { num: 39, nome: "Segurança em Pediatria", peso: 3 },
-                    { num: 40, nome: "Desenvolvimento Neuropsicomotor (DNPM)", peso: 4 },
-                    { num: 41, nome: "Doença do Refluxo Gastroesofágico em Pediatria", peso: 2 },
-                    { num: 42, nome: "Bronquiolite", peso: 4 },
-                    { num: 43, nome: "Emergências Pediátricas", peso: 5 },
-                    { num: 44, nome: "Tópicos em Pediatria", peso: 1 },
-                    { num: 45, nome: "Tuberculose na Infância", peso: 1 },
-                    { num: 46, nome: "Fibrose Cística", peso: 2 },
-                    { num: 47, nome: "Artrite Idiopática Juvenil (AIJ)", peso: 1 },
-                    { num: 48, nome: "Diarreia", peso: 4 }
+                    { n: "1. Puberdade — Peso: 2", p: 2 },
+                    { n: "2. BRUE SMSL — Peso: 1", p: 1 },
+                    { n: "3. Infecção de Trato Urinário em Pediatria (ITU) — Peso: 3", p: 3 },
+                    { n: "4. Alergia Alimentar — Peso: 2", p: 2 },
+                    { n: "5. Obesidade Infantil e na Adolescência — Peso: 2", p: 2 },
+                    { n: "6. Outros distúrbios do período neonatal — Peso: 3", p: 3 },
+                    { n: "7. Anafilaxia e Urticária — Peso: 1", p: 1 },
+                    { n: "8. Crescimento — Peso: 2", p: 2 },
+                    { n: "9. Constipação Intestinal — Peso: 2", p: 2 },
+                    { n: "10. Hiperplasia Adrenal Congênita — Peso: 1", p: 1 },
+                    { n: "11. Distúrbios Respiratórios do Período Neonatal — Peso: 1", p: 1 },
+                    { n: "12. Febre Reumática — Peso: 2", p: 2 },
+                    { n: "13. Síndromes Genéticas, Erros Inatos do Metabolismo — Peso: 1", p: 1 },
+                    { n: "14. Enurese Noturna — Peso: 1", p: 1 },
+                    { n: "15. Infecções Congênitas — Peso: 3", p: 3 },
+                    { n: "16. Hipotireoidismo Congênito — Peso: 1", p: 1 },
+                    { n: "17. Aleitamento Materno — Peso: 4", p: 4 },
+                    { n: "18. Pneumonias na Infância — Peso: 5", p: 5 },
+                    { n: "19. Desnutrição na Infância — Peso: 1", p: 1 },
+                    { n: "20. Imunizações — Peso: 5", p: 5 },
+                    { n: "21. Asma em Pediatria — Peso: 4", p: 4 },
+                    { n: "22. Sífilis na Gestação e Sífilis Congênitas — Peso: 2", p: 2 },
+                    { n: "23. Cuidados Neonatais — Peso: 2", p: 2 },
+                    { n: "24. Choque em Pediatria — Peso: 2", p: 2 },
+                    { n: "25. Deficiências Vitamínicas e Profilaxias — Peso: 3", p: 3 },
+                    { n: "26. Convulsão Febril — Peso: 3", p: 3 },
+                    { n: "27. Reanimação Neonatal — Peso: 3", p: 3 },
+                    { n: "28. Doença de Kawasaki — Peso: 2", p: 2 },
+                    { n: "29. Hipertensão Arterial na Criança e Adolescente — Peso: 1", p: 1 },
+                    { n: "30. Púrpura de Hennoch Schonlein-Vasculite por IGA — Peso: 2", p: 2 },
+                    { n: "31. Doenças Exantemáticas — Peso: 4", p: 4 },
+                    { n: "32. Cardiopatias Congênitas — Peso: 3", p: 3 },
+                    { n: "33. Doença Celíaca em Pediatria — Peso: 2", p: 2 },
+                    { n: "34. Icterícia e Sepse Neonatal — Peso: 3", p: 3 },
+                    { n: "35. Diagnóstico Nutricional — Peso: 1", p: 1 },
+                    { n: "36. Coqueluche — Peso: 1", p: 1 },
+                    { n: "37. Cefaleias na Infância — Peso: 1", p: 1 },
+                    { n: "38. Febre na Pediatria — Peso: 1", p: 1 },
+                    { n: "39. Segurança em Pediatria — Peso: 3", p: 3 },
+                    { n: "40. Desenvolvimento Neuropsicomotor (DNPM) — Peso: 4", p: 4 },
+                    { n: "41. Doença do Refluxo Gastroesofágico em Pediatria — Peso: 2", p: 2 },
+                    { n: "42. Bronquiolite — Peso: 4", p: 4 },
+                    { n: "43. Emergências Pediátricas — Peso: 5", p: 5 },
+                    { n: "44. Tópicos em Pediatria — Peso: 1", p: 1 },
+                    { n: "45. Tuberculose na Infância — Peso: 1", p: 1 },
+                    { n: "46. Fibrose Cística — Peso: 2", p: 2 },
+                    { n: "47. Artrite Idiopática Juvenil (AIJ) — Peso: 1", p: 1 },
+                    { n: "48. Diarreia — Peso: 4", p: 4 }
                 ]
             },
             "Preventiva": {
                 "Medicina Preventiva": [
-                    { num: 1, nome: "Sistemas de Informação em Saúde", peso: 3 },
-                    { num: 2, nome: "Ética Médica", peso: 5 },
-                    { num: 3, nome: "Princípios e Diretrizes do SUS", peso: 4 },
-                    { num: 4, nome: "Bases de Saúde do Trabalhador e Normas Regulamentadoras", peso: 5 },
-                    { num: 5, nome: "Medidas de Saúde Coletiva - Parte I Indicadores de Morbidade", peso: 2 },
-                    { num: 6, nome: "Medidas de Saúde Coletiva - Parte II Indicadores de Mortalidade", peso: 2 },
-                    { num: 7, nome: "Medidas de Saúde Coletiva - Parte III Indicadores Demográficos...", peso: 2 },
-                    { num: 8, nome: "Processos Epidêmicos e Epidemiologia das Doenças Infecciosas", peso: 4 },
-                    { num: 9, nome: "Processo Saúde-Doença", peso: 3 },
-                    { num: 10, nome: "Vigilância em Saúde", peso: 4 },
-                    { num: 11, nome: "Estatística Médica", peso: 5 },
-                    { num: 12, nome: "Pesquisa Epidemiológica e Medidas de Associação", peso: 4 },
-                    { num: 13, nome: "Testes Diagnósticos", peso: 4 },
-                    { num: 14, nome: "História do SUS", peso: 2 },
-                    { num: 15, nome: "Processos de Descentralização e Regionalização do SUS", peso: 1 },
-                    { num: 16, nome: "Atenção Primária à Saúde", peso: 5 },
-                    { num: 17, nome: "Políticas de Saúde", peso: 3 },
-                    { num: 18, nome: "Medicina de Família e Comunidade", peso: 5 },
-                    { num: 19, nome: "Saúde do Idoso", peso: 3 }
+                    { n: "1. Sistemas de Informação em Saúde — Peso: 3", p: 3 },
+                    { n: "2. Ética Médica — Peso: 5", p: 5 },
+                    { n: "3. Princípios e Diretrizes do SUS — Peso: 4", p: 4 },
+                    { n: "4. Bases de Saúde do Trabalhador e Normas Regulamentadoras — Peso: 5", p: 5 },
+                    { n: "5. Medidas de Saúde Coletiva - Parte I Indicadores de Morbidade — Peso: 2", p: 2 },
+                    { n: "6. Medidas de Saúde Coletiva - Parte II Indicadores de Mortalidade — Peso: 2", p: 2 },
+                    { n: "7. Medidas de Saúde Coletiva - Parte III Indicadores Demográficos... — Peso: 2", p: 2 },
+                    { n: "8. Processos Epidêmicos e Epidemiologia das Doenças Infecciosas — Peso: 4", p: 4 },
+                    { n: "9. Processo Saúde-Doença — Peso: 3", p: 3 },
+                    { n: "10. Vigilância em Saúde — Peso: 4", p: 4 },
+                    { n: "11. Estatística Médica — Peso: 5", p: 5 },
+                    { n: "12. Pesquisa Epidemiológica e Medidas de Associação — Peso: 4", p: 4 },
+                    { n: "13. Testes Diagnósticos — Peso: 4", p: 4 },
+                    { n: "14. História do SUS — Peso: 2", p: 2 },
+                    { n: "15. Processos de Descentralização e Regionalização do SUS — Peso: 1", p: 1 },
+                    { n: "16. Atenção Primária à Saúde — Peso: 5", p: 5 },
+                    { n: "17. Políticas de Saúde — Peso: 3", p: 3 },
+                    { n: "18. Medicina de Família e Comunidade — Peso: 5", p: 5 },
+                    { n: "19. Saúde do Idoso — Peso: 3", p: 3 }
                 ]
             }
         };
-
-        // Cada tema tem: id estável, num, nome, peso e fonte (referência bibliográfica, preencha em `fonte`).
-        // `n` (rótulo "N. Nome") e `p` são derivados e mantidos por compatibilidade com dados já salvos.
-        (function normalizarTaxonomia() {
-            const slug = s => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-            Object.keys(taxonomia).forEach(m => Object.keys(taxonomia[m]).forEach(e => taxonomia[m][e].forEach(t => {
-                t.id = slug(m) + '.' + slug(e) + '.' + String(t.num).padStart(2, '0');
-                t.fonte = t.fonte || '';
-                t.n = t.num + '. ' + t.nome;
-                t.p = t.peso;
-            })));
-        })();
 
         // ------------------------------------------------------------------
         // GLOBALS & HYDRATION
@@ -2032,7 +1910,6 @@
                 });
             });
 
-            Object.keys(notasIncidencia).forEach(k => { let limpo = k.split(' — Peso:')[0].trim(); if (limpo !== k && mapaLimpo[limpo]) { if (!notasIncidencia[limpo]) notasIncidencia[limpo] = notasIncidencia[k]; delete notasIncidencia[k]; mudou = true; } });
             if(mudou) {
                 console.log("Migração de pesos concluída.");
                 window.syncToCloud();
@@ -2112,7 +1989,7 @@
         };
 
         function initApp() {
-            document.getElementById('reg_data').value = hojeLocal();
+            document.getElementById('reg_data').valueAsDate = new Date();
             popularSelectsMacros();
             atualizarSeletorSemanasPorRodizios();
             renderizarListasPlanejamento();
@@ -2214,7 +2091,7 @@
             else {
                 sS.disabled = false;
                 taxonomia[m][e].forEach(sub => {
-                    sS.innerHTML += `<option value="${sub.n}" data-peso="${sub.p}">${sub.n} (peso ${sub.p})</option>`;
+                    sS.innerHTML += `<option value="${sub.n}" data-peso="${sub.p}">${sub.n}</option>`;
                 });
             }
             if(isFiltro && idMacro === 'evo_macro') atualizarGraficoEvolucao();
@@ -2233,7 +2110,7 @@
                 if (timeLeft > 0) { 
                     timeLeft--; atualizarDisplayTimer(); 
                     if(timeLeft % 60 === 0) {
-                        let hj = hojeLocal();
+                        let hj = new Date().toISOString().split('T')[0];
                         pomodoroDiario[hj] = (pomodoroDiario[hj] || 0) + 1;
                         window.syncToCloud();
                         atualizarEstatisticasNerds();
@@ -2248,7 +2125,7 @@
             let m = Math.floor(timeLeft/60), s = timeLeft%60; let str = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
             document.getElementById("timerDisplay").innerText = str; document.getElementById("focusTimerDisplay").innerText = str;
         }
-        function toggleDarkMode() { document.body.classList.toggle('dark-mode'); setTimeout(() => { try { atualizarRadar(); atualizarGraficoSimulados(); atualizarGraficoEvolucao(); } catch (e) {} }, 0); }
+        function toggleDarkMode() { document.body.classList.toggle('dark-mode'); }
         function toggleFocusMode() { document.body.classList.toggle('focus-mode'); atualizarEstatisticasNerds(); }
 
         function mudarAba(tabId, btn) {
@@ -2304,7 +2181,7 @@
                 item.fase = 0.5;
                 let d = new Date(dataEstudo + 'T00:00:00');
                 d.setDate(d.getDate() + 1);
-                item.proximaData = hojeLocal(d);
+                item.proximaData = d.toISOString().split('T')[0];
                 item.historico.push({ fase: "Apenas Teoria", tempo, feitas: 0, acertos: 0, percepcao, energia, data: dataEstudo });
             }
 
@@ -2312,7 +2189,7 @@
             
             salvarEAtualizar(); 
             document.getElementById("formEstudo").reset(); 
-            document.getElementById('reg_data').value = hojeLocal();
+            document.getElementById('reg_data').valueAsDate = new Date();
             document.getElementById("checkFezQuestoes").checked = true; toggleQuestoesForm();
             
             document.getElementById("reg_esp").innerHTML = '<option value="">Selecione Macro...</option>';
@@ -2347,7 +2224,7 @@
 
             let nD = new Date(dataBaseStr + 'T00:00:00');
             nD.setDate(nD.getDate() + dias);
-            return hojeLocal(nD);
+            return nD.toISOString().split('T')[0];
         }
 
         // ------------------------------------------------------------------
@@ -2386,7 +2263,7 @@
         function renderizarTabela() {
             let tbody = document.getElementById("tabela-estudos"); if(!tbody) return;
             tbody.innerHTML = "";
-            let hj = hojeLocal();
+            let hj = new Date().toISOString().split('T')[0];
 
             atualizarDashboard();
 
@@ -2401,7 +2278,7 @@
             });
 
             if (filtrados.length === 0) { 
-                tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; padding:30px;"><div class="empty-ico">✨</div><b style="color:var(--primary-color);">Tudo limpo por aqui!</b><br><span style="font-size:12px;opacity:0.7;">Nenhum estudo pendente para esta visualização.</span></td></tr>`; 
+                tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; padding:30px;"><div style="font-size:30px; margin-bottom:10px;">✨</div><b style="color:var(--primary-color);">Tudo limpo por aqui!</b><br><span style="font-size:12px;opacity:0.7;">Nenhum estudo pendente para esta visualização.</span></td></tr>`; 
                 return; 
             }
 
@@ -2425,9 +2302,9 @@
             });
         }
 
-        function atualizarDashboard() { setTimeout(renderizarPainelInicial, 0);
-            let hj = hojeLocal(); let h=0, a=0, p=0, cg=0;
-            let d3 = new Date(); d3.setDate(d3.getDate() + 3); let d3S = hojeLocal(d3);
+        function atualizarDashboard() {
+            let hj = new Date().toISOString().split('T')[0]; let h=0, a=0, p=0, cg=0;
+            let d3 = new Date(); d3.setDate(d3.getDate() + 3); let d3S = d3.toISOString().split('T')[0];
 
             let pp = agendaProvas.find(x => x.tipo === "principal");
             let alertBar = document.getElementById("retaFinalAlert");
@@ -2533,8 +2410,8 @@
             document.getElementById("modalRevisao").style.display = "flex";
         }
 
-        function salvarRevisaoModal(e) { const _seq = window._seqRevisao;
-            e.preventDefault(); let item = listaEstudos[idxModal]; let hoje = hojeLocal();
+        function salvarRevisaoModal(e) {
+            e.preventDefault(); let item = listaEstudos[idxModal]; let hoje = new Date().toISOString().split('T')[0];
             if (!item.easeFactor) item.easeFactor = 2.5;
 
             if (item.fase <= 1) {
@@ -2542,7 +2419,7 @@
                 let p = document.getElementById("modPerc").value;
                 if (item.fase === 0.5) {
                     let d = (p === 'dificil') ? 3 : (p === 'facil') ? 7 : 5;
-                    let nD = new Date(hoje + 'T00:00:00'); nD.setDate(nD.getDate() + d); item.proximaData = hojeLocal(nD);
+                    let nD = new Date(hoje + 'T00:00:00'); nD.setDate(nD.getDate() + d); item.proximaData = nD.toISOString().split('T')[0];
                 } else {
                     let r = item.historico[0] || { feitas: 20, acertos: 16 };
                     item.proximaData = calcularNovaData(hoje, item.peso, p, 2, item.easeFactor, r.feitas, r.acertos);
@@ -2557,15 +2434,15 @@
                 item.historico.push({ fase: `${Math.floor(item.fase)}ª Rev`, tempo: tmp, feitas: f, acertos: a, percepcao: p, data: hoje });
                 item.fase += 1;
             }
-            salvarEAtualizar(); fecharModal('modalRevisao'); window._seqRevisao = _seq; if (_seq) setTimeout(() => { if (!comecarRevisao()) window._seqRevisao = false; }, 250);
+            salvarEAtualizar(); fecharModal('modalRevisao');
         }
 
         function abrirDetalhes(idx) {
             let item = listaEstudos[idx]; if (!item.easeFactor) item.easeFactor = 2.5;
             let html = `<h3>${item.tema}</h3><p style="font-size:12px;opacity:0.8;">Fator FSRS: <b>${item.easeFactor.toFixed(2)}</b> | Peso: <b>${item.peso}</b></p><ul style="padding-left:15px;">`;
             item.historico.forEach(h => html += `<li><b>${h.fase}</b> (${h.data}) ${h.feitas ? `- Acertos: ${h.acertos}/${h.feitas}` : ''}</li>`);
-            html += `</ul><h4 class="mt-20">🔮 Previsão (Fim de Ciclo):</h4><ul style="padding-left:15px; opacity:0.8;">`;
-            let tF = Math.max(2, Math.floor(item.fase)); let tD = item.proximaData || hojeLocal();
+            html += `</ul><h4 style="margin-top:20px;">🔮 Previsão (Fim de Ciclo):</h4><ul style="padding-left:15px; opacity:0.8;">`;
+            let tF = Math.max(2, Math.floor(item.fase)); let tD = item.proximaData || new Date().toISOString().split('T')[0];
             let last = item.historico.filter(h => h.feitas > 0).pop() || { feitas: 20, acertos: 16, percepcao: 'medio' };
             for (let i = tF; i <= 6; i++) { html += `<li><b>${i}ª Rev.:</b> ${tD}</li>`; tD = calcularNovaData(tD, item.peso, last.percepcao, i + 1, item.easeFactor, last.feitas, last.acertos); }
             html += `</ul><p style="color:var(--primary-color);font-weight:bold;margin-top:15px; font-size:15px;">Estimativa de Alta: ${tD}</p>`;
@@ -2667,7 +2544,7 @@
         }
 
         function excluirEstudo(idx) { if (confirm("Excluir este estudo?")) { listaEstudos.splice(idx, 1); salvarEAtualizar(); } }
-        function fecharModal(id) { if (id === "modalRevisao") window._seqRevisao = false; document.getElementById(id).style.display = "none"; }
+        function fecharModal(id) { document.getElementById(id).style.display = "none"; }
 
         // ------------------------------------------------------------------
         // KANBAN BASEADO EM RODÍZIOS COM DATAS EXATAS E ISOLAMENTO
@@ -2678,7 +2555,7 @@
             
             if(cronogramaInternato.length === 0) {
                 sel.innerHTML = `<option value="">Cadastre um rodízio primeiro...</option>`;
-                document.getElementById("gridSemanaSetup").innerHTML = `<div class="empty-state"><div class="empty-ico">🗺️</div><b>Nenhum rodízio cadastrado ou ativo.</b></div>`;
+                document.getElementById("gridSemanaSetup").innerHTML = `<div style="text-align:center; padding:20px; opacity:0.7;"><div style="font-size:30px; margin-bottom:10px;">🗺️</div><b>Nenhum rodízio cadastrado ou ativo.</b></div>`;
                 document.getElementById("resultadoInternato").style.display = "none";
                 return;
             }
@@ -3089,7 +2966,7 @@
         function renderizarBacklogAdiados() {
             let div = document.getElementById("listaBacklogAdiados"); div.innerHTML = "";
             if(backlogAdiados.length === 0) { 
-                div.innerHTML = `<div class="empty-state"><div class="empty-ico">📦</div><b>Nenhum tema no Backlog.</b></div>`; 
+                div.innerHTML = `<div style="text-align:center; padding:20px; opacity:0.7;"><div style="font-size:30px; margin-bottom:10px;">📦</div><b>Nenhum tema no Backlog.</b></div>`; 
                 return; 
             }
             
@@ -3098,7 +2975,7 @@
                 .sort((a,b) => b.item.peso - a.item.peso);
 
             if(filtrados.length === 0) { 
-                div.innerHTML = `<div class="empty-state"><div class="empty-ico">📭</div><b>Nenhum tema para este filtro.</b></div>`; 
+                div.innerHTML = `<div style="text-align:center; padding:20px; opacity:0.7;"><div style="font-size:30px; margin-bottom:10px;">📭</div><b>Nenhum tema para este filtro.</b></div>`; 
                 return; 
             }
 
@@ -3126,7 +3003,7 @@
         function converterParaQuestoes(idx) {
             if(!confirm("Isso removerá a teoria do backlog e a enviará direto para o fluxo de Questões (Fase 2). Confirmar?")) return;
             let item = backlogAdiados[idx];
-            let hoje = hojeLocal();
+            let hoje = new Date().toISOString().split('T')[0];
             listaEstudos.push({
                 id: Date.now(), macroArea: item.macro, especialidade: item.esp, tema: item.tema, 
                 peso: item.peso, easeFactor: 2.5, fase: 2, 
@@ -3275,7 +3152,7 @@
             agendaProvas.forEach((p, i) => ulP.innerHTML += `<li style="margin-bottom:10px; display:flex; align-items:center; gap:10px;"><b>${p.nome}</b> (${p.data}) - [${p.tipo}] <button class="btn-acao btn-edit" onclick="editarProva(${i})">Editar</button> <span style="color:red;cursor:pointer; font-weight:bold;" onclick="agendaProvas.splice(${i},1); window.syncToCloud(); renderizarListasPlanejamento();">[X]</span></li>`);
             
             let divR = document.getElementById("listaRodizios"); divR.innerHTML = "";
-            let hj = hojeLocal();
+            let hj = new Date().toISOString().split('T')[0];
             cronogramaInternato.forEach((r, i) => {
                 let isActive = (r.inicio <= hj && r.fim >= hj);
                 divR.innerHTML += `<div style="padding:12px; border-radius:8px; border:1px solid var(--border-color); margin-bottom:8px; ${isActive ? 'background:rgba(39, 174, 96, 0.05); font-weight:bold; border-left:4px solid var(--primary-color);' : 'background:var(--bg-color);'}">${isActive ? '🟢 [ATUAL] ' : ''}<b>${r.macro}</b>: ${r.inicio} até ${r.fim} <span style="color:var(--danger-color); cursor:pointer; float:right; font-weight:bold;" onclick="cronogramaInternato.splice(${i},1); window.syncToCloud(); renderizarListasPlanejamento(); atualizarSeletorSemanasPorRodizios();">[X]</span></div>`;
@@ -3288,9 +3165,9 @@
         // ESTATÍSTICAS NERDS E METAS
         // ------------------------------------------------------------------
         function atualizarEstatisticasNerds() {
-            let hj = hojeLocal();
-            let d7 = new Date(); d7.setDate(d7.getDate() - 7); let s7 = hojeLocal(d7);
-            let d30 = new Date(); d30.setDate(d30.getDate() - 30); let s30 = hojeLocal(d30);
+            let hj = new Date().toISOString().split('T')[0];
+            let d7 = new Date(); d7.setDate(d7.getDate() - 7); let s7 = d7.toISOString().split('T')[0];
+            let d30 = new Date(); d30.setDate(d30.getDate() - 30); let s30 = d30.toISOString().split('T')[0];
             let tH=0, qH=0, tS=0, qS=0, tM=0, qM=0; let aTop = {};
 
             listaEstudos.forEach(i => {
@@ -3332,7 +3209,7 @@
                     let ft = 0; listaEstudos.forEach(i => { if (i.tema === sub.n) i.historico.forEach(h => ft += (h.feitas || 0)); });
                     let pct = (ft / meta) * 100;
                     let bg = pct >= 100 ? "#27ae60" : pct >= 75 ? "#2980b9" : pct >= 50 ? "#e67e22" : "#c0392b";
-                    tbody.innerHTML += `<tr><td><small style="opacity:0.7">${esp}</small><br><strong>${sub.n}</strong><span class="peso-tag p${sub.p}">P${sub.p}</span></td><td class="ta-c">${meta} qts</td><td class="ta-c">${ft}</td><td class="ta-c"><span class="badge" style="background:${bg}; padding:6px 10px; font-size:12px;">${pct.toFixed(0)}%</span></td></tr>`;
+                    tbody.innerHTML += `<tr><td><small style="opacity:0.7">${esp}</small><br><strong>${sub.n}</strong></td><td style="text-align:center;">${meta} qts</td><td style="text-align:center;">${ft}</td><td style="text-align:center;"><span class="badge" style="background:${bg}; padding:6px 10px; font-size:12px;">${pct.toFixed(0)}%</span></td></tr>`;
                 });
             });
         }
@@ -3344,9 +3221,9 @@
             
             taxonomia[m][e].forEach(sub => {
                 if (!notasIncidencia[sub.n]) notasIncidencia[sub.n] = { text: "", img: "" }; let nota = notasIncidencia[sub.n];
-                tbody.innerHTML += `<tr><td><strong>${sub.n}</strong><span class="peso-tag p${sub.p}">P${sub.p}</span></td>
-                <td><input class="m-0" type="text" value="${nota.text}" placeholder="O que mais cai..." onchange="sNI('${sub.n}', 'text', this.value)"></td>
-                <td><input class="m-0" type="url" value="${nota.img}" placeholder="URL Imagem" onchange="sNI('${sub.n}', 'img', this.value)">${nota.img ? `<br><img src="${nota.img}" style="max-width:100%;border-radius:4px;margin-top:5px; box-shadow:var(--shadow-btn);">` : ''}</td></tr>`;
+                tbody.innerHTML += `<tr><td><strong>${sub.n}</strong></td>
+                <td><input type="text" value="${nota.text}" placeholder="O que mais cai..." onchange="sNI('${sub.n}', 'text', this.value)" style="margin:0;"></td>
+                <td><input type="url" value="${nota.img}" placeholder="URL Imagem" onchange="sNI('${sub.n}', 'img', this.value)" style="margin:0;">${nota.img ? `<br><img src="${nota.img}" style="max-width:100%;border-radius:4px;margin-top:5px; box-shadow:var(--shadow-btn);">` : ''}</td></tr>`;
             });
         }
         function sNI(tema, tipo, val) { if (!notasIncidencia[tema]) notasIncidencia[tema] = {}; notasIncidencia[tema][tipo] = val; window.syncToCloud(); renderizarPlanilha(); }
@@ -3356,7 +3233,7 @@
         // ------------------------------------------------------------------
         function salvarSimulado(e) {
             e.preventDefault();
-            listaSimulados.push({ id: Date.now(), data: hojeLocal(), nome: document.getElementById("simNome").value, acertos: parseInt(document.getElementById("simAcertos").value), total: parseInt(document.getElementById("simTotal").value), areas: { CM: document.getElementById("simCM").value, CIR: document.getElementById("simCIR").value, GO: document.getElementById("simGO").value, PED: document.getElementById("simPED").value, PREV: document.getElementById("simPREV").value } });
+            listaSimulados.push({ id: Date.now(), data: new Date().toISOString().split('T')[0], nome: document.getElementById("simNome").value, acertos: parseInt(document.getElementById("simAcertos").value), total: parseInt(document.getElementById("simTotal").value), areas: { CM: document.getElementById("simCM").value, CIR: document.getElementById("simCIR").value, GO: document.getElementById("simGO").value, PED: document.getElementById("simPED").value, PREV: document.getElementById("simPREV").value } });
             e.target.reset(); salvarEAtualizar();
         }
 
@@ -3368,7 +3245,7 @@
         };
 
         let chartRadar = null, chartSim = null, chartEvo = null;
-        function atualizarRadar() { try { temaChart(); renderizarHeatmap(); atualizarGraficoTendencia(); } catch (e) { console.error(e); }
+        function atualizarRadar() {
             let ctx = document.getElementById('graficoRadar').getContext('2d'); if (chartRadar) chartRadar.destroy();
             let macros = ["Clínica Médica", "Cirurgia", "Ginecologia e Obstetrícia", "Pediatria", "Preventiva"];
             let counts = [0, 0, 0, 0, 0]; let totals = [0, 0, 0, 0, 0];
@@ -3461,7 +3338,7 @@
                 crono_semanas: cronogramaSemanasStore, backlog: backlogAdiados,
                 pomodoro: pomodoroDiario, streak: streak 
             };
-            let blob = new Blob([JSON.stringify(dados, null, 2)], { type: 'json' }); let url = URL.createObjectURL(blob); let a = document.createElement('a'); a.href = url; a.download = `backup_residencia_${hojeLocal()}.json`; a.click();
+            let blob = new Blob([JSON.stringify(dados, null, 2)], { type: 'json' }); let url = URL.createObjectURL(blob); let a = document.createElement('a'); a.href = url; a.download = `backup_residencia_${new Date().toISOString().split('T')[0]}.json`; a.click();
         }
 
         function importarBackup(e) {
@@ -3488,193 +3365,6 @@
             renderizarMapaRodizio();
             if(document.getElementById('tab-rastreio').classList.contains('active')) renderizarRastreio();
         }
-    
-        // ==================================================================
-        // UTILITÁRIOS
-        // ==================================================================
-        function hojeLocal(d) { d = d || new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
-        function esc(s) { return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
-        function diasEntre(a, b) { return Math.floor((new Date(b + 'T00:00:00') - new Date(a + 'T00:00:00')) / 864e5); }
-        function cssVar(n) { return getComputedStyle(document.body).getPropertyValue(n).trim(); }
-        function irParaAba(id) { const b = [...document.querySelectorAll('.sidebar-btn')].find(x => (x.getAttribute('onclick') || '').includes("'" + id + "'")); mudarAba(id, b); }
-        function temaChart() { if (!window.Chart) return; Chart.defaults.color = cssVar('--muted'); Chart.defaults.borderColor = cssVar('--border-color'); Chart.defaults.font.family = cssVar('--font-body'); }
-
-        // ==================================================================
-        // DASHBOARD: REVISÕES DE HOJE, ONBOARDING E ALERTAS
-        // ==================================================================
-        function renderizarPainelInicial() { renderizarOnboarding(); renderizarHoje(); renderizarAlertas(); }
-
-        function revisoesDoDia() {
-            const hj = hojeLocal();
-            return listaEstudos.map((i, idx) => ({ i, idx }))
-                .filter(({ i }) => i.fase <= 6 && i.proximaData <= hj && !(sprintAtivo && i.peso < 4))
-                .sort((a, b) => a.i.proximaData.localeCompare(b.i.proximaData) || b.i.peso - a.i.peso);
-        }
-        function comecarRevisao() {
-            const lista = revisoesDoDia(); if (!lista.length) return false;
-            window._seqRevisao = true; abrirModal(lista[0].idx); return true;
-        }
-        function renderizarHoje() {
-            const el = document.getElementById('listaRevisoesHoje'); if (!el) return;
-            const lista = revisoesDoDia(), hj = hojeLocal(), atras = lista.filter(x => x.i.proximaData < hj).length;
-            document.getElementById('heroResumo').textContent = lista.length
-                ? lista.length + (lista.length === 1 ? ' revisão pendente' : ' revisões pendentes') + (atras ? ' · ' + atras + ' em atraso' : '')
-                : 'Nada pendente por enquanto.';
-            document.getElementById('btnComecarRevisao').disabled = !lista.length;
-            if (!lista.length) {
-                el.innerHTML = `<div class="empty-state"><div class="empty-ico">✨</div><b>Tudo em dia.</b><br><span class="hint">${listaEstudos.length ? 'Aproveite para estudar um tema novo.' : 'Registre seu primeiro estudo para gerar revisões.'}</span></div>`;
-                return;
-            }
-            el.innerHTML = lista.slice(0, 6).map(({ i, idx }) => {
-                const atr = i.proximaData < hj;
-                const fase = i.fase === 0.5 ? 'Anki (teoria)' : i.fase === 1 ? '1ª rev. (Anki)' : Math.floor(i.fase) + 'ª rev. (questões)';
-                return `<div class="rev-item" role="button" tabindex="0" style="--macro:${getMacroColor(i.macroArea)}" onclick="window._seqRevisao=false;abrirModal(${idx})" onkeydown="if(event.key==='Enter')this.click()"><div><strong>${esc(i.tema)}</strong><small>${esc(i.especialidade)} · ${fase}</small></div><span class="tag ${atr ? 'tag-danger' : 'tag-ok'}">${atr ? 'Atrasada' : 'Hoje'}</span></div>`;
-            }).join('') + (lista.length > 6 ? `<p class="hint ta-c m-0">+ ${lista.length - 6} na fila</p>` : '');
-        }
-        function renderizarOnboarding() {
-            const el = document.getElementById('onboardingCard'); if (!el) return;
-            const passos = [
-                { ok: agendaProvas.some(p => p.tipo === 'principal'), t: 'Defina sua prova principal', d: 'Ativa a contagem regressiva e a reta final.', aba: 'tab-planejamento', b: 'Definir prova' },
-                { ok: cronogramaInternato.length > 0, t: 'Monte seu rodízio', d: 'Distribui os temas do edital pelas semanas.', aba: 'tab-planejamento', b: 'Criar rodízio' },
-                { ok: listaEstudos.length > 0, t: 'Registre o primeiro estudo', d: 'Gera as revisões espaçadas automaticamente.', aba: 'tab-estudo', b: 'Registrar estudo' }
-            ];
-            const feitos = passos.filter(p => p.ok).length;
-            if (feitos === passos.length) { el.style.display = 'none'; return; }
-            el.style.display = 'block';
-            el.innerHTML = `<h2>Comece por aqui</h2><p class="hint">${feitos} de ${passos.length} passos concluídos</p><div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${feitos / passos.length * 100}%"></div></div><ol class="steps">${passos.map((p, k) => `<li class="${p.ok ? 'done' : ''}"><span class="step-n">${p.ok ? '✅' : k + 1}</span><div><strong>${p.t}</strong><small>${p.d}</small></div>${p.ok ? '' : `<button class="btn-acao" onclick="irParaAba('${p.aba}')">${p.b}</button>`}</li>`).join('')}</ol>`;
-        }
-        function renderizarAlertas() {
-            const el = document.getElementById('alertasInteligentes'); if (!el) return;
-            const hj = hojeLocal(), alertas = [], lim = configAlgoritmo.burnout || 15;
-            const d3 = new Date(); d3.setDate(d3.getDate() + 3); const fim = hojeLocal(d3);
-            const carga = listaEstudos.filter(i => i.fase <= 6 && i.proximaData >= hj && i.proximaData <= fim).length;
-            if (carga >= lim) alertas.push({ nivel: 'danger', t: 'Risco de saturação', d: carga + ' revisões nos próximos 3 dias (limite: ' + lim + ').' });
-            const frios = listaEstudos.filter(i => {
-                if (i.peso !== 5 || i.fase > 6) return false;
-                const h = i.historico || [], q = h.filter(x => x.feitas > 0).map(x => x.data).sort().pop();
-                const ref = q || (h[0] || {}).data; return ref && diasEntre(ref, hj) >= 30;
-            });
-            if (frios.length) alertas.push({ nivel: 'warn', t: frios.length + (frios.length === 1 ? ' tema de peso 5 está' : ' temas de peso 5 estão') + ' há 30 dias ou mais sem questões', d: frios.slice(0, 4).map(i => esc(i.tema)).join(' · ') + (frios.length > 4 ? ' …' : '') });
-            const por = {};
-            listaEstudos.forEach(i => (i.historico || []).forEach(x => { if (x.feitas > 0) { const o = por[i.macroArea] = por[i.macroArea] || { f: 0, a: 0 }; o.f += x.feitas; o.a += x.acertos; } }));
-            Object.keys(por).forEach(m => { const o = por[m], pct = Math.round(o.a / o.f * 100); if (o.f >= 20 && pct < 60) alertas.push({ nivel: 'danger', t: esc(m) + ': acerto de ' + pct + '%', d: o.a + ' acertos em ' + o.f + ' questões, abaixo da meta de 60%.', aba: 'tab-analytics' }); });
-            el.innerHTML = alertas.length
-                ? alertas.map(a => `<div class="alert-item ${a.nivel}"><span class="alert-ico">⚠️</span><div><strong>${a.t}</strong><small>${a.d}</small></div>${a.aba ? `<button class="btn-acao btn-neutral" onclick="irParaAba('${a.aba}')">Ver evolução</button>` : ''}</div>`).join('')
-                : '<div class="empty-state"><div class="empty-ico">✅</div><b>Nenhum alerta no momento.</b></div>';
-        }
-
-        // ==================================================================
-        // GRÁFICOS: HEATMAP DE ESTUDO E TENDÊNCIA DE ACERTOS
-        // ==================================================================
-        function renderizarHeatmap() {
-            const el = document.getElementById('heatmapEstudo'); if (!el) return;
-            const min = {}; listaEstudos.forEach(i => (i.historico || []).forEach(x => { if (x.data) min[x.data] = (min[x.data] || 0) + (x.tempo || 0); }));
-            const hoje = new Date(); hoje.setHours(0, 0, 0, 0);
-            const ini = new Date(hoje); ini.setDate(ini.getDate() - 175 - hoje.getDay());
-            let html = '', total = 0, dias = 0;
-            for (let d = new Date(ini); d <= hoje; d.setDate(d.getDate() + 1)) {
-                const k = hojeLocal(d), m = min[k] || 0; total += m; if (m) dias++;
-                html += `<i class="hm l${!m ? 0 : m < 30 ? 1 : m < 60 ? 2 : m < 120 ? 3 : 4}" title="${k.split('-').reverse().join('/')}: ${m} min"></i>`;
-            }
-            el.innerHTML = html;
-            document.getElementById('heatmapResumo').textContent = Math.round(total / 60) + ' h em ' + dias + ' dias de estudo nos últimos 6 meses';
-        }
-        let chartTend = null;
-        function atualizarGraficoTendencia() {
-            const cv = document.getElementById('graficoTendencia'); if (!cv || !window.Chart) return; if (chartTend) chartTend.destroy();
-            const seg = s => { const x = new Date(s + 'T00:00:00'); x.setDate(x.getDate() - ((x.getDay() + 6) % 7)); return hojeLocal(x); };
-            const base = new Date(seg(hojeLocal()) + 'T00:00:00'), semanas = [];
-            for (let k = 11; k >= 0; k--) { const x = new Date(base); x.setDate(x.getDate() - 7 * k); semanas.push(hojeLocal(x)); }
-            const macros = { 'Clínica Médica': 'Clínica', 'Cirurgia': 'Cirurgia', 'Ginecologia e Obstetrícia': 'GO', 'Pediatria': 'Pediatria', 'Preventiva': 'Preventiva' };
-            const datasets = Object.keys(macros).map(m => {
-                const acc = {};
-                listaEstudos.forEach(i => { if (i.macroArea !== m) return; (i.historico || []).forEach(x => { if (x.feitas > 0 && x.data) { const o = acc[seg(x.data)] = acc[seg(x.data)] || { f: 0, a: 0 }; o.f += x.feitas; o.a += x.acertos; } }); });
-                return { label: macros[m], data: semanas.map(s => acc[s] ? Math.round(acc[s].a / acc[s].f * 100) : null), borderColor: getMacroColor(m), backgroundColor: getMacroColor(m), tension: .3, spanGaps: true, pointRadius: 3, borderWidth: 2 };
-            });
-            datasets.push({ label: 'Meta 60%', data: semanas.map(() => 60), borderColor: cssVar('--danger-color'), borderDash: [5, 5], pointRadius: 0, borderWidth: 1 });
-            chartTend = new Chart(cv.getContext('2d'), { type: 'line', data: { labels: semanas.map(s => s.slice(8) + '/' + s.slice(5, 7)), datasets }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { min: 0, max: 100, ticks: { callback: v => v + '%' } } }, plugins: { legend: { position: 'bottom' } } } });
-        }
-
-        // ==================================================================
-        // ÍCONES SVG (estilo Lucide) — substitui emojis em todo o DOM, inclusive conteúdo dinâmico
-        // ==================================================================
-        const ICONES = {
-            'home': '<path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
-            'calendar': '<path d="M8 2v4M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/>',
-            'compass': '<circle cx="12" cy="12" r="10"/><path d="m16.24 7.76-2.12 6.36-6.36 2.12 2.12-6.36z"/>',
-            'pen': '<path d="M12 20h9"/><path d="M16.376 3.622a1 1 0 0 1 3.002 3.002L7.368 18.635a2 2 0 0 1-.855.506l-2.872.838a.5.5 0 0 1-.62-.62l.838-2.872a2 2 0 0 1 .506-.854z"/>',
-            'chart': '<path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M18 17V9M13 17V5M8 17v-3"/>',
-            'gauge': '<path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/>',
-            'book': '<path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/>',
-            'file': '<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z"/><path d="M14 2v4a2 2 0 0 0 2 2h4M10 9H8M16 13H8M16 17H8"/>',
-            'sliders': '<path d="M10 5H3M12 19H3M14 3v4M16 17v4M21 12h-9M21 19h-5M21 5h-3M8 10v4M8 12H3"/>',
-            'shield': '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>',
-            'target': '<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>',
-            'flame': '<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>',
-            'zap': '<path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/>',
-            'play': '<polygon points="6 3 20 12 6 21 6 3"/>',
-            'pause': '<rect x="14" y="4" width="4" height="16" rx="1"/><rect x="6" y="4" width="4" height="16" rx="1"/>',
-            'rotate': '<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>',
-            'moon': '<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/>',
-            'alert': '<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4M12 17h.01"/>',
-            'check': '<path d="M21.801 10A10 10 0 1 1 17 3.335"/><path d="m9 11 3 3L22 4"/>',
-            'star': '<path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"/>',
-            'pin': '<path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/>',
-            'package': '<path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"/><path d="M12 22V12M3.29 7 12 12l8.71-5"/>',
-            'hourglass': '<path d="M5 22h14M5 2h14M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"/>',
-            'inbox': '<path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/>',
-            'sparkles': '<path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4M22 5h-4M4 17v2M5 18H3"/>',
-            'save': '<path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7M7 3v4a1 1 0 0 0 1 1h7"/>',
-            'download': '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>',
-            'trash': '<path d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>',
-            'search': '<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
-            'menu': '<path d="M4 6h16M4 12h16M4 18h16"/>', 'plus': '<path d="M5 12h14M12 5v14"/>', 'minus': '<path d="M5 12h14"/>',
-            'eye': '<path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/>',
-            'battery': '<rect x="2" y="7" width="16" height="10" rx="2"/><path d="M22 11v2M6 11v2M10 11v2M14 11v2"/>',
-            'battery-low': '<rect x="2" y="7" width="16" height="10" rx="2"/><path d="M22 11v2M6 11v2"/>',
-            'leaf': '<path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>',
-            'globe': '<circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20M2 12h20"/>',
-            'heart': '<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7z"/><path d="M3.22 12H9.5l.5-1 2 4.5 2-7 1.5 3.5h5.27"/>',
-            'activity': '<path d="M22 12h-4l-3 9L9 3l-3 9H2"/>',
-            'dot-red': '<circle cx="12" cy="12" r="6" fill="currentColor" stroke="none"/>',
-            'dot-green': '<circle cx="12" cy="12" r="6" fill="currentColor" stroke="none"/>',
-            'dot-gray': '<circle cx="12" cy="12" r="6" fill="currentColor" stroke="none"/>'
-        };
-        const EMOJI_ICONE = {
-            '🧠⚕': 'activity', '🧠': 'activity', '🩺': 'heart', '🏥': 'heart', '🏠': 'home', '📅': 'calendar', '🗓': 'calendar', '🧭': 'compass', '🗺': 'compass',
-            '✍': 'pen', '📊': 'chart', '🤓': 'gauge', '📚': 'book', '📘': 'book', '📖': 'book', '📋': 'file', '📝': 'file', '📂': 'file', '⚙': 'sliders', '🎨': 'sliders',
-            '🛡': 'shield', '🎯': 'target', '🔥': 'flame', '⚡': 'zap', '🚀': 'zap', '▶': 'play', '⏸': 'pause', '🔄': 'rotate', '🔁': 'rotate', '🌓': 'moon', '⚠': 'alert',
-            '✅': 'check', '✔': 'check', '🔴': 'dot-red', '🟢': 'dot-green', '⚪': 'dot-gray', '⭐': 'star', '🥇': 'star', '🥈': 'star', '🥉': 'star', '☰': 'menu', '🏆': 'star', '📌': 'pin',
-            '📦': 'package', '⏳': 'hourglass', '📭': 'inbox', '🎉': 'sparkles', '✨': 'sparkles', '🔮': 'sparkles', '💾': 'save', '📥': 'download', '🗑': 'trash',
-            '🔎': 'search', '🔍': 'search', '➕': 'plus', '➖': 'minus', '👁': 'eye', '🔋': 'battery', '🪫': 'battery-low', '🌿': 'leaf', '🌐': 'globe'
-        };
-        const RX_EMOJI = new RegExp('(' + Object.keys(EMOJI_ICONE).sort((a, b) => b.length - a.length).map(k => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|') + ')\uFE0F?\\s*', 'g');
-        function iconeSvg(n) { return '<svg class="ic ic-' + n + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + ICONES[n] + '</svg>'; }
-        function iconizar(raiz) {
-            if (!raiz) return;
-            const nos = [];
-            if (raiz.nodeType === 3) nos.push(raiz);
-            else if (raiz.nodeType === 1 && !/^(SCRIPT|STYLE|TEXTAREA|SVG|CANVAS)$/i.test(raiz.tagName)) {
-                const w = document.createTreeWalker(raiz, NodeFilter.SHOW_TEXT);
-                for (let n = w.nextNode(); n; n = w.nextNode()) nos.push(n);
-            }
-            nos.forEach(n => {
-                RX_EMOJI.lastIndex = 0; if (!RX_EMOJI.test(n.nodeValue)) return;
-                const pai = n.parentNode; if (!pai || /^(SCRIPT|STYLE|TEXTAREA|TITLE)$/i.test(pai.nodeName)) return;
-                RX_EMOJI.lastIndex = 0;
-                if (/^(OPTION|OPTGROUP)$/i.test(pai.nodeName)) { n.nodeValue = n.nodeValue.replace(RX_EMOJI, ''); return; }
-                const t = document.createElement('template');
-                t.innerHTML = esc(n.nodeValue).replace(RX_EMOJI, (m, k) => iconeSvg(EMOJI_ICONE[k]));
-                pai.replaceChild(t.content, n);
-            });
-        }
-        const obsIcones = new MutationObserver(muts => {
-            muts.forEach(m => { m.addedNodes.forEach(n => { if (n.nodeType === 1 || n.nodeType === 3) iconizar(n); }); if (m.type === 'characterData') iconizar(m.target); });
-            obsIcones.takeRecords();
-        });
-        document.querySelectorAll('[placeholder]').forEach(e => { RX_EMOJI.lastIndex = 0; e.placeholder = e.placeholder.replace(RX_EMOJI, ''); });
-        iconizar(document.body);
-        obsIcones.observe(document.body, { childList: true, subtree: true, characterData: true });
     </script>
 </body>
 </html>
