@@ -3781,6 +3781,13 @@
             const lista = revisoesDoDia(); if (!lista.length) return false;
             window._seqRevisao = true; abrirModal(lista[0].idx); return true;
         }
+        let filaRevisoesExpandida = false;
+
+        function toggleFilaRevisoes() {
+            filaRevisoesExpandida = !filaRevisoesExpandida;
+            renderizarHoje();
+        }
+
         function renderizarHoje() {
             const el = document.getElementById('listaRevisoesHoje'); if (!el) return;
             const lista = revisoesDoDia(), hj = hojeLocal(), atras = lista.filter(x => x.i.proximaData < hj).length;
@@ -3792,11 +3799,12 @@
                 el.innerHTML = `<div class="empty-state"><div class="empty-ico">✨</div><b>Tudo em dia.</b><br><span class="hint">${listaEstudos.length ? 'Aproveite para estudar um tema novo.' : 'Registre seu primeiro estudo para gerar revisões.'}</span></div>`;
                 return;
             }
-            el.innerHTML = lista.slice(0, 6).map(({ i, idx }) => {
+            const exibidos = filaRevisoesExpandida ? lista : lista.slice(0, 6);
+            el.innerHTML = exibidos.map(({ i, idx }) => {
                 const atr = i.proximaData < hj;
                 const fase = i.fase === 0.5 ? 'Anki (teoria)' : i.fase === 1 ? '1ª rev. (Anki)' : Math.floor(i.fase) + 'ª rev. (questões)';
-                return `<div class="rev-item" role="button" tabindex="0" style="--macro:${getMacroColor(i.macroArea)}" onclick="window._seqRevisao=false;abrirModal(${idx})" onkeydown="if(event.key==='Enter')this.click()"><div><strong>${esc(i.tema)}</strong><small>${esc(i.especialidade)} · ${fase}</small></div><span class="tag ${atr ? 'tag-danger' : 'tag-ok'}">${atr ? 'Atrasada' : 'Hoje'}</span></div>`;
-            }).join('') + (lista.length > 6 ? `<p class="hint ta-c m-0">+ ${lista.length - 6} na fila</p>` : '');
+                return `<div class="rev-item" role="button" tabindex="0" style="--macro:${getMacroColor(i.macroArea)}" onclick="window._seqRevisao=false;abrirModal(${idx})" onkeydown="if(event.key==='Enter')this.click()"><div><strong>${esc(i.tema)} <span class="peso-tag p${i.peso}">P${i.peso}</span></strong><small>${esc(i.especialidade)} · ${fase}</small></div><span class="tag ${atr ? 'tag-danger' : 'tag-ok'}">${atr ? 'Atrasada' : 'Hoje'}</span></div>`;
+            }).join('') + (lista.length > 6 ? `<button type="button" class="btn-expand-fila" onclick="toggleFilaRevisoes()">${filaRevisoesExpandida ? '➖ Recolher fila' : `➕ Ver mais ${lista.length - 6} na fila`}</button>` : '');
         }
         function renderizarOnboarding() {
             const el = document.getElementById('onboardingCard'); if (!el) return;
