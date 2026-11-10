@@ -342,6 +342,109 @@
         .empty-ico { font-size:30px; margin-bottom:10px; color:var(--accent-color); }
         .list-tight { padding-left:15px; margin:0; }
         .btn-neutral { background:var(--border-color); color:var(--text-color); }
+/* ==========================================================
+           CORREÇÕES DE CONTRASTE (CLARO / ESCURO) E LAYOUT DO KANBAN
+           ========================================================== */
+        :root {
+            --btn-sec-bg: #dce5f4;
+            --btn-sec-text: #0f1b33;
+            --surface-subtle: #f1f5fb;
+        }
+        .dark-mode {
+            --btn-sec-bg: #1e293b;
+            --btn-sec-text: #f1f5f9;
+            --surface-subtle: #111a2e;
+        }
+
+        /* Corrige botões neutros e secundários que sumiam na troca de tema */
+        .btn-neutral,
+        button[style*="background:var(--text-color)"],
+        button[style*="background-color: var(--text-color)"],
+        button[style*="background:var(--border-color)"] {
+            background: var(--btn-sec-bg) !important;
+            color: var(--btn-sec-text) !important;
+            border: 1px solid var(--border-color) !important;
+        }
+
+        /* Corrige botões e inputs forçados com fundo branco fixo no HTML */
+        button[style*="background:white"],
+        input[style*="background:white"] {
+            background: var(--card-bg) !important;
+            color: var(--text-color) !important;
+            border-color: var(--border-color) !important;
+        }
+
+        /* Corrige textos com cores fixas (#555, #7f8c8d, --header-bg) */
+        [style*="color:var(--header-bg)"] {
+            color: var(--text-color) !important;
+        }
+        .badge[style*="background:var(--header-bg)"] {
+            background: var(--primary-color) !important;
+            color: #ffffff !important;
+        }
+        [style*="color:#555"],
+        [style*="color:#7f8c8d"],
+        [style*="color:#95a5a6"] {
+            color: var(--muted) !important;
+        }
+
+        /* Melhora contraste das tags de peso (P1 a P5) */
+        .peso-tag {
+            background: var(--btn-sec-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+        }
+        .peso-tag.p4, .peso-tag.p5 {
+            background: color-mix(in srgb, var(--warning-bg) 22%, var(--card-bg));
+            color: #b45309;
+            border-color: var(--warning-bg);
+        }
+        .dark-mode .peso-tag.p4, .dark-mode .peso-tag.p5 {
+            color: #fbbf24;
+        }
+
+        /* Botão para expandir/recolher "+ X na fila" nas Revisões de Hoje */
+        .btn-expand-fila {
+            background: var(--surface-subtle);
+            color: var(--accent-color);
+            border: 1px dashed var(--accent-color);
+            padding: 9px 14px;
+            border-radius: var(--r-md);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 6px;
+            box-shadow: none;
+            transition: background 0.2s, transform 0.1s;
+        }
+        .btn-expand-fila:hover {
+            background: color-mix(in srgb, var(--accent-color) 14%, transparent);
+            filter: none;
+            box-shadow: none;
+        }
+
+        /* Cartões do Kanban com nome completo da aula e destaque de Peso */
+        .kanban-tema-nome {
+            font-size: 11px;
+            line-height: 1.38;
+            font-weight: 600;
+            margin: 5px 0;
+            word-break: break-word;
+            overflow-wrap: anywhere;
+            white-space: normal;
+            color: #ffffff;
+        }
+        .kanban-peso-badge {
+            display: inline-block;
+            background: rgba(0, 0, 0, 0.35);
+            color: #fde047;
+            padding: 2px 6px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 700;
+            border: 1px solid rgba(255, 255, 255, 0.22);
+        }
 </style>
 </head>
 <body class="dark-mode">
@@ -1030,6 +1133,27 @@
         <div class="modal-content">
             <div id="detalhesBodyContent"></div>
             <button type="button" class="sub-aba-btn" style="width:100%; margin-top:20px; padding:12px; border:1px solid var(--border-color); background:var(--bg-color);" onclick="fecharModal('modalDetalhes')">Fechar</button>
+        </div>
+    </div>
+<!-- MODAL ESCOLHER TEMA MANUALMENTE PARA O KANBAN -->
+    <div class="modal" id="modalEscolherTemaKanban">
+        <div class="modal-content" style="max-width: 480px;">
+            <h3 class="mt-0">🎯 Escolher Tema para o Turno Livre</h3>
+            <p class="hint">Selecione o assunto do edital que deseja estudar neste horário.</p>
+
+            <label>Macro-Área:</label>
+            <select id="selManualMacro" onchange="popularManualEspecialidades()"></select>
+
+            <label class="mt-20">Especialidade:</label>
+            <select id="selManualEsp" onchange="popularManualSubtemas()"></select>
+
+            <label class="mt-20">Subtema (com Peso):</label>
+            <select id="selManualTema"></select>
+
+            <div style="display:flex; gap:12px; margin-top:25px;">
+                <button type="button" onclick="confirmarAlocacaoManualTema()" style="flex:1; margin:0;">Alocar no Turno</button>
+                <button type="button" class="btn-excluir" style="flex:1; margin:0;" onclick="fecharModal('modalEscolherTemaKanban')">Cancelar</button>
+            </div>
         </div>
     </div>
 <!-- SCRIPT DE INFRAESTRUTURA FIREBASE -->
@@ -2672,7 +2796,7 @@
         // ------------------------------------------------------------------
         // KANBAN BASEADO EM RODÍZIOS COM DATAS EXATAS E ISOLAMENTO
         // ------------------------------------------------------------------
-        function atualizarSeletorSemanasPorRodizios() {
+        function atualizarSeletorSemanasPorRodizios(forcarSemanaVigente = false) {
             let sel = document.getElementById("seletorSemanaInternato");
             sel.innerHTML = "";
             
@@ -2684,6 +2808,10 @@
             }
 
             let primeiraValida = "";
+            let semanaVigenteHoje = "";
+            let hoje = new Date();
+            hoje.setHours(0, 0, 0, 0);
+
             cronogramaInternato.forEach((rod, rIdx) => {
                 let dIni = new Date(rod.inicio + 'T00:00:00');
                 let dFim = new Date(rod.fim + 'T00:00:00');
@@ -2697,16 +2825,28 @@
                     dtIniSem.setDate(dIni.getDate() + (s-1)*7);
                     let dtFimSem = new Date(dtIniSem);
                     dtFimSem.setDate(dtIniSem.getDate() + 6);
-                    let fD = d => `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}`;
+                    
+                    dtIniSem.setHours(0, 0, 0, 0);
+                    dtFimSem.setHours(23, 59, 59, 999);
 
-                    let labelText = `${rod.macro} — Sem. ${s} (${fD(dtIniSem)} a ${fD(dtFimSem)})`;
+                    let isVigente = (hoje >= dtIniSem && hoje <= dtFimSem);
+                    if (isVigente && !semanaVigenteHoje) {
+                        semanaVigenteHoje = sId;
+                    }
+
+                    let fD = d => `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}`;
+                    let prefixo = isVigente ? "📍 [ATUAL] " : "";
+                    let labelText = `${prefixo}${rod.macro} — Sem. ${s} (${fD(dtIniSem)} a ${fD(dtFimSem)})`;
                     sel.innerHTML += `<option value="${sId}">${labelText}</option>`;
                 }
             });
 
-            if(!semanaAtivaId || !document.querySelector(`#seletorSemanaInternato option[value="${semanaAtivaId}"]`)) {
-                semanaAtivaId = primeiraValida;
+            if (forcarSemanaVigente && semanaVigenteHoje) {
+                semanaAtivaId = semanaVigenteHoje;
+            } else if (!semanaAtivaId || !document.querySelector(`#seletorSemanaInternato option[value="${semanaAtivaId}"]`)) {
+                semanaAtivaId = semanaVigenteHoje || primeiraValida;
             }
+            
             sel.value = semanaAtivaId;
             mudarSemanaAtiva(semanaAtivaId);
         }
@@ -2936,7 +3076,6 @@
 
         function gerarPlanoSemanaAtiva() {
             salvarGradeTurnosSemanaSilencioso();
-            let misto = document.getElementById("chkMisto").checked;
             let gradeAtual = gradesSemanaisStore[semanaAtivaId];
             if(!gradeAtual) return alert("Salve a grade de turnos primeiro!");
 
@@ -2945,15 +3084,49 @@
             let macroRod = rod ? rod.macro : "Clínica Médica";
 
             let slotsEstudo = [];
-            diasSemanaArr.forEach(d => { turnosArr.forEach(t => { if(gradeAtual[d] && gradeAtual[d][t] === 'estudo') slotsEstudo.push({d, t}); }); });
+            diasSemanaArr.forEach(d => { 
+                turnosArr.forEach(t => { 
+                    if(gradeAtual[d] && gradeAtual[d][t] === 'estudo') slotsEstudo.push({d, t}); 
+                }); 
+            });
             
             if(slotsEstudo.length === 0) return alert("Defina pelo menos um turno como '📘 Estudo' nesta semana!");
 
-            let qTeoria = misto ? Math.round(slotsEstudo.length * 0.65) : slotsEstudo.length;
+            // Pergunta ao usuário se prefere escolher manualmente ou preenchimento automático
+            let modoManual = confirm(
+                "Deseja escolher os temas manualmente para os turnos de estudo livres desta semana?\n\n" +
+                "• OK: Deixa os horários livres com botão [➕ Escolher Tema] para você puxar o assunto que quiser.\n" +
+                "• Cancelar: Preenche automaticamente respeitando os pesos do edital."
+            );
 
-            let poolTemas = [];
-            let antigoCrono = cronogramaSemanasStore[semanaAtivaId];
-            if(antigoCrono) {
+            let antigoCrono = cronogramaSemanasStore[semanaAtivaId] || {};
+            let novoCrono = {};
+
+            diasSemanaArr.forEach(d => {
+                novoCrono[d] = {};
+                turnosArr.forEach(t => {
+                    let tipoDefinido = gradeAtual[d] ? gradeAtual[d][t] : 'ocupado';
+                    novoCrono[d][t] = { tipo: tipoDefinido };
+                });
+            });
+
+            if (modoManual) {
+                // Preserva os temas que já estavam alocados nos slots que continuam sendo de estudo
+                slotsEstudo.forEach(slot => {
+                    let anterior = antigoCrono[slot.d] && antigoCrono[slot.d][slot.t];
+                    if (anterior && anterior.tipo === 'teoria') {
+                        novoCrono[slot.d][slot.t] = anterior;
+                    } else {
+                        // Deixa livre para você puxar manualmente
+                        novoCrono[slot.d][slot.t] = { tipo: 'estudo' };
+                    }
+                });
+            } else {
+                // Modo Automático tradicional
+                let misto = document.getElementById("chkMisto").checked;
+                let qTeoria = misto ? Math.round(slotsEstudo.length * 0.65) : slotsEstudo.length;
+
+                let poolTemas = [];
                 diasSemanaArr.forEach(d => {
                     turnosArr.forEach(t => {
                         if(antigoCrono[d] && antigoCrono[d][t] && antigoCrono[d][t].tipo === 'teoria') {
@@ -2961,49 +3134,43 @@
                         }
                     });
                 });
-            }
 
-            while(poolTemas.length < qTeoria && backlogAdiados.length > 0) {
-                poolTemas.push(backlogAdiados.shift());
-            }
-
-            if(poolTemas.length < qTeoria && taxonomia[macroRod]) {
-                Object.keys(taxonomia[macroRod]).forEach(esp => {
-                    taxonomia[macroRod][esp].forEach(sub => {
-                        let jaFez = listaEstudos.some(e => e.tema === sub.n);
-                        let jaNoPool = poolTemas.some(p => p.tema === sub.n);
-                        if(!jaFez && !jaNoPool) poolTemas.push({ macro: macroRod, esp: esp, tema: sub.n, peso: sub.p });
-                    });
-                });
-                poolTemas.sort((a,b) => b.peso - a.peso);
-            }
-
-            let novoCrono = {};
-            diasSemanaArr.forEach(d => {
-                novoCrono[d] = {};
-                turnosArr.forEach(t => novoCrono[d][t] = { tipo: gradeAtual[d] ? gradeAtual[d][t] : 'ocupado' });
-            });
-
-            let count = 0;
-            slotsEstudo.forEach(slot => {
-                if(count < qTeoria && poolTemas.length > 0) {
-                    let topico = poolTemas.shift();
-                    novoCrono[slot.d][slot.t] = { tipo: 'teoria', macro: topico.macro, esp: topico.esp, tema: topico.tema, peso: topico.peso };
-                    count++;
-                } else {
-                    novoCrono[slot.d][slot.t] = { tipo: 'revisao' };
+                while(poolTemas.length < qTeoria && backlogAdiados.length > 0) {
+                    poolTemas.push(backlogAdiados.shift());
                 }
-            });
 
-            if(poolTemas.length > 0) {
-                poolTemas.forEach(sobra => {
-                    backlogAdiados.push({
-                        macro: sobra.macro, esp: sobra.esp, tema: sobra.tema, peso: sobra.peso,
-                        dataAdiado: calcularDataExataRodizio(semanaAtivaId, 0),
-                        dataRealAdiado: new Date().toISOString(),
-                        motivo: "Sem espaço livre após recalcular a semana"
+                if(poolTemas.length < qTeoria && taxonomia[macroRod]) {
+                    Object.keys(taxonomia[macroRod]).forEach(esp => {
+                        taxonomia[macroRod][esp].forEach(sub => {
+                            let jaFez = listaEstudos.some(e => e.tema === sub.n);
+                            let jaNoPool = poolTemas.some(p => p.tema === sub.n);
+                            if(!jaFez && !jaNoPool) poolTemas.push({ macro: macroRod, esp: esp, tema: sub.n, peso: sub.p });
+                        });
                     });
+                    poolTemas.sort((a,b) => b.peso - a.peso);
+                }
+
+                let count = 0;
+                slotsEstudo.forEach(slot => {
+                    if(count < qTeoria && poolTemas.length > 0) {
+                        let topico = poolTemas.shift();
+                        novoCrono[slot.d][slot.t] = { tipo: 'teoria', macro: topico.macro, esp: topico.esp, tema: topico.tema, peso: topico.peso };
+                        count++;
+                    } else {
+                        novoCrono[slot.d][slot.t] = { tipo: 'revisao' };
+                    }
                 });
+
+                if(poolTemas.length > 0) {
+                    poolTemas.forEach(sobra => {
+                        backlogAdiados.push({
+                            macro: sobra.macro, esp: sobra.esp, tema: sobra.tema, peso: sobra.peso,
+                            dataAdiado: calcularDataExataRodizio(semanaAtivaId, 0),
+                            dataRealAdiado: new Date().toISOString(),
+                            motivo: "Sem espaço livre após recalcular a semana"
+                        });
+                    });
+                }
             }
 
             cronogramaSemanasStore[semanaAtivaId] = novoCrono;
@@ -3011,7 +3178,91 @@
 
             renderizarKanbanSemanaAtiva();
             renderizarBacklogAdiados();
-            alert("Esta semana foi recalculada isoladamente sem afetar as outras!");
+            alert(modoManual ? "Semana recalculada! Agora você pode clicar em [➕ Escolher Tema] nos horários livres." : "Esta semana foi recalculada automaticamente!");
+        }
+
+// ------------------------------------------------------------------
+        // SELEÇÃO MANUAL DE TEMAS PARA O KANBAN
+        // ------------------------------------------------------------------
+        let slotManualAlvo = null;
+
+        function abrirSelecaoManualTema(dia, turno) {
+            slotManualAlvo = { dia, turno };
+            let rIdx = parseInt(semanaAtivaId.split('_')[1]);
+            let rod = cronogramaInternato[rIdx];
+            let macroPadrao = rod ? rod.macro : "Clínica Médica";
+
+            // Se for MFC ou Psiquiatria, ajusta para a macro correspondente
+            if (macroPadrao === "Psiquiatria") macroPadrao = "Clínica Médica";
+            if (macroPadrao === "MFC") macroPadrao = "Preventiva";
+
+            document.getElementById("modalEscolherTemaKanban").style.display = "flex";
+            
+            // Popula macros no modal
+            let selM = document.getElementById("selManualMacro");
+            selM.innerHTML = Object.keys(taxonomia).map(m => `<option value="${m}" ${m === macroPadrao ? 'selected' : ''}>${m}</option>`).join('');
+            popularManualEspecialidades();
+        }
+
+        function popularManualEspecialidades() {
+            let m = document.getElementById("selManualMacro").value;
+            let selE = document.getElementById("selManualEsp");
+            let selT = document.getElementById("selManualTema");
+            selE.innerHTML = "";
+            selT.innerHTML = "";
+
+            if (!taxonomia[m]) return;
+            Object.keys(taxonomia[m]).forEach(esp => {
+                selE.innerHTML += `<option value="${esp}">${esp}</option>`;
+            });
+            popularManualSubtemas();
+        }
+
+        function popularManualSubtemas() {
+            let m = document.getElementById("selManualMacro").value;
+            let esp = document.getElementById("selManualEsp").value;
+            let selT = document.getElementById("selManualTema");
+            selT.innerHTML = "";
+
+            if (!taxonomia[m] || !taxonomia[m][esp]) return;
+            taxonomia[m][esp].forEach(sub => {
+                let status = getTemaStatus(sub.n);
+                let tagStatus = status.type === 'estudado' ? ' [✅ Já Estudado]' : status.type === 'backlog' ? ' [📦 No Backlog]' : '';
+                selT.innerHTML += `<option value="${sub.n}" data-peso="${sub.p}">${sub.n} (P${sub.p})${tagStatus}</option>`;
+            });
+        }
+
+        function confirmarAlocacaoManualTema() {
+            if (!slotManualAlvo) return;
+            let m = document.getElementById("selManualMacro").value;
+            let esp = document.getElementById("selManualEsp").value;
+            let selT = document.getElementById("selManualTema");
+            if (!selT.value) return alert("Selecione um tema!");
+
+            let temaNome = selT.value;
+            let peso = parseInt(selT.options[selT.selectedIndex].getAttribute("data-peso")) || 1;
+
+            let cg = cronogramaSemanasStore[semanaAtivaId];
+            if (!cg) return;
+
+            // Remove o tema de onde ele já estava (evita duplicações no Backlog ou em outra semana)
+            removerAlocacaoAnterior(temaNome);
+
+            cg[slotManualAlvo.dia][slotManualAlvo.turno] = {
+                tipo: 'teoria',
+                macro: m,
+                esp: esp,
+                tema: temaNome,
+                peso: peso
+            };
+
+            cronogramaSemanasStore[semanaAtivaId] = cg;
+            window.syncToCloud();
+
+            fecharModal('modalEscolherTemaKanban');
+            renderizarKanbanSemanaAtiva();
+            renderizarBacklogAdiados();
+            slotManualAlvo = null;
         }
 
         function renderizarKanbanSemanaAtiva() {
@@ -3032,35 +3283,51 @@
                     let bg, cont;
 
                     if(b.tipo === 'ocupado') {
-                        bg = 'var(--bg-color)'; cont = `<div style="font-size:11px; color:#7f8c8d; text-align:center; padding:10px 0;">🏥 Ocupado</div>`;
+                        bg = 'var(--bg-color)'; cont = `<div style="font-size:11px; color:var(--muted); text-align:center; padding:10px 0;">🏥 Ocupado</div>`;
                     } else if(b.tipo === 'descanso') {
-                        bg = '#2ecc71'; cont = `<div style="font-size:11px; color:white; text-align:center; padding:10px 0;">🌿 Descanso</div>`;
+                        bg = '#16a34a'; cont = `<div style="font-size:11px; color:white; text-align:center; padding:10px 0;">🌿 Descanso</div>`;
                     } else if(b.tipo === 'estudo') {
-                        bg = 'rgba(52, 152, 219, 0.05)'; 
-                        cont = `<div style="font-size:11px; color:var(--accent-color); text-align:center; padding:10px 0; border: 1px dashed var(--accent-color); border-radius:6px;">📘 Estudo Livre</div>`;
+                        bg = 'rgba(52, 152, 219, 0.08)'; 
+                        cont = `<div style="font-size:11px; color:var(--accent-color); text-align:center; padding:6px 0; border: 1px dashed var(--accent-color); border-radius:6px;">
+                                    <b>📘 Estudo Livre</b><br>
+                                    <button style="padding:4px 6px; font-size:10px; margin-top:5px; border-radius:4px; box-shadow:none; width:auto; display:inline-block;" onclick="abrirSelecaoManualTema('${d}', '${t}')">➕ Escolher Tema</button>
+                                </div>`;
                     } else if(b.tipo === 'teoria') {
                         bg = getMacroColor(b.macro);
-                        
                         let jaEstudou = listaEstudos.some(e => e.tema === b.tema);
+                        let pesoVal = b.peso || 1;
+                        let espLabel = b.esp ? `<div style="font-size:9.5px; opacity:0.9; font-weight:500;">${b.esp}</div>` : '';
                         
                         if (jaEstudou) {
-                            cont = `<div style="font-size:10px; color:white; text-shadow: 0px 1px 3px rgba(0,0,0,0.4);">
-                                      <b>✅ Estudado</b><br>${b.tema.substring(0,30)}...
+                            cont = `<div style="color:white; text-shadow: 0px 1px 2px rgba(0,0,0,0.45); text-align:left;">
+                                      <div style="display:flex; justify-content:space-between; align-items:center; gap:4px; margin-bottom:3px;">
+                                          <b style="font-size:10px;">✅ Estudado</b>
+                                          <span class="kanban-peso-badge">⭐ P${pesoVal}</span>
+                                      </div>
+                                      ${espLabel}
+                                      <div class="kanban-tema-nome">${b.tema}</div>
                                     </div>`;
                         } else {
-                            cont = `<div style="font-size:10px; color:white; text-shadow: 0px 1px 3px rgba(0,0,0,0.4);"><b>📘 Teoria</b><br>${b.tema.substring(0,30)}...
+                            cont = `<div style="color:white; text-shadow: 0px 1px 2px rgba(0,0,0,0.45); text-align:left;">
+                                      <div style="display:flex; justify-content:space-between; align-items:center; gap:4px; margin-bottom:3px;">
+                                          <b style="font-size:10px;">📘 Teoria</b>
+                                          <span class="kanban-peso-badge">⭐ P${pesoVal}</span>
+                                      </div>
+                                      ${espLabel}
+                                      <div class="kanban-tema-nome">${b.tema}</div>
                                       <div style="display:flex; gap:4px; margin-top:8px;">
-                                          <button style="padding:4px; font-size:9px; margin:0; border-radius:4px; box-shadow:none; text-shadow:none;" onclick="iniciarTeoriaKanban('${b.macro}', '${b.esp}', '${b.tema}')">✔️ Estudar</button>
-                                          <button style="padding:4px; font-size:9px; margin:0; border-radius:4px; box-shadow:none; background:#f39c12; text-shadow:none;" onclick="adiarTemaParaBacklog('${d}', '${t}', '${dtExata}')">📦 Adiar</button>
-                                      </div></div>`;
+                                          <button style="padding:5px 6px; font-size:10px; margin:0; border-radius:4px; box-shadow:none; text-shadow:none; background:rgba(0,0,0,0.45); color:#fff; border:1px solid rgba(255,255,255,0.25);" onclick="iniciarTeoriaKanban('${b.macro}', '${b.esp}', '${b.tema}')">✔️ Estudar</button>
+                                          <button style="padding:5px 6px; font-size:10px; margin:0; border-radius:4px; box-shadow:none; background:#f59e0b; color:#1a1200; font-weight:700; text-shadow:none;" onclick="adiarTemaParaBacklog('${d}', '${t}', '${dtExata}')">📦 Adiar</button>
+                                      </div>
+                                    </div>`;
                         }
                     } else if(b.tipo === 'revisao') {
-                        bg = '#e67e22';
+                        bg = '#d97706';
                         cont = `<div style="font-size:11px; color:white; text-align:center; padding:10px 0;"><b>🔁 FSRS</b><br>Revisões</div>`;
                     }
 
-                    html += `<div style="background:${bg}; padding:8px; border-radius:6px; margin-bottom:8px; min-height:60px; display:flex; flex-direction:column; justify-content:center;">
-                                <div style="font-size:9px; opacity:0.8; margin-bottom:4px; text-transform:uppercase; font-weight:bold; color:${(b.tipo==='ocupado' || b.tipo==='estudo') ?'#95a5a6':'white'};">${label}</div>
+                    html += `<div style="background:${bg}; padding:8px; border-radius:6px; margin-bottom:8px; min-height:68px; display:flex; flex-direction:column; justify-content:center;">
+                                <div style="font-size:9px; opacity:0.85; margin-bottom:4px; text-transform:uppercase; font-weight:bold; color:${(b.tipo==='ocupado' || b.tipo==='estudo') ?'var(--muted)':'white'};">${label}</div>
                                 ${cont}
                              </div>`;
                 });
