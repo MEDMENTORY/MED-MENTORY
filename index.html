@@ -6,6 +6,10 @@
     <title>MED MENTORY</title>
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- Motor FSRS Oficial (ts-fsrs) -->
+    <script src="https://cdn.jsdelivr.net/npm/ts-fsrs@latest/dist/index.umd.js"></script>
+<!-- Confetes para Gamificação e Metas -->
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
     <meta name="theme-color" content="#060912">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -445,6 +449,65 @@
             font-weight: 700;
             border: 1px solid rgba(255, 255, 255, 0.22);
         }
+/* ==========================================================
+           GAMIFICAÇÃO, MOTIVAÇÃO E PRODUTIVIDADE MÉDICA
+           ========================================================== */
+        /* Barra de Nível e XP Médico */
+        .xp-container {
+            display: flex; align-items: center; gap: 12px;
+            background: var(--card-bg); border: 1px solid var(--border-color);
+            padding: 8px 16px; border-radius: var(--r-pill);
+            box-shadow: var(--shadow-btn); font-size: 12px;
+        }
+        .xp-bar-bg {
+            width: 110px; height: 8px; background: color-mix(in srgb, var(--text-color) 12%, transparent);
+            border-radius: var(--r-pill); overflow: hidden;
+        }
+        .xp-bar-fill {
+            height: 100%; background: linear-gradient(90deg, #f59e0b, #eab308);
+            border-radius: var(--r-pill); transition: width 0.4s ease;
+        }
+
+        /* Card de Missões Diárias */
+        .missoes-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 12px; margin-top: 12px;
+        }
+        .missao-item {
+            background: var(--bg-color); border: 1px solid var(--border-color);
+            border-radius: var(--r-md); padding: 12px 14px;
+            display: flex; align-items: center; gap: 12px;
+            transition: border-color 0.2s, transform 0.1s;
+        }
+        .missao-item.concluida {
+            border-color: var(--ok-color);
+            background: color-mix(in srgb, var(--ok-color) 8%, var(--card-bg));
+        }
+        .missao-check {
+            width: 22px; height: 22px; border-radius: 50%;
+            border: 2px solid var(--border-color); display: grid; place-items: center;
+            font-size: 11px; font-weight: bold; flex: none;
+        }
+        .missao-item.concluida .missao-check {
+            background: var(--ok-color); border-color: var(--ok-color); color: white;
+        }
+
+        /* Botão Café Express no Header */
+        .btn-cafe-express {
+            background: linear-gradient(135deg, #d97706, #b45309);
+            color: white; border: none; padding: 7px 14px; border-radius: var(--r-sm);
+            font-size: 12px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 6px;
+            box-shadow: var(--shadow-btn);
+        }
+        .btn-cafe-express:hover { filter: brightness(1.15); }
+
+        /* Mural de Pegadinhas */
+        .pegadinha-card {
+            background: var(--bg-color); border-left: 4px solid var(--warning-bg);
+            border-radius: 0 var(--r-md) var(--r-md) 0; padding: 12px 15px; margin-bottom: 10px;
+            display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;
+        }
+
 </style>
 </head>
 <body class="dark-mode">
@@ -524,6 +587,16 @@
                     <h2 id="headerAbaTitulo" style="margin:0; font-size:22px; font-weight:700;">🏠 Dashboard Inicial</h2>
                 </div>
                 <div class="header-actions" style="display: flex; gap: 8px; align-items:center;">
+                    <!-- Nível & XP Médico -->
+                    <div class="xp-container" id="xpContainer" title="Ganhe XP resolvendo questões e completando revisões">
+                        <span id="rankBadge" style="font-weight:700; color:#f59e0b;">🩺 Interno Geral</span>
+                        <div class="xp-bar-bg"><div class="xp-bar-fill" id="xpBarFill" style="width: 0%;"></div></div>
+                        <span id="xpTexto" style="color:var(--muted); font-size:11px;">0/500 XP</span>
+                    </div>
+
+                    <!-- Botão Café Express -->
+                    <button type="button" class="btn-cafe-express" onclick="abrirCafeExpress()">☕ Café Express</button>
+
                     <span id="userInfoHeader" style="font-size:12px; margin-right:15px; font-weight:bold; background:var(--bg-color); padding:6px 12px; border-radius:20px;">Offline (Local)</span>
                     <button class="sub-aba-btn m-0" onclick="toggleSobrevivencia()" id="btnSobrevivencia">🛡️ Sobrevivência</button>
                     <button class="sub-aba-btn active m-0" onclick="toggleFocusMode()">🎯 Foco</button>
@@ -546,6 +619,16 @@
                         <button class="btn-hero" id="btnComecarRevisao" onclick="comecarRevisao()">▶️ Começar revisão</button>
                     </div>
                     <div id="listaRevisoesHoje" class="rev-list"></div>
+                </section>
+
+<!-- MISSÕES DIÁRIAS (DESAFIO RELÂMPAGO) -->
+                <section class="card">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <h2 class="m-0">⚡ Missões Diárias de Hoje</h2>
+                        <span id="shieldIndicator" style="font-size:12px; font-weight:700; color:#3b82f6;">🛡️ 0 Escudos de Plantão</span>
+                    </div>
+                    <p class="hint">Cumpra os 3 objetivos diários para manter o ritmo e acumular escudos de proteção de sequência.</p>
+                    <div class="missoes-grid" id="missoesDiariasGrid"></div>
                 </section>
 
                 <div class="dashboard-grid">
@@ -590,6 +673,11 @@
                             <h4 style="margin:0; font-size:11px; opacity:0.6; text-transform:uppercase;">RITMO NECESSÁRIO</h4>
                             <p id="metaRitmoNecessario" style="font-size:18px; font-weight:bold; color:#f39c12; margin:8px 0;">0 qts/dia</p>
                             <small id="metaDiasRestantes" style="font-size:11px; opacity:0.8;">Até a prova principal</small>
+                        </div>
+                        <div class="stat-box" style="padding:15px; border-left:4px solid var(--accent-color); box-shadow:none; background:var(--bg-color);">
+                            <h4 style="margin:0; font-size:11px; opacity:0.6; text-transform:uppercase;">PROJEÇÃO NO EXAME</h4>
+                            <p id="metaNotaEstimada" style="font-size:18px; font-weight:bold; color:var(--accent-color); margin:8px 0;">-- pts</p>
+                            <small id="metaFaixaEstimada" style="font-size:11px; opacity:0.8;">Cálculo Preditivo</small>
                         </div>
                         <div class="stat-box" style="padding:15px; box-shadow:none; background:var(--bg-color);">
                             <h4 style="margin:0; font-size:11px; opacity:0.6; text-transform:uppercase;">STATUS PREDITIVO</h4>
@@ -919,6 +1007,14 @@
 
             <!-- ABA 6: METAS + INCIDÊNCIA DE ASSUNTOS -->
             <div id="tab-caderno" class="tab-content">
+<div class="card">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <h2>🧠 Mural de Pegadinhas & Gatilhos de Memória</h2>
+                        <span id="totalPegadinhas" class="hint">0 anotações</span>
+                    </div>
+                    <p class="hint">Conceitos e pegadinhas anotados durante as suas revisões para bater o olho antes de simulados.</p>
+                    <div id="listaMuralPegadinhas" style="max-height: 280px; overflow-y: auto; margin-top: 15px;"></div>
+                </div>
                 <div class="card">
                     <h2>🎯 Metas de Questões por Subtema</h2>
                     <div class="row-form" style="margin-bottom:20px;">
@@ -1047,18 +1143,23 @@
                 </div>
                 
                 <div class="card">
-                    <h2>⚙️ Calibragem do Algoritmo FSRS (Pesos 1 a 5)</h2>
-                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap:15px; margin-top:15px;">
-                        <div><label>Fator Peso 5:</label><input type="number" step="0.1" id="configPeso5" value="0.5"></div>
-                        <div><label>Fator Peso 4:</label><input type="number" step="0.1" id="configPeso4" value="0.7"></div>
-                        <div><label>Fator Peso 3:</label><input type="number" step="0.1" id="configPeso3" value="0.9"></div>
-                        <div><label>Fator Peso 2:</label><input type="number" step="0.1" id="configPeso2" value="1.1"></div>
-                        <div><label>Fator Peso 1:</label><input type="number" step="0.1" id="configPeso1" value="1.4"></div>
+                    <h2>⚙️ Parâmetros do Motor FSRS & Carga</h2>
+                    <p class="hint">O FSRS calcula intervalos matemáticos com base na curva do esquecimento e no peso do edital.</p>
+                    
+                    <div class="row-form" style="margin-top:15px;">
+                        <div class="col-form">
+                            <label>Retenção Desejada Base (Temas P3):</label>
+                            <select id="configRetencaoBase">
+                                <option value="0.85">85% (Mais fôlego, menos revisões diárias)</option>
+                                <option value="0.88" selected>88% (Padrão recomendado para Residência)</option>
+                                <option value="0.90">90% (Maior rigor, mais revisões diárias)</option>
+                            </select>
+                        </div>
+                        <div class="col-form">
+                            <label>Alerta de Saturação (Burnout em 3 dias):</label>
+                            <input type="number" id="configBurnout" value="15">
+                        </div>
                     </div>
-                    <label class="mt-20">Intervalos Base (Dias):</label>
-                    <input type="text" id="configIntervalos" value="1, 7, 14, 30, 60, 90">
-                    <label>Limite de Saturação (Aviso de Burnout em 3 Dias):</label>
-                    <input type="number" id="configBurnout" value="15">
                     <button class="mt-20" onclick="salvarConfiguracoes()">Salvar Configurações</button>
                 </div>
 
@@ -1086,8 +1187,43 @@
         <div class="modal-content">
             <form onsubmit="salvarRevisaoModal(event)">
                 <div id="modalBodyContent"></div>
+<div id="boxPegadinhaRevisao" style="margin: 15px 0; background: var(--bg-color); padding: 12px; border-radius: 8px; border: 1px dashed var(--warning-bg);">
+                    <label class="mt-0" style="color:var(--text-color); font-weight:600;">🧠 Ponto-chave / Pegadinha da questão (Opcional):</label>
+                    <input type="text" id="modPegadinhaInput" placeholder="Ex: Na apendicite, TC é padrão-ouro no adulto; USG em gestantes..." style="margin-bottom:0;">
+                </div>
                 <button type="submit">Salvar Revisão e Atualizar FSRS</button>
                 <button type="button" class="btn-excluir" style="width:100%; margin-top:10px; padding:12px; border:none; color:white; border-radius:8px; font-weight:bold; cursor:pointer;" onclick="fecharModal('modalRevisao')">Cancelar</button>
+            </form>
+        </div>
+    </div>
+
+<!-- MODAL CAFÉ EXPRESS -->
+    <div class="modal" id="modalCafeExpress">
+        <div class="modal-content" style="max-width: 460px;">
+            <h3 class="mt-0">☕ Revisão Café Express (5 min)</h3>
+            <p class="hint">Tem apenas alguns minutos vagos no plantão? Resolva 5 questões rápidas do tema mais urgente da sua fila.</p>
+            
+            <div style="background:var(--bg-color); padding:14px; border-radius:10px; border:1px solid var(--border-color); margin-bottom:15px;">
+                <span id="cafeMacroBadge" class="badge">Área</span>
+                <h4 id="cafeTemaTitulo" style="margin:8px 0 4px 0; font-size:15px;">Carregando tema...</h4>
+                <small id="cafeTemaMotivo" style="color:var(--muted);">Menor Estabilidade na memória</small>
+            </div>
+
+            <form onsubmit="salvarCafeExpress(event)">
+                <div style="display:flex; gap:12px;">
+                    <div class="flex-1"><label>Questões:</label><input type="number" id="cafeFeitas" value="5" min="1" required></div>
+                    <div class="flex-1"><label>Acertos:</label><input type="number" id="cafeAcertos" value="4" min="0" required></div>
+                </div>
+                <label>Percepção:</label>
+                <select id="cafePerc" required>
+                    <option value="medio">Médio</option>
+                    <option value="facil">Fácil</option>
+                    <option value="dificil">Difícil</option>
+                </select>
+                <div style="display:flex; gap:10px; margin-top:20px;">
+                    <button type="submit" style="flex:1; margin:0;">Salvar e Ganhar XP</button>
+                    <button type="button" class="btn-excluir" style="flex:1; margin:0;" onclick="fecharModal('modalCafeExpress')">Fechar</button>
+                </div>
             </form>
         </div>
     </div>
@@ -1253,6 +1389,227 @@
 
     <!-- SCRIPT DE LÓGICA DA APLICAÇÃO -->
     <script>
+
+// ==================================================================
+        // GAMIFICAÇÃO, NÍVEIS, ESCUDOS, MISSÕES E CAFÉ EXPRESS
+        // ==================================================================
+        let muralPegadinhas = [];
+        let streakShields = 0;
+        let cafeItemAlvo = null;
+
+        const NIVEIS_MEDICOS = [
+            { nome: "🩺 Interno Geral", minXP: 0, maxXP: 500 },
+            { nome: "💉 R1 Sobrevivente", minXP: 500, maxXP: 1500 },
+            { nome: "🏥 Residente Sênior", minXP: 1500, maxXP: 3500 },
+            { nome: "🩺 Chefe de Equipe (R+)", minXP: 3500, maxXP: 7000 },
+            { nome: "🏆 Preceptor Especialista", minXP: 7000, maxXP: Infinity }
+        ];
+
+        function calcularXPAtual() {
+            let totalQts = 0;
+            let totalRevs = 0;
+            listaEstudos.forEach(i => {
+                (i.historico || []).forEach(h => {
+                    totalQts += (h.feitas || 0);
+                    if (h.fase) totalRevs++;
+                });
+            });
+            // 1 ponto por questão + 10 pontos por revisão concluída
+            return (totalQts * 1) + (totalRevs * 10);
+        }
+
+        function atualizarGamificacao() {
+            const xp = calcularXPAtual();
+            let nivelAtual = NIVEIS_MEDICOS[0];
+            let proximoNivel = NIVEIS_MEDICOS[1];
+
+            for (let i = 0; i < NIVEIS_MEDICOS.length; i++) {
+                if (xp >= NIVEIS_MEDICOS[i].minXP) {
+                    nivelAtual = NIVEIS_MEDICOS[i];
+                    proximoNivel = NIVEIS_MEDICOS[i + 1] || NIVEIS_MEDICOS[i];
+                }
+            }
+
+            const elBadge = document.getElementById("rankBadge");
+            const elFill = document.getElementById("xpBarFill");
+            const elTexto = document.getElementById("xpTexto");
+
+            if (elBadge) elBadge.textContent = nivelAtual.nome;
+            if (elFill && elTexto) {
+                if (proximoNivel === nivelAtual) {
+                    elFill.style.width = "100%";
+                    elTexto.textContent = `${xp} XP (Máx)`;
+                } else {
+                    const faixa = proximoNivel.minXP - nivelAtual.minXP;
+                    const prog = Math.min(100, Math.round(((xp - nivelAtual.minXP) / faixa) * 100));
+                    elFill.style.width = `${prog}%`;
+                    elTexto.textContent = `${xp}/${proximoNivel.minXP} XP`;
+                }
+            }
+
+            // Escudos: 1 a cada 7 dias de streak (máximo 3)
+            streakShields = Math.min(3, Math.floor(streak / 7));
+            const elShield = document.getElementById("shieldIndicator");
+            if (elShield) elShield.textContent = `🛡️ ${streakShields} ${streakShields === 1 ? 'Escudo' : 'Escudos'} de Plantão`;
+
+            renderizarMissoesDiarias();
+            atualizarNotaPreditiva();
+            renderizarMuralPegadinhas();
+        }
+
+        function renderizarMissoesDiarias() {
+            const container = document.getElementById("missoesDiariasGrid");
+            if (!container) return;
+
+            const hj = hojeLocal();
+            const revsFeitasHoje = listaEstudos.filter(i => (i.historico || []).some(h => h.data === hj)).length;
+            const fezPesoAltoHoje = listaEstudos.some(i => i.peso >= 4 && (i.historico || []).some(h => h.data === hj));
+            const pomodoroHoje = pomodoroDiario[hj] || 0;
+
+            const missoes = [
+                { t: "Foco Clínico", d: "Concluir 1 bloco de estudo/Pomodoro", ok: pomodoroHoje >= 1 },
+                { t: "Foco no Edital", d: "Revisar ao menos 1 tema P4 ou P5", ok: fezPesoAltoHoje },
+                { t: "Consistência Diária", d: "Cumprir ao menos 2 revisões hoje", ok: revsFeitasHoje >= 2 }
+            ];
+
+            const todasOk = missoes.every(m => m.ok);
+            if (todasOk && !window._confettiDisparadoHoje) {
+                window._confettiDisparadoHoje = true;
+                if (window.confetti) window.confetti({ particleCount: 70, spread: 60, origin: { y: 0.7 } });
+            }
+
+            container.innerHTML = missoes.map(m => `
+                <div class="missao-item ${m.ok ? 'concluida' : ''}">
+                    <div class="missao-check">${m.ok ? '✓' : ''}</div>
+                    <div>
+                        <b style="font-size:12px; display:block; color:var(--text-color);">${m.t}</b>
+                        <small style="font-size:11px; color:var(--muted);">${m.d}</small>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function atualizarNotaPreditiva() {
+            let totalQts = 0, totalAcertos = 0;
+            listaEstudos.forEach(i => (i.historico || []).forEach(h => {
+                totalQts += (h.feitas || 0);
+                totalAcertos += (h.acertos || 0);
+            }));
+
+            const txAcertoGeral = totalQts > 0 ? (totalAcertos / totalQts) : 0;
+            
+            // Cobertura do edital
+            let totalTemas = 0;
+            Object.keys(taxonomia).forEach(m => Object.keys(taxonomia[m]).forEach(e => totalTemas += taxonomia[m][e].length));
+            const temasEstudados = listaEstudos.length;
+            const pctCobertura = totalTemas > 0 ? (temasEstudados / totalTemas) : 0;
+
+            // Modelo preditivo: 75% taxa de acertos + 25% amplitude de cobertura do edital
+            const notaEstimada = totalQts >= 30 ? Math.round(((txAcertoGeral * 0.75) + (pctCobertura * 0.25)) * 100) : null;
+
+            const elNota = document.getElementById("metaNotaEstimada");
+            const elFaixa = document.getElementById("metaFaixaEstimada");
+
+            if (elNota && elFaixa) {
+                if (notaEstimada !== null) {
+                    elNota.textContent = `${notaEstimada} / 100`;
+                    elFaixa.textContent = notaEstimada >= 80 ? "🟢 Zona de Classificação Direta" : notaEstimada >= 70 ? "🟡 Faixa Competitiva" : "🔴 Fase de Construção de Base";
+                } else {
+                    elNota.textContent = "Aguardando dados";
+                    elFaixa.textContent = "Mínimo 30 questões resolvidas";
+                }
+            }
+        }
+
+        function abrirCafeExpress() {
+            if (listaEstudos.length === 0) return alert("Cadastre ao menos um estudo primeiro!");
+
+            // Encontra o tema com menor estabilidade ou mais atrasado
+            const hj = hojeLocal();
+            const candidatos = [...listaEstudos].sort((a, b) => {
+                const sA = a.fsrsCard ? a.fsrsCard.stability : 1;
+                const sB = b.fsrsCard ? b.fsrsCard.stability : 1;
+                return sA - sB || a.proximaData.localeCompare(b.proximaData);
+            });
+
+            cafeItemAlvo = candidatos[0];
+            document.getElementById("cafeMacroBadge").style.background = getMacroColor(cafeItemAlvo.macroArea);
+            document.getElementById("cafeMacroBadge").textContent = cafeItemAlvo.macroArea;
+            document.getElementById("cafeTemaTitulo").textContent = `${cafeItemAlvo.tema} (⭐ P${cafeItemAlvo.peso})`;
+            document.getElementById("cafeTemaMotivo").textContent = cafeItemAlvo.fsrsCard ? `Estabilidade baixa (${cafeItemAlvo.fsrsCard.stability} dias)` : "Pendente de consolidação inicial";
+
+            document.getElementById("cafeFeitas").value = 5;
+            document.getElementById("cafeAcertos").value = 4;
+            document.getElementById("modalCafeExpress").style.display = "flex";
+        }
+
+        function salvarCafeExpress(e) {
+            e.preventDefault();
+            if (!cafeItemAlvo) return;
+
+            const feitas = parseInt(document.getElementById("cafeFeitas").value) || 5;
+            const acertos = parseInt(document.getElementById("cafeAcertos").value) || 0;
+            const perc = document.getElementById("cafePerc").value;
+            const hj = hojeLocal();
+
+            processarRevisaoFSRS(cafeItemAlvo, hj, feitas, acertos, perc, false);
+            cafeItemAlvo.historico.push({
+                fase: "☕ Café Express",
+                tempo: 5,
+                feitas: feitas,
+                acertos: acertos,
+                percepcao: perc,
+                data: hj
+            });
+
+            salvarEAtualizar();
+            fecharModal("modalCafeExpress");
+            if (window.confetti) window.confetti({ particleCount: 40, spread: 45 });
+            alert(`Café Express concluído! +${feitas + 10} XP acumulados.`);
+            cafeItemAlvo = null;
+        }
+
+        function registrarPegadinha(tema, texto) {
+            if (!texto || !texto.trim()) return;
+            muralPegadinhas.unshift({
+                id: Date.now(),
+                data: hojeLocal(),
+                tema: tema,
+                texto: texto.trim()
+            });
+            window.syncToCloud();
+            renderizarMuralPegadinhas();
+        }
+
+        function excluirPegadinha(id) {
+            muralPegadinhas = muralPegadinhas.filter(p => p.id !== id);
+            window.syncToCloud();
+            renderizarMuralPegadinhas();
+        }
+
+        function renderizarMuralPegadinhas() {
+            const container = document.getElementById("listaMuralPegadinhas");
+            const contador = document.getElementById("totalPegadinhas");
+            if (!container) return;
+
+            if (contador) contador.textContent = `${muralPegadinhas.length} anotações`;
+
+            if (muralPegadinhas.length === 0) {
+                container.innerHTML = `<div class="empty-state" style="padding:15px;"><div class="empty-ico">💡</div><b>Nenhuma pegadinha registrada ainda.</b><br><span class="hint">Anote os detalhes que errou durante as revisões diárias.</span></div>`;
+                return;
+            }
+
+            container.innerHTML = muralPegadinhas.map(p => `
+                <div class="pegadinha-card">
+                    <div>
+                        <strong style="font-size:12px; color:var(--accent-color);">${p.tema}</strong>
+                        <p style="margin:4px 0 0; font-size:13px; color:var(--text-color);">${p.texto}</p>
+                        <small style="font-size:10px; color:var(--muted);">${p.data.split('-').reverse().join('/')}</small>
+                    </div>
+                    <button type="button" class="btn-excluir" style="padding:3px 7px; font-size:10px; border-radius:4px; width:auto; margin:0;" onclick="excluirPegadinha(${p.id})">✖</button>
+                </div>
+            `).join('');
+        }
         
         // ------------------------------------------------------------------
         // UTILITÁRIOS GERAIS (CORES POR MACRO-ÁREA E STATUS)
@@ -2212,7 +2569,8 @@
             pomodoroDiario = JSON.parse(localStorage.getItem('pomodoro_diario')) || {};
             notasIncidencia = JSON.parse(localStorage.getItem('incidencia_notas')) || {};
             listaSimulados = JSON.parse(localStorage.getItem('simulados_med')) || [];
-            metaAnual = parseInt(localStorage.getItem('meta_questoes')) || 10000;
+muralPegadinhas = JSON.parse(localStorage.getItem('mural_pegadinhas')) || [];
+metaAnual = parseInt(localStorage.getItem('meta_questoes')) || 10000;
             
             migrarPesosAntigos();
             initApp();
@@ -2228,8 +2586,9 @@
             backlogAdiados = d.backlog || JSON.parse(localStorage.getItem('backlog_adiados')) || [];
             pomodoroDiario = d.pomodoro || JSON.parse(localStorage.getItem('pomodoro_diario')) || {};
             notasIncidencia = d.notas || JSON.parse(localStorage.getItem('incidencia_notas')) || {};
-            listaSimulados = d.simulados || JSON.parse(localStorage.getItem('simulados_med')) || [];
-            metaAnual = d.metaAnual || parseInt(localStorage.getItem('meta_questoes')) || 10000;
+          listaSimulados = d.simulados || JSON.parse(localStorage.getItem('simulados_med')) || [];
+muralPegadinhas = d.pegadinhas || JSON.parse(localStorage.getItem('mural_pegadinhas')) || [];
+metaAnual = d.metaAnual || parseInt(localStorage.getItem('meta_questoes')) || 10000;
             
             migrarPesosAntigos();
             initApp();
@@ -2242,9 +2601,12 @@
             renderizarListasPlanejamento();
             renderizarBacklogAdiados();
             
-            document.getElementById("configIntervalos").value = configAlgoritmo.intervalos.join(', ');
-            [1,2,3,4,5].forEach(n => document.getElementById(`configPeso${n}`).value = configAlgoritmo[`p${n}`]);
-            document.getElementById("configBurnout").value = configAlgoritmo.burnout || 15;
+         if (document.getElementById("configRetencaoBase")) {
+                document.getElementById("configRetencaoBase").value = configAlgoritmo.retencaoBase || 0.88;
+            }
+            if (document.getElementById("configBurnout")) {
+                document.getElementById("configBurnout").value = configAlgoritmo.burnout || 15;
+            }
             document.getElementById("metaInputConfig").value = metaAnual;
             
             renderizarTabela(); 
@@ -2254,6 +2616,7 @@
             renderizarPlanilha(); 
             atualizarEstatisticasNerds();
             renderizarMapaRodizio();
+            atualizarGamificacao();
             if(document.getElementById('tab-rastreio').classList.contains('active')) renderizarRastreio();
         }
 
@@ -2268,6 +2631,7 @@
             localStorage.setItem('pomodoro_diario', JSON.stringify(pomodoroDiario));
             localStorage.setItem('incidencia_notas', JSON.stringify(notasIncidencia));
             localStorage.setItem('simulados_med', JSON.stringify(listaSimulados));
+localStorage.setItem('mural_pegadinhas', JSON.stringify(muralPegadinhas)); // <-- LINHA ADICIONADA 1
             localStorage.setItem('meta_questoes', metaAnual);
 
             const dataToSave = {
@@ -2275,6 +2639,7 @@
                 internato: cronogramaInternato, grades_semanais: gradesSemanaisStore,
                 crono_semanas: cronogramaSemanasStore, backlog: backlogAdiados,
                 pomodoro: pomodoroDiario, notas: notasIncidencia, simulados: listaSimulados,
+                pegadinhas: muralPegadinhas,
                 metaAnual: metaAnual
             };
             if(window.firebaseSaveData && window.currentUserUid) {
@@ -2403,6 +2768,119 @@
         function toggleQuestoesForm() {
             document.getElementById("boxQuestoesIniciais").style.display = document.getElementById("checkFezQuestoes").checked ? "flex" : "none";
         }
+// ==================================================================
+        // MOTOR FSRS REAL (ts-fsrs + Adaptação de Incidência Médica)
+        // ==================================================================
+     function obterRetencaoPorPeso(peso) {
+            const base = (configAlgoritmo && configAlgoritmo.retencaoBase) ? configAlgoritmo.retencaoBase : 0.88;
+            const mapaDelta = { 5: +0.04, 4: +0.02, 3: 0.0, 2: -0.02, 1: -0.04 };
+            const delta = mapaDelta[peso] !== undefined ? mapaDelta[peso] : 0.0;
+            return Math.min(0.95, Math.max(0.80, base + delta));
+        }
+
+        function traduzirNotaFSRS(feitas, acertos, percepcao, isApenasAnki = false) {
+            const lib = window.tsfsrs || window.FSRS;
+const R = lib ? lib.Rating : { Again: 1, Hard: 2, Good: 3, Easy: 4 };
+            if (isApenasAnki || !feitas || feitas <= 0) {
+                if (percepcao === 'dificil') return R.Hard;
+                if (percepcao === 'facil') return R.Easy;
+                return R.Good;
+            }
+            const tx = (acertos / feitas) * 100;
+            if (tx < 50) return R.Again; // Colapso (Lapse): reinicia estabilidade e volta rápido
+            if (tx < 70) return R.Hard;  // Desempenho limítrofe
+            if (tx >= 85 && percepcao === 'facil') return R.Easy; // Domínio alto
+            return R.Good;               // Bom (70%+)
+        }
+
+        function processarRevisaoFSRS(item, dataBaseStr, feitas, acertos, percepcao, isApenasAnki = false) {
+            const dataRef = new Date(dataBaseStr + 'T00:00:00');
+            const nota = traduzirNotaFSRS(feitas, acertos, percepcao, isApenasAnki);
+
+            // Se a biblioteca ts-fsrs carregou do CDN, usa o cálculo diferencial real
+            const libFSRS = window.tsfsrs || window.FSRS;
+if (libFSRS && typeof libFSRS.fsrs === 'function') {
+    const { fsrs, generatorParameters, createEmptyCard, Rating } = libFSRS;
+                const retencaoAlvo = obterRetencaoPorPeso(item.peso);
+                const params = generatorParameters({
+                    request_retention: retencaoAlvo,
+                    maximum_interval: 180,
+                    enable_fuzz: false
+                });
+                const scheduler = fsrs(params);
+
+                // Se o estudo antigo não tinha card FSRS ainda, cria ou hidrata
+                let card = item.fsrsCard ? { ...item.fsrsCard } : createEmptyCard(dataRef);
+                card.due = new Date(card.due);
+                if (card.last_review) card.last_review = new Date(card.last_review);
+
+                const agendamento = scheduler.repeat(card, dataRef);
+                const novoCard = agendamento[nota].card;
+
+                // Salva o estado real do FSRS dentro do item
+                item.fsrsCard = {
+                    due: novoCard.due.toISOString(),
+                    stability: Number(novoCard.stability.toFixed(2)),
+                    difficulty: Number(novoCard.difficulty.toFixed(2)),
+                    elapsed_days: novoCard.elapsed_days,
+                    scheduled_days: novoCard.scheduled_days,
+                    reps: novoCard.reps,
+                    lapses: novoCard.lapses,
+                    state: novoCard.state,
+                    last_review: novoCard.last_review ? novoCard.last_review.toISOString() : dataRef.toISOString()
+                };
+
+                // Mantém compatibilidade visual com o resto do sistema
+                item.stability = item.fsrsCard.stability;
+                item.difficulty = item.fsrsCard.difficulty;
+                item.easeFactor = Number((11 - item.difficulty).toFixed(2)); // Espelho inverso p/ UI
+
+                // Se o scheduled_days for 0 ou 1 mas a estabilidade já cresceu (S >= 2),
+// calcula o intervalo ótimo diretamente pela estabilidade e retenção alvo do FSRS:
+let diasCalculados = novoCard.scheduled_days;
+if (diasCalculados <= 1 && novoCard.stability > 1.5) {
+    // Fórmula oficial FSRS: Intervalo = S * (ln(R) / ln(0.9))
+    const fatorR = Math.log(retencaoAlvo) / Math.log(0.9);
+    diasCalculados = Math.round(novoCard.stability * fatorR);
+}
+let dias = Math.max(1, diasCalculados);
+
+                // Se errou muito (< 50% / Rating.Again), regride a fase para forçar reabilitação
+                if (nota === Rating.Again) {
+                    item.fase = 2;
+                    dias = item.peso >= 4 ? 1 : 2;
+                } else {
+// Mantém o contador de revisões ativo sem deixar ultrapassar 6 (evita que o tema suma da fila)
+item.fase = (item.fase < 2) ? 2 : Math.min(6, item.fase + 1);
+item.totalRevisoes = (item.totalRevisoes || 1) + 1;                }
+
+                // Trava de Segurança: Reta Final 45 dias para a Prova Principal
+                let pp = agendaProvas.find(p => p.tipo === "principal");
+                if (pp) {
+                    let dP = new Date(pp.data + 'T00:00:00');
+                    let dH = new Date();
+                    let diff = Math.ceil((dP - dH) / (1000 * 60 * 60 * 24));
+                    if (diff <= 45 && dH < dP) dias = Math.min(dias, 10);
+                }
+
+                let proxData = new Date(dataRef);
+                proxData.setDate(proxData.getDate() + dias);
+                item.proximaData = hojeLocal(proxData);
+                return;
+            }
+
+            // Fallback offline caso o usuário esteja sem internet no primeiro carregamento
+            if (nota === 1) {
+                item.easeFactor = Math.max(1.3, (item.easeFactor || 2.5) - 0.3);
+                item.fase = 2;
+                let nD = new Date(dataRef);
+                nD.setDate(nD.getDate() + (item.peso >= 4 ? 1 : 2));
+                item.proximaData = hojeLocal(nD);
+            } else {
+                item.proximaData = calcularNovaData(dataBaseStr, item.peso, percepcao, item.fase + 1, item.easeFactor || 2.5, feitas, acertos);
+                item.fase = (item.fase < 2) ? 2 : item.fase + 1;
+            }
+        }
 
         function salvarNovoEstudo(e) {
             e.preventDefault();
@@ -2422,7 +2900,8 @@
             if (fezQ) {
                 let feitas = parseInt(document.getElementById("reg_feitas").value) || 0;
                 let acertos = parseInt(document.getElementById("reg_acertos").value) || 0;
-                item.proximaData = calcularNovaData(dataEstudo, peso, percepcao, 1, 2.5, feitas, acertos);
+                processarRevisaoFSRS(item, dataEstudo, feitas, acertos, percepcao, false);
+                item.fase = 1; // Primeira revisão agendada pelo FSRS
                 item.historico.push({ fase: "Teoria + Questões", tempo, feitas, acertos, percepcao, energia, data: dataEstudo });
             } else {
                 item.fase = 0.5;
@@ -2445,7 +2924,7 @@
             document.getElementById("reg_subtema").disabled = true;
 
             renderizarTabela();
-            alert("Estudo Registrado com Sucesso! Revisão FSRS programada.");
+            alert("Estudo Registrado com Sucesso! Card FSRS inicializado.");
         }
 
         function getFatorPeso(peso) {
@@ -2454,7 +2933,8 @@
         }
 
         function calcularNovaData(dataBaseStr, peso, percepcao, faseDestino, easeFactor, feitas, acertos) {
-            let baseDias = (faseDestino <= 1) ? 1 : configAlgoritmo.intervalos[Math.min(faseDestino - 1, 5)];
+           let listaInt = (configAlgoritmo && configAlgoritmo.intervalos) ? configAlgoritmo.intervalos : [1, 7, 14, 30, 60, 90];
+let baseDias = (faseDestino <= 1) ? 1 : listaInt[Math.min(faseDestino - 1, 5)];
             let fp = getFatorPeso(peso);
             let fd = (percepcao === 'dificil') ? 0.6 : (percepcao === 'facil') ? 1.3 : 1.0;
             let fDes = 1.0;
@@ -2657,45 +3137,71 @@
             document.getElementById("modalRevisao").style.display = "flex";
         }
 
-        function salvarRevisaoModal(e) { const _seq = window._seqRevisao;
-            e.preventDefault(); let item = listaEstudos[idxModal]; let hoje = hojeLocal();
-            if (!item.easeFactor) item.easeFactor = 2.5;
+        function salvarRevisaoModal(e) {
+            const _seq = window._seqRevisao;
+            e.preventDefault();
+            let item = listaEstudos[idxModal];
+            let hoje = hojeLocal();
 
             if (item.fase <= 1) {
                 if (!document.getElementById("modAnki").checked) return alert("Confirme o Anki!");
                 let p = document.getElementById("modPerc").value;
-                if (item.fase === 0.5) {
-                    let d = (p === 'dificil') ? 3 : (p === 'facil') ? 7 : 5;
-                    let nD = new Date(hoje + 'T00:00:00'); nD.setDate(nD.getDate() + d); item.proximaData = hojeLocal(nD);
-                } else {
-                    let r = item.historico[0] || { feitas: 20, acertos: 16 };
-                    item.proximaData = calcularNovaData(hoje, item.peso, p, 2, item.easeFactor, r.feitas, r.acertos);
-                }
-                item.historico.push({ fase: "Anki", percepcao: p, data: hoje }); item.fase = 2;
+                processarRevisaoFSRS(item, hoje, 0, 0, p, true);
+                item.historico.push({ fase: "Anki", percepcao: p, data: hoje });
             } else {
-                let tmp = parseInt(document.getElementById("modTempo").value); let f = parseInt(document.getElementById("modFeitas").value);
-                let a = parseInt(document.getElementById("modAcertos").value); let p = document.getElementById("modPerc").value;
-                let tx = (a / f) * 100;
-                if (tx < 50) item.easeFactor = Math.max(1.3, item.easeFactor - 0.2); else if (tx >= 85) item.easeFactor += 0.15;
-                item.proximaData = calcularNovaData(hoje, item.peso, p, item.fase + 1, item.easeFactor, f, a);
-                item.historico.push({ fase: `${Math.floor(item.fase)}ª Rev`, tempo: tmp, feitas: f, acertos: a, percepcao: p, data: hoje });
-                item.fase += 1;
+                let tmp = parseInt(document.getElementById("modTempo").value);
+                let f = parseInt(document.getElementById("modFeitas").value);
+                let a = parseInt(document.getElementById("modAcertos").value);
+                let p = document.getElementById("modPerc").value;
+                let faseAntiga = Math.floor(item.fase);
+
+                processarRevisaoFSRS(item, hoje, f, a, p, false);
+                item.historico.push({
+                    fase: `${faseAntiga}ª Rev`,
+                    tempo: tmp,
+                    feitas: f,
+                    acertos: a,
+                    percepcao: p,
+                    data: hoje
+                });
             }
-            salvarEAtualizar(); fecharModal('modalRevisao'); window._seqRevisao = _seq; if (_seq) setTimeout(() => { if (!comecarRevisao()) window._seqRevisao = false; }, 250);
+            let pegadinhaTexto = document.getElementById("modPegadinhaInput") ? document.getElementById("modPegadinhaInput").value : "";
+            if (pegadinhaTexto) {
+                registrarPegadinha(item.tema, pegadinhaTexto);
+                document.getElementById("modPegadinhaInput").value = "";
+            }
+
+            salvarEAtualizar();
+            fecharModal('modalRevisao');
+            window._seqRevisao = _seq;
+            if (_seq) setTimeout(() => { if (!comecarRevisao()) window._seqRevisao = false; }, 250);
         }
 
         function abrirDetalhes(idx) {
-            let item = listaEstudos[idx]; if (!item.easeFactor) item.easeFactor = 2.5;
-            let html = `<h3>${item.tema}</h3><p style="font-size:12px;opacity:0.8;">Fator FSRS: <b>${item.easeFactor.toFixed(2)}</b> | Peso: <b>${item.peso}</b></p><ul style="padding-left:15px;">`;
-            item.historico.forEach(h => html += `<li><b>${h.fase}</b> (${h.data}) ${h.feitas ? `- Acertos: ${h.acertos}/${h.feitas}` : ''}</li>`);
-            html += `</ul><h4 class="mt-20">🔮 Previsão (Fim de Ciclo):</h4><ul style="padding-left:15px; opacity:0.8;">`;
-            let tF = Math.max(2, Math.floor(item.fase)); let tD = item.proximaData || hojeLocal();
-            let last = item.historico.filter(h => h.feitas > 0).pop() || { feitas: 20, acertos: 16, percepcao: 'medio' };
-            for (let i = tF; i <= 6; i++) { html += `<li><b>${i}ª Rev.:</b> ${tD}</li>`; tD = calcularNovaData(tD, item.peso, last.percepcao, i + 1, item.easeFactor, last.feitas, last.acertos); }
-            html += `</ul><p style="color:var(--primary-color);font-weight:bold;margin-top:15px; font-size:15px;">Estimativa de Alta: ${tD}</p>`;
-            document.getElementById("detalhesBodyContent").innerHTML = html; document.getElementById("modalDetalhes").style.display = "flex";
-        }
+            let item = listaEstudos[idx];
+            let sVal = item.fsrsCard ? `${item.fsrsCard.stability} dias` : "Calculando na próx. rev";
+            let dVal = item.fsrsCard ? `${item.fsrsCard.difficulty} / 10` : "—";
+            let lapsesVal = item.fsrsCard ? item.fsrsCard.lapses : 0;
+            let retAlvo = Math.round(obterRetencaoPorPeso(item.peso) * 100);
 
+            let html = `<h3>${item.tema}</h3>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; background:var(--bg-color); padding:12px; border-radius:10px; border:1px solid var(--border-color); margin-bottom:15px; font-size:12px;">
+                    <div>🧠 <b>Estabilidade (S):</b> <span style="color:var(--accent-color); font-weight:bold;">${sVal}</span></div>
+                    <div>⚙️ <b>Dificuldade (D):</b> <b>${dVal}</b></div>
+                    <div>🎯 <b>Retenção Alvo (P${item.peso}):</b> <b>${retAlvo}%</b></div>
+                    <div>⚠️ <b>Recaídas (Lapses):</b> <b style="color:var(--danger-color);">${lapsesVal}</b></div>
+                </div>
+                <h4 style="margin-bottom:8px;">📜 Histórico de Sessões:</h4>
+                <ul style="padding-left:15px; font-size:13px; line-height:1.7;">`;
+            item.historico.forEach(h => {
+                let pct = h.feitas ? ` (${Math.round((h.acertos/h.feitas)*100)}%)` : '';
+                html += `<li><b>${h.fase}</b> (${h.data}) ${h.feitas ? `— Acertos: <b>${h.acertos}/${h.feitas}</b>${pct}` : ''}</li>`;
+            });
+            html += `</ul>
+                <p style="color:var(--primary-color);font-weight:bold;margin-top:15px; font-size:14px;">📅 Próxima Revisão Otimizada: ${item.proximaData}</p>`;
+            document.getElementById("detalhesBodyContent").innerHTML = html;
+            document.getElementById("modalDetalhes").style.display = "flex";
+        }
         // LÓGICA DO MODAL DE ADIAMENTO PERSONALIZADO
         let adiarContext = null;
 
@@ -3204,6 +3710,32 @@
             popularManualEspecialidades();
         }
 
+function trocarTemaDoTurno(dia, turno) {
+            let cg = cronogramaSemanasStore[semanaAtivaId];
+            if (!cg || !cg[dia] || !cg[dia][turno]) return;
+
+            let temaAtual = cg[dia][turno].tema;
+
+            // Pergunta o que o utilizador prefere fazer com o bloco
+            let escolha = confirm(
+                `Deseja libertar o turno de "${temaAtual}"?\n\n` +
+                "• OK: Escolher outro tema imediatamente para este horário.\n" +
+                "• Cancelar: Apenas deixar o horário livre (Estudo Livre) sem tema alocado."
+            );
+
+            // Devolve o bloco para estado de Estudo Livre
+            cg[dia][turno] = { tipo: 'estudo' };
+            cronogramaSemanasStore[semanaAtivaId] = cg;
+            window.syncToCloud();
+
+            renderizarKanbanSemanaAtiva();
+
+            // Se clicou OK, abre imediatamente o modal para escolher o novo assunto
+            if (escolha) {
+                abrirSelecaoManualTema(dia, turno);
+            }
+        }
+
         function popularManualEspecialidades() {
             let m = document.getElementById("selManualMacro").value;
             let selE = document.getElementById("selManualEsp");
@@ -3315,9 +3847,10 @@
                                       </div>
                                       ${espLabel}
                                       <div class="kanban-tema-nome">${b.tema}</div>
-                                      <div style="display:flex; gap:4px; margin-top:8px;">
-                                          <button style="padding:5px 6px; font-size:10px; margin:0; border-radius:4px; box-shadow:none; text-shadow:none; background:rgba(0,0,0,0.45); color:#fff; border:1px solid rgba(255,255,255,0.25);" onclick="iniciarTeoriaKanban('${b.macro}', '${b.esp}', '${b.tema}')">✔️ Estudar</button>
-                                          <button style="padding:5px 6px; font-size:10px; margin:0; border-radius:4px; box-shadow:none; background:#f59e0b; color:#1a1200; font-weight:700; text-shadow:none;" onclick="adiarTemaParaBacklog('${d}', '${t}', '${dtExata}')">📦 Adiar</button>
+                                      <div style="display:flex; gap:3px; margin-top:8px;">
+                                          <button title="Estudar este tema" style="padding:5px 4px; font-size:9.5px; margin:0; border-radius:4px; box-shadow:none; text-shadow:none; background:rgba(0,0,0,0.45); color:#fff; border:1px solid rgba(255,255,255,0.25); flex:1;" onclick="iniciarTeoriaKanban('${b.macro}', '${b.esp}', '${b.tema}')">✔️ Estudar</button>
+                                          <button title="Trocar ou desocupar este turno" style="padding:5px 4px; font-size:9.5px; margin:0; border-radius:4px; box-shadow:none; background:rgba(255,255,255,0.18); color:#fff; border:1px solid rgba(255,255,255,0.3); text-shadow:none; flex:1;" onclick="trocarTemaDoTurno('${d}', '${t}')">🔄 Trocar</button>
+                                          <button title="Adiar para a fila de atrasados" style="padding:5px 4px; font-size:9.5px; margin:0; border-radius:4px; box-shadow:none; background:#f59e0b; color:#1a1200; font-weight:700; text-shadow:none; flex:1;" onclick="adiarTemaParaBacklog('${d}', '${t}', '${dtExata}')">📦 Adiar</button>
                                       </div>
                                     </div>`;
                         }
@@ -3701,18 +4234,13 @@
         // CONFIGURAÇÕES & BACKUP
         // ------------------------------------------------------------------
         function salvarConfiguracoes() {
-            let intStr = document.getElementById("configIntervalos").value;
             configAlgoritmo = {
-                intervalos: intStr.split(',').map(n => parseInt(n.trim())).filter(n => !isNaN(n)),
-                p5: parseFloat(document.getElementById("configPeso5").value),
-                p4: parseFloat(document.getElementById("configPeso4").value),
-                p3: parseFloat(document.getElementById("configPeso3").value),
-                p2: parseFloat(document.getElementById("configPeso2").value),
-                p1: parseFloat(document.getElementById("configPeso1").value),
-                burnout: parseInt(document.getElementById("configBurnout").value)
+                retencaoBase: parseFloat(document.getElementById("configRetencaoBase").value) || 0.88,
+                burnout: parseInt(document.getElementById("configBurnout").value) || 15
             };
             window.syncToCloud();
-            alert("Configurações salvas!"); atualizarDashboard();
+            alert("Configurações salvas com sucesso!"); 
+            atualizarDashboard();
         }
 
         function atualizarMetaAnual() {
@@ -3726,7 +4254,7 @@
                 provas: agendaProvas, internato: cronogramaInternato, 
                 grades_semanais: gradesSemanaisStore,
                 crono_semanas: cronogramaSemanasStore, backlog: backlogAdiados,
-                pomodoro: pomodoroDiario, streak: streak 
+                pomodoro: pomodoroDiario, pegadinhas: muralPegadinhas, streak: streak 
             };
             let blob = new Blob([JSON.stringify(dados, null, 2)], { type: 'json' }); let url = URL.createObjectURL(blob); let a = document.createElement('a'); a.href = url; a.download = `backup_residencia_${hojeLocal()}.json`; a.click();
         }
@@ -3753,6 +4281,7 @@
             renderizarPlanilha(); 
             atualizarEstatisticasNerds();
             renderizarMapaRodizio();
+            atualizarGamificacao();
             if(document.getElementById('tab-rastreio').classList.contains('active')) renderizarRastreio();
         }
     
