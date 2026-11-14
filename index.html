@@ -3720,14 +3720,46 @@ let baseDias = (faseDestino <= 1) ? 1 : listaInt[Math.min(faseDestino - 1, 5)];
             backlogAdiados = backlogAdiados.filter(item => item.macro !== rod.macro);
 
             if(taxonomia[rod.macro]) {
-                Object.keys(taxonomia[rod.macro]).forEach(esp => {
-                    taxonomia[rod.macro][esp].forEach(sub => {
-                        let jaFez = listaEstudos.some(e => e.tema === sub.n);
-                        let jaNoPool = pool.some(p => p.tema === sub.n);
-                        if(!jaFez && !jaNoPool) pool.push({ macro: rod.macro, esp: esp, tema: sub.n, peso: sub.p });
+                let espPermitidas = null;
+
+                // SE FOR CLÍNICA MÉDICA, PERMITE ESCOLHER OS SUB-CICLOS / SUBCATEGORIAS
+                if (rod.macro === "Clínica Médica") {
+                    const espsDisponiveis = Object.keys(taxonomia["Clínica Médica"]);
+                    let mensagemPrompt = "🏥 CICLOS DE CLÍNICA MÉDICA\n\nEste rodízio é dividido em ciclos. Digite os números correspondentes às especialidades que deseja incluir nesta geração (separados por vírgula):\n\n";
+                    
+                    espsDisponiveis.forEach((espName, idx) => {
+                        mensagemPrompt += `${idx + 1}. ${espName}\n`;
                     });
+                    mensagemPrompt += `\nDeixe em branco ou digite "todas" para incluir a Clínica Médica inteira.`;
+
+                    let escolhaUsuario = prompt(mensagemPrompt, "todas");
+                    
+                    if (escolhaUsuario && escolhaUsuario.toLowerCase() !== "todas" && escolhaUsuario.trim() !== "") {
+                        let indices = escolhaUsuario.split(',').map(s => parseInt(s.trim()) - 1);
+                        espPermitidas = [];
+                        indices.forEach(idx => {
+                            if (espsDisponiveis[idx]) espPermitidas.push(espsDisponiveis[idx]);
+                        });
+                        if (espPermitidas.length === 0) {
+                            alert("Nenhuma especialidade válida selecionada. O sistema incluirá todas por segurança.");
+                            espPermitidas = null;
+                        }
+                    }
+                }
+
+                // Popula o pool respeitando o filtro de especialidades (se houver)
+                let espAlvo = espPermitidas || Object.keys(taxonomia[rod.macro]);
+                espAlvo.forEach(esp => {
+                    if (taxonomia[rod.macro][esp]) {
+                        taxonomia[rod.macro][esp].forEach(sub => {
+                            let jaFez = listaEstudos.some(e => e.tema === sub.n);
+                            let jaNoPool = pool.some(p => p.tema === sub.n);
+                            if(!jaFez && !jaNoPool) pool.push({ macro: rod.macro, esp: esp, tema: sub.n, peso: sub.p });
+                        });
+                    }
                 });
             }
+
             pool.sort((a,b) => b.peso - a.peso);
 
             for(let s=1; s<=numSemanasRod; s++) {
@@ -3779,11 +3811,7 @@ let baseDias = (faseDestino <= 1) ? 1 : listaInt[Math.min(faseDestino - 1, 5)];
             renderizarKanbanSemanaAtiva();
             renderizarBacklogAdiados();
             
-            if(rod.macro === "Psiquiatria" || rod.macro === "MFC") {
-                alert(`Rodízio de ${rod.macro} gerado! Os turnos de estudo estão livres para você resgatar os temas manualmente na Busca Livre.`);
-            } else {
-                alert(`Todo o rodízio de ${rod.macro} (${numSemanasRod} semanas) foi planejado com sucesso!`);
-            }
+            alert(`Cronograma do rodízio de ${rod.macro} (${numSemanasRod} semanas) gerado com sucesso com base no ciclo selecionado!`);
         }
 
         function gerarPlanoSemanaAtiva() {
