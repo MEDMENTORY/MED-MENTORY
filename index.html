@@ -91,30 +91,76 @@
         /* ESTRUTURA GLOBAL */
         .app-container { display: flex; height: 100vh; width: 100%; position: relative; }
 
+/* ==========================================================
+           SIDEBAR COMPACTÁVEL (MODO MENOR)
+           ========================================================== */
         .sidebar {
-            width: 272px;
+            width: 230px; /* Reduzido de 272px para ocupar menos espaço */
             background: var(--sidebar-bg);
             border-right: 1px solid var(--border-color);
             display: flex; flex-direction: column;
-            padding: 24px 16px;
+            padding: 20px 12px;
             box-sizing: border-box;
             z-index: 100;
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), padding 0.3s;
+            position: relative;
         }
-        .sidebar-logo { margin-bottom: 28px; padding: 0 10px; }
+
+        /* Classe ativada via JS para retrair o menu */
+        .sidebar.collapsed {
+            width: 72px;
+            padding: 20px 8px;
+        }
+
+        .sidebar-logo { margin-bottom: 22px; padding: 0 6px; display: flex; align-items: center; justify-content: space-between; }
+        
+        /* Esconde textos e subtítulos quando retraído */
+        .sidebar.collapsed .sidebar-logo h1 span-texto,
+        .sidebar.collapsed .sidebar-logo p,
+        .sidebar.collapsed .sidebar-btn span,
+        .sidebar.collapsed .sidebar-footer-text {
+            display: none !important;
+        }
+
+        .sidebar.collapsed .sidebar-logo h1 {
+            font-size: 22px;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .sidebar.collapsed .sidebar-btn {
+            text-align: center;
+            padding: 12px 0;
+            justify-content: center;
+        }
+
+        .sidebar.collapsed .sidebar-btn .ic {
+            margin: 0 !important;
+        }
+
         .sidebar-logo h1 {
-            font-size: 19px; margin: 0; font-weight: 700; display: flex; align-items: center; gap: 8px;
+            font-size: 17px; margin: 0; font-weight: 700; display: flex; align-items: center; gap: 8px;
             background: linear-gradient(100deg, var(--text-color) 30%, var(--accent-color));
             -webkit-background-clip: text; background-clip: text; color: transparent;
         }
-        .sidebar-logo p { margin: 6px 0 0; font-size: 11.5px; color: var(--muted); line-height: 1.4; }
+        .sidebar-logo p { margin: 4px 0 0; font-size: 11px; color: var(--muted); line-height: 1.3; }
 
-        .sidebar-nav { display: flex; flex-direction: column; gap: 4px; flex: 1; overflow-y: auto; padding-right: 4px; }
+        /* Botão de Retrair/Expandir no Rodapé da Sidebar */
+        .btn-toggle-sidebar {
+            background: var(--bg-color); color: var(--muted); border: 1px solid var(--border-color);
+            padding: 8px; border-radius: var(--r-md); cursor: pointer; font-size: 12px;
+            display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%;
+            margin-top: 10px; transition: background 0.2s, color 0.2s; box-shadow: none;
+        }
+        .btn-toggle-sidebar:hover { background: color-mix(in srgb, var(--primary-color) 12%, transparent); color: var(--text-color); }
+
+        .sidebar-nav { display: flex; flex-direction: column; gap: 4px; flex: 1; overflow-y: auto; padding-right: 2px; }
         .sidebar-btn {
             background: transparent; color: var(--muted);
-            border: 1px solid transparent; padding: 11px 14px; border-radius: var(--r-md);
-            text-align: left; font-size: 13.5px; font-weight: 500; font-family: inherit;
+            border: 1px solid transparent; padding: 10px 12px; border-radius: var(--r-md);
+            text-align: left; font-size: 13px; font-weight: 500; font-family: inherit;
             cursor: pointer; transition: background 0.2s, color 0.2s;
-            width: 100%; margin: 0; box-shadow: none;
+            width: 100%; margin: 0; box-shadow: none; display: flex; align-items: center; gap: 10px;
         }
         .sidebar-btn:hover { background: color-mix(in srgb, var(--primary-color) 9%, transparent); color: var(--text-color); transform: none; filter: none; box-shadow: none; }
         .sidebar-btn.active {
@@ -508,6 +554,43 @@
             display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;
         }
 
+/* ==========================================================
+           MODO FOCO CUSTOMIZÁVEL (BLOCOS DE TEMPO)
+           ========================================================== */
+        .foco-modo-botoes {
+            display: flex; gap: 8px; justify-content: center; margin-bottom: 15px; flex-wrap: wrap;
+        }
+        .btn-modo-foco {
+            background: var(--bg-color); color: var(--text-color); border: 1px solid var(--border-color);
+            padding: 6px 14px; border-radius: var(--r-pill); font-size: 12px; font-weight: 600;
+            cursor: pointer; width: auto; margin: 0; box-shadow: none; transition: all 0.2s;
+        }
+        .btn-modo-foco:hover { border-color: var(--accent-color); }
+        .btn-modo-foco.active {
+            background: var(--accent-color); color: #fff; border-color: var(--accent-color);
+            box-shadow: var(--glow);
+        }
+
+/* ==========================================================
+           MODAL DE PATENTES E PROGRESSO MÉDICO
+           ========================================================== */
+        .xp-container {
+            cursor: pointer; transition: transform 0.2s;
+        }
+        .xp-container:hover {
+            transform: scale(1.03);
+            border-color: var(--accent-color);
+        }
+        .patente-nivel-card {
+            display: flex; align-items: center; justify-content: space-between;
+            background: var(--bg-color); border: 1px solid var(--border-color);
+            padding: 10px 14px; border-radius: var(--r-md); margin-bottom: 8px;
+        }
+        .patente-nivel-card.atual {
+            border-color: #f59e0b;
+            background: color-mix(in srgb, #f59e0b 12%, var(--card-bg));
+        }
+
 </style>
 </head>
 <body class="dark-mode">
@@ -531,9 +614,18 @@
         </div>
     </div>
 
-    <!-- MODO FOCO -->
+
+   <!-- MODO FOCO -->
     <div class="focus-overlay">
         <h2>🎯 MODO FOCO ATIVO</h2>
+        
+        <!-- Seletores de Blocos de Tempo -->
+        <div class="foco-modo-botoes">
+            <button type="button" class="btn-modo-foco" onclick="definirModoFoco(15, 'Quick Focus')">⚡ Quick (15m)</button>
+            <button type="button" class="btn-modo-foco active" onclick="definirModoFoco(25, 'Pomodoro')">🍅 Pomodoro (25m)</button>
+            <button type="button" class="btn-modo-foco" onclick="definirModoFoco(50, 'Deep Work')">🧠 Deep Work (50m)</button>
+        </div>
+
         <div class="timer-display" id="focusTimerDisplay" style="font-size: 72px;">25:00</div>
         <div style="display: flex; gap: 10px; margin-bottom: 20px;">
             <button class="sub-aba-btn active" onclick="iniciarPomodoro()">▶️ Iniciar</button>
@@ -554,26 +646,31 @@
     <div class="app-container">
         
         <!-- SIDEBAR DE NAVEGAÇÃO -->
-        <aside class="sidebar">
+        <aside class="sidebar" id="appSidebar">
             <div class="sidebar-logo">
-                <h1>🧠⚕️ MED MENTORY</h1>
-                <p>Sistema Preditivo para Residência Médica</p>
+                <h1>🧠⚕️ <span class="span-texto">MED MENTORY</span></h1>
+                <p>Sistema Preditivo</p>
             </div>
             
             <nav class="sidebar-nav">
-                <button class="sidebar-btn active" onclick="mudarAba('tab-inicio', this)">🏠 Dashboard Inicial</button>
-                <button class="sidebar-btn" onclick="mudarAba('tab-planejamento', this)">📅 Cronograma de Atividades</button>
-                <button class="sidebar-btn" onclick="mudarAba('tab-rastreio', this)">🧭 Rastreio de Temas</button>
-                <button class="sidebar-btn" onclick="mudarAba('tab-estudo', this)">✍️ Registro de Estudo</button>
-                <button class="sidebar-btn" onclick="mudarAba('tab-analytics', this)">📊 Radar de Evolução</button>
-                <button class="sidebar-btn" onclick="mudarAba('tab-nerd', this)">🤓 Carga de Estudo</button>
-                <button class="sidebar-btn" onclick="mudarAba('tab-caderno', this)">📚 Metas & Incidência</button>
-                <button class="sidebar-btn" onclick="mudarAba('tab-manual', this)">📖 Manual de Bordo</button>
-                <button class="sidebar-btn" onclick="mudarAba('tab-config', this)">⚙️ Configurações</button>
+                <button class="sidebar-btn active" onclick="mudarAba('tab-inicio', this)">🏠 <span>Dashboard Inicial</span></button>
+                <button class="sidebar-btn" onclick="mudarAba('tab-planejamento', this)">📅 <span>Cronograma</span></button>
+                <button class="sidebar-btn" onclick="mudarAba('tab-rastreio', this)">🧭 <span>Rastreio de Temas</span></button>
+                <button class="sidebar-btn" onclick="mudarAba('tab-estudo', this)">✍️ <span>Registro de Estudo</span></button>
+                <button class="sidebar-btn" onclick="mudarAba('tab-analytics', this)">📊 <span>Radar de Evolução</span></button>
+                <button class="sidebar-btn" onclick="mudarAba('tab-nerd', this)">🤓 <span>Carga de Estudo</span></button>
+                <button class="sidebar-btn" onclick="mudarAba('tab-caderno', this)">📚 <span>Metas & Incidência</span></button>
+                <button class="sidebar-btn" onclick="mudarAba('tab-manual', this)">📖 <span>Manual de Bordo</span></button>
+                <button class="sidebar-btn" onclick="mudarAba('tab-config', this)">⚙️ <span>Configurações</span></button>
             </nav>
 
-            <div style="margin-top:auto; padding-top:15px; font-size:11px; opacity:0.5; text-align:center;">
-                MED MENTORY v5.9
+            <div>
+                <button type="button" class="btn-toggle-sidebar" onclick="toggleSidebarCollapse()" title="Recolher / Expandir Menu">
+                    ◀️ <span class="span-texto">Recolher Menu</span>
+                </button>
+                <div style="margin-top:10px; font-size:11px; opacity:0.5; text-align:center;" class="sidebar-footer-text">
+                    MED MENTORY v5.9
+                </div>
             </div>
         </aside>
 
@@ -588,7 +685,7 @@
                 </div>
                 <div class="header-actions" style="display: flex; gap: 8px; align-items:center;">
                     <!-- Nível & XP Médico -->
-                    <div class="xp-container" id="xpContainer" title="Ganhe XP resolvendo questões e completando revisões">
+                    <div class="xp-container" id="xpContainer" onclick="abrirModalPatentes()" title="Clique para ver os detalhes do seu nível e patentes">
                         <span id="rankBadge" style="font-weight:700; color:#f59e0b;">🩺 Interno Geral</span>
                         <div class="xp-bar-bg"><div class="xp-bar-fill" id="xpBarFill" style="width: 0%;"></div></div>
                         <span id="xpTexto" style="color:var(--muted); font-size:11px;">0/500 XP</span>
@@ -738,6 +835,57 @@
             <!-- ABA 2: CRONOGRAMA ADAPTADO AO INTERNATO -->
             <div id="tab-planejamento" class="tab-content">
                 
+                <!-- 1. KANBAN DA SEMANA ATIVA (CRONOGRAMA SEMANAL) -->
+                <div class="card">
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                        <h2 class="m-0">📅 Cronograma Semanal</h2>
+                        <div style="display:flex; gap:10px; align-items:center;">
+                            <label style="margin:0; font-size:13px;">Semana:</label>
+                            <select id="seletorSemanaInternato" onchange="mudarSemanaAtiva(this.value)" style="font-weight:bold; color:var(--accent-color); margin:0; width:auto; padding:6px 12px;">
+                                <option value="">Cadastre um rodízio primeiro...</option>
+                            </select>
+                        </div>
+                    </div>
+                    <p style="font-size:13px; opacity:0.8; margin-top:8px; margin-bottom:0;">Acompanhe os turnos da semana ativa. Clique em <b>Estudar</b>, <b>Trocar</b> ou <b>Adiar</b> diretamente nos cartões.</p>
+                    
+                    <div id="resultadoInternato" style="margin-top:15px; display:block;"></div>
+                </div>
+
+                <!-- 2. BUSCA LIVRE UNIVERSAL -->
+                <div class="card" id="cardResgateEspecial" style="border: 2px dashed var(--accent-color); background: rgba(52, 152, 219, 0.02);">
+                    <h2 style="color:var(--accent-color);">🔎 Busca Livre de Temas no Edital</h2>
+                    <p class="hint">Pesquise qualquer assunto do edital para alocar diretamente em um turno livre desta semana (ideal para casos vistos em plantão ou temas de interesse).</p>
+                    <input type="text" id="inputBuscaLivre" placeholder="Digite para buscar no edital (mínimo 3 letras)..." onkeyup="renderizarBuscaLivre()" style="border: 1px solid var(--accent-color); background:white;">
+                    <div id="listaBuscaLivre" style="max-height:250px; overflow-y:auto; margin-top:10px;"></div>
+                </div>
+
+                <!-- 3. TEMAS ADIADOS -->
+                <div class="card">
+                    <h2>📦 Temas Adiados</h2>
+                    <p style="font-size:13px; opacity:0.8; margin-bottom:15px;">Temas cancelados por falta de tempo. Resgate-os para um turno livre ou envie direto para as revisões práticas.</p>
+                    
+                    <div class="sub-nav-abas" style="margin-bottom: 15px;">
+                        <button class="sub-aba-btn active" id="btnFiltroBacklog_todas" onclick="setFiltroBacklog('todas')">Todas</button>
+                        <button class="sub-aba-btn" id="btnFiltroBacklog_CM" onclick="setFiltroBacklog('Clínica Médica')">Clínica</button>
+                        <button class="sub-aba-btn" id="btnFiltroBacklog_CIR" onclick="setFiltroBacklog('Cirurgia')">Cirurgia</button>
+                        <button class="sub-aba-btn" id="btnFiltroBacklog_GO" onclick="setFiltroBacklog('Ginecologia e Obstetrícia')">GO</button>
+                        <button class="sub-aba-btn" id="btnFiltroBacklog_PED" onclick="setFiltroBacklog('Pediatria')">Pediatria</button>
+                        <button class="sub-aba-btn" id="btnFiltroBacklog_PREV" onclick="setFiltroBacklog('Preventiva')">Preventiva</button>
+                    </div>
+
+                    <div id="listaBacklogAdiados" style="max-height:300px; overflow-y:auto;"></div>
+                </div>
+
+                <!-- 4. MAPA DO RODÍZIO VIGENTE -->
+                <div class="card" id="cardMapaRodizio">
+                    <h2>🗺️ Mapa do Rodízio Vigente</h2>
+                    <p class="hint">Acompanhe o status completo de todos os temas do edital da macro-área atual.</p>
+                    <div id="mapaRodizioContainer">
+                        <!-- Preenchido via JS -->
+                    </div>
+                </div>
+
+                <!-- 5. CONFIGURAÇÃO DE RODÍZIOS E TURNOS (FICHA TÉCNICA / POR ÚLTIMO) -->
                 <div class="card">
                     <h2>🏥 Data de Rodízios no Internato</h2>
                     <p class="hint">Cadastre os blocos de rodízio do seu internato. O sistema calculará o número exato de semanas e montará o calendário completo.</p>
@@ -755,20 +903,14 @@
 
                 <div class="card">
                     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
-                        <h2 class="m-0">📅 Cronograma de Estudos Personalizado</h2>
+                        <h2 class="m-0">⚙️ Configuração de Turnos & Geração do Rodízio</h2>
                         <button onclick="gerarTodoORodizio()" style="background:var(--primary-color); width:auto; padding:10px 20px; margin:0;">🚀 Gerar Cronograma do Rodízio</button>
                     </div>
-                    <p style="font-size:13px; opacity:0.8; margin-top:10px;">Alterne entre as semanas abaixo. Altere turnos para <b>Ocupado</b> em imprevistos e recalcule estritamente aquela semana sem afetar as demais.</p>
+                    <p style="font-size:13px; opacity:0.8; margin-top:10px;">Configure a disponibilidade dos seus turnos semanais e recalcule o planejamento de forma isolada.</p>
                     
                     <div class="row-form" style="margin-bottom:20px; margin-top:20px;">
-                        <div class="col-form">
-                            <label>Selecione a Semana Ativa:</label>
-                            <select id="seletorSemanaInternato" onchange="mudarSemanaAtiva(this.value)" style="font-weight:bold; color:var(--accent-color);">
-                                <option value="">Cadastre um rodízio primeiro...</option>
-                            </select>
-                        </div>
                         <div class="col-form" style="display:flex; align-items:flex-end;">
-                            <label style="display:flex; align-items:center; gap:10px; margin:0; cursor:pointer; height:42px; background:var(--bg-color); padding:0 15px; border-radius:8px; border:1px solid var(--border-color);">
+                            <label style="display:flex; align-items:center; gap:10px; margin:0; cursor:pointer; height:42px; background:var(--bg-color); padding:0 15px; border-radius:8px; border:1px solid var(--border-color); width:100%;">
                                 <input type="checkbox" id="chkMisto" checked style="width:18px; height:18px; margin:0;">
                                 <span>Modo Misto (65% Rodízio / 35% Revisão Global)</span>
                             </label>
@@ -809,43 +951,8 @@
                         <button onclick="gerarPlanoSemanaAtiva()" style="background:var(--accent-color); flex:2;">🔄 Recalcular Apenas Esta Semana (Efeito Local Isolado)</button>
                         <button onclick="salvarGradeTurnosSemana()" style="background:var(--text-color); flex:1;">💾 Salvar Turnos Desta Semana</button>
                     </div>
-
-                    <div id="resultadoInternato" style="margin-top:30px; display:none;"></div>
                 </div>
 
-                <!-- PAINEL DE BUSCA LIVRE UNIVERSAL -->
-                <div class="card" id="cardResgateEspecial" style="border: 2px dashed var(--accent-color); background: rgba(52, 152, 219, 0.02);">
-                    <h2 style="color:var(--accent-color);">🔎 Busca Livre de Temas no Edital</h2>
-                    <p class="hint">Pesquise qualquer assunto do edital para alocar diretamente em um turno livre desta semana (ideal para casos vistos em plantão ou temas de interesse). Adicione e depois edite manualmente no cronograma semanal.</p>
-                    <input type="text" id="inputBuscaLivre" placeholder="Digite para buscar no edital (mínimo 3 letras)..." onkeyup="renderizarBuscaLivre()" style="border: 1px solid var(--accent-color); background:white;">
-                    <div id="listaBuscaLivre" style="max-height:250px; overflow-y:auto; margin-top:10px;"></div>
-                </div>
-
-                <!-- TEMAS ADIADOS -->
-                <div class="card">
-                    <h2>📦 Temas Adiados</h2>
-                    <p style="font-size:13px; opacity:0.8; margin-bottom:15px;">Temas cancelados por falta de tempo. Eles estão ordenados por peso (prioridade). Resgate-os para um turno livre ou envie direto para as revisões práticas.</p>
-                    
-                    <div class="sub-nav-abas" style="margin-bottom: 15px;">
-                        <button class="sub-aba-btn active" id="btnFiltroBacklog_todas" onclick="setFiltroBacklog('todas')">Todas</button>
-                        <button class="sub-aba-btn" id="btnFiltroBacklog_CM" onclick="setFiltroBacklog('Clínica Médica')">Clínica</button>
-                        <button class="sub-aba-btn" id="btnFiltroBacklog_CIR" onclick="setFiltroBacklog('Cirurgia')">Cirurgia</button>
-                        <button class="sub-aba-btn" id="btnFiltroBacklog_GO" onclick="setFiltroBacklog('Ginecologia e Obstetrícia')">GO</button>
-                        <button class="sub-aba-btn" id="btnFiltroBacklog_PED" onclick="setFiltroBacklog('Pediatria')">Pediatria</button>
-                        <button class="sub-aba-btn" id="btnFiltroBacklog_PREV" onclick="setFiltroBacklog('Preventiva')">Preventiva</button>
-                    </div>
-
-                    <div id="listaBacklogAdiados" style="max-height:300px; overflow-y:auto;"></div>
-                </div>
-
-                <!-- MAPA DO RODÍZIO VIGENTE -->
-                <div class="card" id="cardMapaRodizio">
-                    <h2>🗺️ Mapa do Rodízio Vigente</h2>
-                    <p class="hint">Acompanhe o status completo de todos os temas do edital da macro-área atual.</p>
-                    <div id="mapaRodizioContainer">
-                        <!-- Preenchido via JS -->
-                    </div>
-                </div>
             </div>
 
             <!-- ABA 3: REGISTRO DE ESTUDO -->
@@ -1264,6 +1371,27 @@
         </div>
     </div>
 
+<!-- MODAL DE PATENTES E NÍVEIS MÉDICOS -->
+ <div class="modal" id="modalPatentes">
+     <div class="modal-content" style="max-width: 480px;">
+         <h3 class="mt-0">🏆 Sua Trajetória na Residência</h3>
+         <p class="hint">Acompanhe seu XP acumulado, simulados e a hierarquia de patentes médicas do MED MENTORY.</p>
+
+         <div style="background:var(--bg-color); padding:16px; border-radius:12px; border:1px solid var(--border-color); margin-bottom:20px; text-align:center;">
+             <span id="modalPatenteTitulo" style="font-size:18px; font-weight:800; color:#f59e0b;">🩺 Interno Geral</span>
+             <div style="font-size:13px; color:var(--muted); margin-top:4px;" id="modalPatenteXpTotal">0 XP acumulados</div>
+             <div class="progress-bar-bg" style="height:10px; margin-top:12px;">
+                 <div class="progress-bar-fill" id="modalPatenteBar" style="width: 0%; background: linear-gradient(90deg, #f59e0b, #eab308);"></div>
+             </div>
+         </div>
+
+         <h4 style="margin-bottom:10px;">📋 Hierarquia de Patentes</h4>
+         <div id="listaHierarquiaPatentes" style="max-height: 250px; overflow-y: auto; margin-bottom: 20px;"></div>
+
+         <button type="button" class="sub-aba-btn" style="width:100%; padding:12px; background:var(--bg-color); color:var(--text-color); border:1px solid var(--border-color);" onclick="fecharModal('modalPatentes')">Fechar</button>
+     </div>
+ </div>
+
     <!-- MODAL DETALHES -->
     <div class="modal" id="modalDetalhes">
         <div class="modal-content">
@@ -1398,24 +1526,83 @@
         let cafeItemAlvo = null;
 
         const NIVEIS_MEDICOS = [
-            { nome: "🩺 Interno Geral", minXP: 0, maxXP: 500 },
-            { nome: "💉 R1 Sobrevivente", minXP: 500, maxXP: 1500 },
-            { nome: "🏥 Residente Sênior", minXP: 1500, maxXP: 3500 },
-            { nome: "🩺 Chefe de Equipe (R+)", minXP: 3500, maxXP: 7000 },
-            { nome: "🏆 Preceptor Especialista", minXP: 7000, maxXP: Infinity }
+            { nome: "🩺 Interno Mediano", minXP: 0, maxXP: 1000 },
+            { nome: "💉 Interno Padrãozinho", minXP: 1000, maxXP: 2000 },
+            { nome: "🏥 Interno Padrão", minXP: 2000, maxXP: 4000 },
+            { nome: "🩺 Quasei R1", minXP: 4000, maxXP: 7000 },
+            { nome: "🏆 VOCÊ TA PRONTO PRA SER R1", minXP: 7000, maxXP: Infinity }
         ];
 
         function calcularXPAtual() {
             let totalQts = 0;
             let totalRevs = 0;
+            
+            // 1. Contabiliza questões e revisões do cronograma/estudos
             listaEstudos.forEach(i => {
                 (i.historico || []).forEach(h => {
                     totalQts += (h.feitas || 0);
                     if (h.fase) totalRevs++;
                 });
             });
-            // 1 ponto por questão + 10 pontos por revisão concluída
-            return (totalQts * 1) + (totalRevs * 10);
+
+            // 2. Contabiliza questões e bônus de simulados (50 XP por simulado feito + 1 XP por questão do simulado)
+            let totalSimuladosXp = 0;
+            if (window.listaSimulados && Array.isArray(window.listaSimulados)) {
+                window.listaSimulados.forEach(sim => {
+                    const qtsSim = parseInt(sim.total) || 0;
+                    // 1 XP por questão do simulado + 50 XP de bônus por ter concluído o simulado
+                    totalSimuladosXp += qtsSim + 50;
+                });
+            }
+
+            // 1 ponto por questão comum + 10 pontos por revisão + XP de simulados
+            return (totalQts * 1) + (totalRevs * 10) + totalSimuladosXp;
+        }
+
+        function abrirModalPatentes() {
+            const xp = calcularXPAtual();
+            let nivelAtual = NIVEIS_MEDICOS[0];
+
+            for (let i = 0; i < NIVEIS_MEDICOS.length; i++) {
+                if (xp >= NIVEIS_MEDICOS[i].minXP) {
+                    nivelAtual = NIVEIS_MEDICOS[i];
+                }
+            }
+
+            document.getElementById("modalPatenteTitulo").textContent = nivelAtual.nome;
+            document.getElementById("modalPatenteXpTotal").textContent = `${xp} XP acumulados no total`;
+            
+            // Calcula progresso para o próximo nível
+            let proximoNivel = NIVEIS_MEDICOS.find(n => n.minXP > xp) || nivelAtual;
+            let progressoPct = 100;
+            if (proximoNivel !== nivelAtual) {
+                let faixa = proximoNivel.minXP - nivelAtual.minXP;
+                let atualNoNivel = xp - nivelAtual.minXP;
+                progressoPct = Math.min(100, Math.round((atualNoNivel / faixa) * 100));
+            }
+            document.getElementById("modalPatenteBar").style.width = `${progressoPct}%`;
+
+            // Popula a lista da hierarquia
+            const container = document.getElementById("listaHierarquiaPatentes");
+            container.innerHTML = NIVEIS_MEDICOS.map(n => {
+                const alcancado = xp >= n.minXP;
+                const ehAtual = n.nome === nivelAtual.nome;
+                return `
+                    <div class="patente-nivel-card ${ehAtual ? 'atual' : ''}">
+                        <div>
+                            <strong style="font-size:13px; color:var(--text-color);">${n.nome}</strong>
+                            <div style="font-size:11px; color:var(--muted);">A partir de ${n.minXP} XP</div>
+                        </div>
+                        <div>
+                            <span class="badge" style="background:${alcancado ? 'var(--ok-color)' : 'var(--border-color)'}; color:${alcancado ? '#fff' : 'var(--muted)'};">
+                                ${ehAtual ? '⭐ Atual' : (alcancado ? 'Conquistado' : 'Bloqueado')}
+                            </span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById("modalPatentes").style.display = "flex";
         }
 
         function atualizarGamificacao() {
@@ -2760,6 +2947,25 @@ localStorage.setItem('mural_pegadinhas', JSON.stringify(muralPegadinhas)); // <-
             if (tabId === 'tab-planejamento') { renderizarListasPlanejamento(); atualizarSeletorSemanasPorRodizios(); renderizarKanbanSemanaAtiva(); }
             if (tabId === 'tab-nerd') { atualizarEstatisticasNerds(); }
             if (tabId === 'tab-rastreio') { popularEspecialidadesRastreio(); }
+        }
+
+function definirModoFoco(minutos, nomeModo) {
+            if (isRunning) {
+                if (!confirm(`O temporizador está a correr. Deseja reiniciar para o modo ${nomeModo}?`)) return;
+                pausarPomodoro();
+            }
+            
+            pomodoroTemas.foco = minutos;
+            timeLeft = minutos * 60;
+            atualizarDisplayTimer();
+
+            // Atualiza visual dos botões de modo
+            document.querySelectorAll('.btn-modo-foco').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.textContent.includes(`${minutos}m`)) {
+                    btn.classList.add('active');
+                }
+            });
         }
 
         // ------------------------------------------------------------------
@@ -4479,6 +4685,22 @@ function trocarTemaDoTurno(dia, turno) {
         document.querySelectorAll('[placeholder]').forEach(e => { RX_EMOJI.lastIndex = 0; e.placeholder = e.placeholder.replace(RX_EMOJI, ''); });
         iconizar(document.body);
         obsIcones.observe(document.body, { childList: true, subtree: true, characterData: true });
+
+function toggleSidebarCollapse() {
+            const sidebar = document.getElementById("appSidebar");
+            sidebar.classList.toggle("collapsed");
+            
+            // Altera o ícone/texto do botão de recolher
+            const btn = sidebar.querySelector(".btn-toggle-sidebar");
+            if (sidebar.classList.contains("collapsed")) {
+                btn.innerHTML = "▶️";
+                btn.title = "Expandir Menu";
+            } else {
+                btn.innerHTML = '◀️ <span class="span-texto">Recolher Menu</span>';
+                btn.title = "Recolher / Expandir Menu";
+            }
+        }
+
     </script>
 </body>
 </html>
