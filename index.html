@@ -3616,12 +3616,35 @@ let baseDias = (faseDestino <= 1) ? 1 : listaInt[Math.min(faseDestino - 1, 5)];
 
         function salvarGradeTurnosSemanaSilencioso() {
             if(!gradesSemanaisStore[semanaAtivaId]) gradesSemanaisStore[semanaAtivaId] = {};
+            if(!cronogramaSemanasStore[semanaAtivaId]) cronogramaSemanasStore[semanaAtivaId] = {};
+
             document.querySelectorAll('.sel-turno').forEach(sel => {
-                let d = sel.dataset.dia; let t = sel.dataset.trn;
+                let d = sel.dataset.dia; 
+                let t = sel.dataset.trn;
+                let novoValor = sel.value; // 'ocupado', 'estudo' ou 'descanso'
+
+                // 1. Salva na grade base da semana
                 if(!gradesSemanaisStore[semanaAtivaId][d]) gradesSemanaisStore[semanaAtivaId][d] = {};
-                gradesSemanaisStore[semanaAtivaId][d][t] = sel.value;
+                gradesSemanaisStore[semanaAtivaId][d][t] = novoValor;
+
+                // 2. Atualiza o cronograma ativo da semana instantaneamente
+                if(!cronogramaSemanasStore[semanaAtivaId][d]) cronogramaSemanasStore[semanaAtivaId][d] = {};
+                let slotAtual = cronogramaSemanasStore[semanaAtivaId][d][t];
+
+                // Se o turno era ocupado/descanso e virou estudo (ou vice-versa)
+                if (!slotAtual || slotAtual.tipo === 'ocupado' || slotAtual.tipo === 'descanso' || slotAtual.tipo === 'estudo') {
+                    if (novoValor === 'estudo') {
+                        cronogramaSemanasStore[semanaAtivaId][d][t] = { tipo: 'estudo' };
+                    } else if (novoValor === 'descanso') {
+                        cronogramaSemanasStore[semanaAtivaId][d][t] = { tipo: 'descanso' };
+                    } else {
+                        cronogramaSemanasStore[semanaAtivaId][d][t] = { tipo: 'ocupado' };
+                    }
+                }
             });
+
             window.syncToCloud();
+            renderizarKanbanSemanaAtiva();
         }
 
         function salvarGradeTurnosSemana() {
