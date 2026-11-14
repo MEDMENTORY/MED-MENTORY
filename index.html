@@ -270,10 +270,14 @@
         .timer-display { font-size: 28px; font-weight: 500; font-family: var(--font-mono); color: var(--accent-color); text-shadow: var(--glow); letter-spacing: 0.02em; }
         body.modo-sobrevivencia .pomodoro-box { border: 1px solid var(--sobrevivencia-bg); box-shadow: 0 0 22px color-mix(in srgb, var(--sobrevivencia-bg) 30%, transparent); }
 
-        .semana-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-top: 15px; }
-        .dia-col { background: var(--bg-color); border: 1px solid var(--border-color); border-radius: var(--r-md); padding: 8px; text-align: center; }
-        .dia-col h4 { font-size: 12px; margin: 0 0 8px 0; background: var(--card-bg); color: var(--text-color); padding: 6px; border-radius: var(--r-sm); border: 1px solid var(--border-color); }
-        .sel-turno { font-size: 11px; padding: 4px; width: 100%; border-radius: var(--r-sm); border: 1px solid var(--border-color); margin-bottom: 6px; }
+        .semana-grid { 
+    display: grid; 
+    grid-template-columns: repeat(7, minmax(130px, 1fr)); 
+    gap: 10px; 
+    margin-top: 15px; 
+    overflow-x: auto; 
+    padding-bottom: 6px;
+}
 
         /* MAPA DO RODÍZIO */
         .accordion-header { background: var(--bg-color); color: var(--text-color); padding: 12px 18px; cursor: pointer; border-radius: var(--r-md); margin-top: 10px; display: flex; justify-content: space-between; align-items: center; font-weight: 600; border: 1px solid var(--border-color); transition: border-color 0.2s; }
@@ -4009,7 +4013,7 @@ function trocarTemaDoTurno(dia, turno) {
             
             if(!cg) { res.style.display = "none"; return; }
 
-            let html = `<div style="display:grid; grid-template-columns: repeat(7, 1fr); gap:10px; margin-top:10px;" class="semana-grid">`;
+            let html = `<div style="display:grid; grid-template-columns: repeat(7, minmax(130px, 1fr)); gap:10px; margin-top:10px; overflow-x:auto;" class="semana-grid">`;
             
             diasSemanaArr.forEach((d, idx) => {
                 let dtExata = calcularDataExataRodizio(semanaAtivaId, idx);
