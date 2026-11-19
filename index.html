@@ -14,584 +14,484 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
-    <style>
+<style>
         /* ==========================================================
-           MED MENTORY — TEMA HIGH-TECH
-           Escuro por padrão (HUD clínico); o botão "Modo Escuro"
-           alterna para a variante clara "laboratório".
+           MED MENTORY — DESIGN SYSTEM SAAS MINIMALISTA
            ========================================================== */
         :root {
-            --bg-color: #eaf0f8;
+            --bg-color: #f8fafc;
             --card-bg: #ffffff;
-            --text-color: #0f1b33;
+            --surface-subtle: #f1f5f9;
+            --text-color: #0f172a;
+            --muted: #64748b;
+            --border-color: #e2e8f0;
+            --primary-color: #2563eb;
+            --primary-hover: #1d4ed8;
+            --accent-color: #0284c7;
+            --danger-color: #dc2626;
+            --warning-bg: #d97706;
+            --ok-color: #16a34a;
+            --sobrevivencia-bg: #7c3aed;
+            --sidebar-bg: #ffffff;
             --header-bg: #ffffff;
-            --border-color: #d3dcec;
-            --primary-color: #3d6bff;
-            --primary-hover: #2f58de;
-            --accent-color: #0b7fa6;
-            --danger-color: #e5384f;
-            --warning-bg: #e08a00;
-            --sobrevivencia-bg: #7c5cf0;
-            --sidebar-bg: #f8faff;
-            --shadow-soft: 0 14px 32px -18px rgba(20, 40, 90, 0.28);
-            --shadow-btn: 0 2px 6px rgba(20, 40, 90, 0.14);
-            --glow: 0 0 0 rgba(0, 0, 0, 0);
-            --edge: rgba(61, 107, 255, 0.35);
-            --grid-dot: rgba(15, 27, 51, 0.07);
-            --aura-1: rgba(61, 107, 255, 0.10);
-            --aura-2: rgba(11, 127, 166, 0.08);
-            --muted: rgba(15, 27, 51, 0.62);
-            --font-display: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
-            --font-body: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
+            --btn-sec-bg: #f1f5f9;
+            --btn-sec-text: #0f172a;
+            --shadow-soft: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
+            --shadow-btn: 0 1px 2px rgba(15, 23, 42, 0.06);
+            --font-display: 'Plus Jakarta Sans', system-ui, sans-serif;
+            --font-body: 'Plus Jakarta Sans', system-ui, sans-serif;
             --font-mono: 'JetBrains Mono', ui-monospace, Consolas, monospace;
+            --sp-1: 4px; --sp-2: 8px; --sp-3: 12px; --sp-4: 16px; --sp-5: 24px; --sp-6: 32px;
+            --r-sm: 6px; --r-md: 8px; --r-lg: 12px; --r-xl: 14px; --r-pill: 999px;
+            --fs-xs: 12px; --fs-sm: 13px; --fs-md: 14px; --fs-lg: 16px; --fs-xl: 20px;
         }
 
         .dark-mode {
-            --bg-color: #060912;
-            --card-bg: #0d1424;
-            --text-color: #e6edf8;
-            --header-bg: #0d1424;
-            --border-color: rgba(130, 165, 255, 0.16);
-            --primary-color: #4170ff;
-            --primary-hover: #6a92ff;
-            --accent-color: #22d3ee;
-            --danger-color: #ff4d6a;
-            --warning-bg: #ffb454;
-            --sobrevivencia-bg: #9b7bff;
-            --sidebar-bg: #080d19;
-            --shadow-soft: 0 20px 40px -26px rgba(0, 0, 0, 0.9);
-            --shadow-btn: 0 2px 8px rgba(0, 0, 0, 0.45);
-            --glow: 0 0 22px rgba(34, 211, 238, 0.16);
-            --edge: rgba(34, 211, 238, 0.45);
-            --grid-dot: rgba(160, 190, 255, 0.07);
-            --aura-1: rgba(65, 112, 255, 0.16);
-            --aura-2: rgba(34, 211, 238, 0.08);
-            --muted: rgba(230, 237, 248, 0.62);
+            --bg-color: #090d16;
+            --card-bg: #111827;
+            --surface-subtle: #161f30;
+            --text-color: #f1f5f9;
+            --muted: #94a3b8;
+            --border-color: rgba(148, 163, 184, 0.16);
+            --primary-color: #3b82f6;
+            --primary-hover: #2563eb;
+            --accent-color: #38bdf8;
+            --danger-color: #ef4444;
+            --warning-bg: #f59e0b;
+            --ok-color: #22c55e;
+            --sobrevivencia-bg: #8b5cf6;
+            --sidebar-bg: #0c111d;
+            --header-bg: #0c111d;
+            --btn-sec-bg: #1e293b;
+            --btn-sec-text: #e2e8f0;
+            --shadow-soft: 0 1px 3px rgba(0, 0, 0, 0.35);
+            --shadow-btn: 0 1px 2px rgba(0, 0, 0, 0.35);
             color-scheme: dark;
         }
 
-        * { scrollbar-width: thin; scrollbar-color: var(--border-color) transparent; }
+        * { scrollbar-width: thin; scrollbar-color: var(--border-color) transparent; box-sizing: border-box; }
 
         body {
             font-family: var(--font-body);
             margin: 0; padding: 0;
-            background:
-                radial-gradient(900px 520px at 88% -8%, var(--aura-1), transparent 62%),
-                radial-gradient(700px 420px at -4% 104%, var(--aura-2), transparent 60%),
-                var(--bg-color);
+            background: var(--bg-color);
             color: var(--text-color);
-            transition: background 0.3s, color 0.3s;
-            height: 100vh;
-            overflow: hidden;
+            transition: background 0.2s, color 0.2s;
+            height: 100vh; overflow: hidden;
             -webkit-font-smoothing: antialiased;
         }
 
-        h1, h2, h3, h4, .stat-box h3, .sidebar-logo h1 { font-family: var(--font-display); letter-spacing: -0.01em; }
+        h1, h2, h3, h4 { font-family: var(--font-display); letter-spacing: -0.015em; color: var(--text-color); }
+        h2 { font-size: 16px; margin-top: 0; font-weight: 600; }
+
+        /* TIPOGRAFIA TABULAR RIGOROSA */
+        .mono-num, .peso-tag, .timer-display, .stat-box h3, td small {
+            font-family: var(--font-mono);
+            font-variant-numeric: tabular-nums;
+        }
 
         /* ESTRUTURA GLOBAL */
         .app-container { display: flex; height: 100vh; width: 100%; position: relative; }
 
-/* ==========================================================
-           SIDEBAR COMPACTÁVEL (MODO MENOR)
-           ========================================================== */
+        /* SIDEBAR COMPACTÁVEL + RODAPÉ DE CONTA */
         .sidebar {
-            width: 230px; /* Reduzido de 272px para ocupar menos espaço */
+            width: 232px;
             background: var(--sidebar-bg);
             border-right: 1px solid var(--border-color);
             display: flex; flex-direction: column;
-            padding: 20px 12px;
-            box-sizing: border-box;
+            padding: 18px 12px;
             z-index: 100;
-            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), padding 0.3s;
-            position: relative;
+            transition: width 0.25s ease, padding 0.25s ease;
         }
+        .sidebar.collapsed { width: 68px; padding: 18px 8px; }
+        .sidebar-logo { margin-bottom: 20px; padding: 0 6px; }
+        .sidebar-logo h1 { font-size: 16px; margin: 0; font-weight: 700; display: flex; align-items: center; gap: 8px; color: var(--text-color); }
+        .sidebar-logo p { margin: 4px 0 0; font-size: 11px; color: var(--muted); }
 
-        /* Classe ativada via JS para retrair o menu */
-        .sidebar.collapsed {
-            width: 72px;
-            padding: 20px 8px;
-        }
-
-        .sidebar-logo { margin-bottom: 22px; padding: 0 6px; display: flex; align-items: center; justify-content: space-between; }
-        
-        /* Esconde textos e subtítulos quando retraído */
-        .sidebar.collapsed .sidebar-logo h1 span-texto,
+        .sidebar.collapsed .span-texto,
         .sidebar.collapsed .sidebar-logo p,
         .sidebar.collapsed .sidebar-btn span,
-        .sidebar.collapsed .sidebar-footer-text {
-            display: none !important;
-        }
+        .sidebar.collapsed .sidebar-footer-text,
+        .sidebar.collapsed .sidebar-xp-meta,
+        .sidebar.collapsed .sidebar-account-email { display: none !important; }
+        .sidebar.collapsed .sidebar-logo h1,
+        .sidebar.collapsed .sidebar-btn { justify-content: center; padding: 10px 0; }
+        .sidebar.collapsed .sidebar-btn .ic { margin: 0 !important; }
+        .sidebar.collapsed .sidebar-xp-card { padding: 8px; justify-content: center; }
 
-        .sidebar.collapsed .sidebar-logo h1 {
-            font-size: 22px;
-            justify-content: center;
-            width: 100%;
-        }
-
-        .sidebar.collapsed .sidebar-btn {
-            text-align: center;
-            padding: 12px 0;
-            justify-content: center;
-        }
-
-        .sidebar.collapsed .sidebar-btn .ic {
-            margin: 0 !important;
-        }
-
-        .sidebar-logo h1 {
-            font-size: 17px; margin: 0; font-weight: 700; display: flex; align-items: center; gap: 8px;
-            background: linear-gradient(100deg, var(--text-color) 30%, var(--accent-color));
-            -webkit-background-clip: text; background-clip: text; color: transparent;
-        }
-        .sidebar-logo p { margin: 4px 0 0; font-size: 11px; color: var(--muted); line-height: 1.3; }
-
-        /* Botão de Retrair/Expandir no Rodapé da Sidebar */
-        .btn-toggle-sidebar {
-            background: var(--bg-color); color: var(--muted); border: 1px solid var(--border-color);
-            padding: 8px; border-radius: var(--r-md); cursor: pointer; font-size: 12px;
-            display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%;
-            margin-top: 10px; transition: background 0.2s, color 0.2s; box-shadow: none;
-        }
-        .btn-toggle-sidebar:hover { background: color-mix(in srgb, var(--primary-color) 12%, transparent); color: var(--text-color); }
-
-        .sidebar-nav { display: flex; flex-direction: column; gap: 4px; flex: 1; overflow-y: auto; padding-right: 2px; }
+        .sidebar-nav { display: flex; flex-direction: column; gap: 2px; flex: 1; overflow-y: auto; }
         .sidebar-btn {
-            background: transparent; color: var(--muted);
-            border: 1px solid transparent; padding: 10px 12px; border-radius: var(--r-md);
-            text-align: left; font-size: 13px; font-weight: 500; font-family: inherit;
-            cursor: pointer; transition: background 0.2s, color 0.2s;
-            width: 100%; margin: 0; box-shadow: none; display: flex; align-items: center; gap: 10px;
+            background: transparent; color: var(--muted); border: 1px solid transparent;
+            padding: 9px 11px; border-radius: var(--r-md); text-align: left;
+            font-size: 13px; font-weight: 500; cursor: pointer;
+            width: 100%; margin: 0; box-shadow: none;
+            display: flex; align-items: center; gap: 10px; transition: background 0.15s, color 0.15s;
         }
-        .sidebar-btn:hover { background: color-mix(in srgb, var(--primary-color) 9%, transparent); color: var(--text-color); transform: none; filter: none; box-shadow: none; }
+        .sidebar-btn:hover { background: var(--surface-subtle); color: var(--text-color); filter: none; }
         .sidebar-btn.active {
-            background: color-mix(in srgb, var(--primary-color) 16%, transparent);
-            color: var(--text-color); font-weight: 600;
-            border-color: color-mix(in srgb, var(--primary-color) 38%, transparent);
-            box-shadow: inset 3px 0 0 var(--accent-color), var(--glow);
+            background: color-mix(in srgb, var(--primary-color) 12%, transparent);
+            color: var(--primary-color); font-weight: 600;
         }
 
+        .sidebar-footer {
+            margin-top: auto; padding-top: 12px; border-top: 1px solid var(--border-color);
+            display: flex; flex-direction: column; gap: 8px;
+        }
+        .sidebar-xp-card {
+            background: var(--surface-subtle); border: 1px solid var(--border-color);
+            border-radius: var(--r-md); padding: 10px; cursor: pointer;
+            display: flex; flex-direction: column; gap: 6px; transition: border-color 0.15s;
+        }
+        .sidebar-xp-card:hover { border-color: var(--primary-color); }
+        .xp-bar-bg { width: 100%; height: 6px; background: var(--border-color); border-radius: var(--r-pill); overflow: hidden; }
+        .xp-bar-fill { height: 100%; background: var(--warning-bg); border-radius: var(--r-pill); transition: width 0.3s ease; }
+
+        .sidebar-account-row {
+            display: flex; align-items: center; justify-content: space-between; gap: 6px;
+            font-size: 11.5px; color: var(--muted); padding: 2px 4px;
+        }
+        .sidebar-account-email { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+        .btn-toggle-sidebar {
+            background: transparent; color: var(--muted); border: 1px solid var(--border-color);
+            padding: 7px; border-radius: var(--r-md); font-size: 12px;
+            display: flex; align-items: center; justify-content: center; gap: 6px;
+            width: 100%; margin: 0; box-shadow: none;
+        }
+        .btn-toggle-sidebar:hover { background: var(--surface-subtle); color: var(--text-color); filter: none; }
+
+        /* MAIN CONTENT (FUNDO SÓLIDO SEM PONTOS) */
         .main-content {
             flex: 1; display: flex; flex-direction: column;
-            height: 100vh; overflow-y: auto; padding: 24px 40px 40px;
-            box-sizing: border-box; scroll-behavior: smooth;
-            background-image: radial-gradient(var(--grid-dot) 1px, transparent 1px);
-            background-size: 26px 26px;
-            background-attachment: local;
+            height: 100vh; overflow-y: auto; padding: 24px 36px 40px;
+            background: var(--bg-color); scroll-behavior: smooth;
         }
 
         header {
             display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 24px; padding-bottom: 16px;
+            margin-bottom: 20px; padding-bottom: 14px;
             border-bottom: 1px solid var(--border-color);
         }
         #btnMenuMobile { display: none; }
+        .header-actions { display: flex; gap: 8px; align-items: center; }
 
-        /* MODO FOCO, LOGIN E ALERTAS */
-        .focus-overlay { display: none; position: fixed; inset: 0; background: radial-gradient(800px 500px at 50% 30%, var(--aura-1), transparent 70%), var(--bg-color); z-index: 99999; flex-direction: column; justify-content: center; align-items: center; gap: 20px; }
-        body.focus-mode .focus-overlay { display: flex; }
-        body.focus-mode .app-container { display: none !important; }
-        .focus-dashboard { display: flex; gap: 28px; background: var(--card-bg); padding: 16px 32px; border-radius: var(--r-lg); border: 1px solid var(--border-color); text-align: center; box-shadow: var(--shadow-soft), var(--glow); }
-
-        #loginOverlay { display: flex; position: fixed; inset: 0; background: radial-gradient(700px 480px at 50% 35%, rgba(65,112,255,0.22), rgba(3,6,14,0.94) 70%); z-index: 100000; flex-direction: column; justify-content: center; align-items: center; backdrop-filter: blur(6px); }
-        .login-box { background: var(--card-bg); color: var(--text-color); padding: 40px; border-radius: var(--r-xl); width: 90%; max-width: 420px; text-align: center; border: 1px solid var(--border-color); box-shadow: 0 30px 70px rgba(0,0,0,0.55), var(--glow); }
-        .login-box h2 { color: var(--accent-color); margin-top: 0; }
-
-        .alert-bar { background-color: var(--danger-color); color: #fff; padding: 12px; text-align: center; font-weight: 600; border-radius: var(--r-md); margin-bottom: 20px; box-shadow: var(--shadow-btn); }
-
-        /* PAINÉIS */
-        .card, .stat-box, .modal-content, .login-box { position: relative; }
+        /* CARDS LIMPOS (SEM ::before LUMINOSO) */
         .card {
-            background: var(--card-bg); padding: 24px;
+            background: var(--card-bg); padding: 20px;
             border-radius: var(--r-lg); box-shadow: var(--shadow-soft);
-            margin-bottom: 24px; border: 1px solid var(--border-color);
+            margin-bottom: 18px; border: 1px solid var(--border-color);
         }
-        .card::before, .stat-box::before {
-            content: ""; position: absolute; inset: 0 14px auto 14px; height: 1px;
-            background: linear-gradient(90deg, transparent, var(--edge), transparent);
-            pointer-events: none;
+        .surface-box {
+            background: var(--surface-subtle); border: 1px solid var(--border-color);
+            border-radius: var(--r-md); padding: 14px;
         }
-        h2 { font-size: 17px; margin-top: 0; color: var(--text-color); font-weight: 600; }
-        h3, h4 { color: var(--text-color); }
 
-        /* CAMPOS E BOTÕES */
+        /* FORMULÁRIOS */
         label { font-weight: 500; display: block; margin-top: 10px; font-size: 12.5px; color: var(--muted); }
         select, input, textarea {
-            width: 100%; padding: 10px 12px; margin-top: 6px; margin-bottom: 12px;
+            width: 100%; padding: 9px 12px; margin-top: 5px; margin-bottom: 10px;
             border: 1px solid var(--border-color); border-radius: var(--r-md);
             background: var(--bg-color); color: var(--text-color);
-            box-sizing: border-box; font-family: inherit; font-size: 14px;
-            transition: border-color 0.2s, box-shadow 0.2s;
+            font-family: inherit; font-size: 13.5px; transition: border-color 0.15s;
         }
-        select:focus, input:focus, textarea:focus { outline: none; border-color: var(--accent-color); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-color) 22%, transparent); }
+        select:focus, input:focus, textarea:focus { outline: none; border-color: var(--primary-color); }
 
+        /* PADRONIZAÇÃO DE BOTÕES (SÓLIDO / SECUNDÁRIO / GHOST / DANGER) */
         button {
-            background: linear-gradient(135deg, var(--primary-color), color-mix(in srgb, var(--primary-color) 62%, var(--accent-color)));
-            color: #fff; padding: 12px 18px; border: none; border-radius: var(--r-md);
-            cursor: pointer; font-size: 14px; font-family: inherit; width: 100%; margin-top: 10px;
-            font-weight: 600; transition: filter 0.2s, box-shadow 0.2s, transform 0.1s; box-shadow: var(--shadow-btn);
-        }
-        button:hover { filter: brightness(1.12); box-shadow: var(--shadow-btn), var(--glow); }
-        button:active { transform: scale(0.98); }
-        button:focus-visible, a:focus-visible, .accordion-header:focus-visible { outline: 2px solid var(--accent-color); outline-offset: 2px; }
-
-        .btn-acao { background: var(--primary-color); width: auto; padding: 8px 14px; font-size: 12px; margin: 2px; }
-        .btn-excluir { background: #d92d4b; }
-        .btn-edit { background: #f0a020; color: #1a1200; }
-
-        .sub-nav-abas { display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; }
-        .sub-aba-btn {
-            background: var(--bg-color); color: var(--text-color); border: 1px solid var(--border-color);
-            padding: 8px 14px; cursor: pointer; border-radius: var(--r-sm); font-weight: 500; width: auto; font-size: 13px; margin: 0; box-shadow: none;
-        }
-        .sub-aba-btn:hover { border-color: var(--accent-color); filter: none; box-shadow: none; }
-        .sub-aba-btn.active {
-            background: color-mix(in srgb, var(--primary-color) 20%, var(--bg-color));
-            color: var(--text-color); border-color: var(--primary-color); box-shadow: var(--glow);
-        }
-
-        /* TABELAS */
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; font-variant-numeric: tabular-nums; }
-        th, td { border-bottom: 1px solid var(--border-color); padding: 12px 10px; text-align: left; }
-        th { background: transparent; color: var(--muted); font-weight: 600; font-size: 12px; border-top: 1px solid var(--border-color); }
-        tr:hover { background-color: color-mix(in srgb, var(--accent-color) 6%, transparent); }
-        tr.atrasado { background: linear-gradient(90deg, color-mix(in srgb, var(--danger-color) 14%, transparent), transparent 60%); box-shadow: inset 3px 0 0 var(--danger-color); }
-
-        .badge { padding: 4px 9px; border-radius: var(--r-pill); color: #fff; text-shadow: 0 1px 1px rgba(0,0,0,0.35); font-weight: 600; font-size: 11px; display: inline-block; }
-        .badge-macro { margin-bottom: 5px; }
-
-        /* DASHBOARD */
-        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px; }
-        .stat-box { background: var(--card-bg); padding: 20px; border-radius: var(--r-lg); border: 1px solid var(--border-color); text-align: center; box-shadow: var(--shadow-soft); }
-        .stat-box h3 { margin: 0; font-size: 32px; font-weight: 700; color: var(--accent-color); font-variant-numeric: tabular-nums; text-shadow: var(--glow); }
-        .stat-box p { margin: 6px 0 0; font-size: 12.5px; color: var(--muted); font-weight: 500; }
-
-        /* POMODORO, SEMANA E KANBAN */
-        .pomodoro-box { display: flex; align-items: center; justify-content: space-between; background: var(--card-bg); padding: 14px 24px; border-radius: var(--r-lg); border: 1px solid var(--border-color); margin-bottom: 24px; flex-wrap: wrap; gap: 12px; box-shadow: var(--shadow-soft); }
-        .timer-display { font-size: 28px; font-weight: 500; font-family: var(--font-mono); color: var(--accent-color); text-shadow: var(--glow); letter-spacing: 0.02em; }
-        body.modo-sobrevivencia .pomodoro-box { border: 1px solid var(--sobrevivencia-bg); box-shadow: 0 0 22px color-mix(in srgb, var(--sobrevivencia-bg) 30%, transparent); }
-
-        .semana-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-top: 15px; }
-        .dia-col { background: var(--bg-color); border: 1px solid var(--border-color); border-radius: var(--r-md); padding: 8px; text-align: center; }
-        .dia-col h4 { font-size: 12px; margin: 0 0 8px 0; background: var(--card-bg); color: var(--text-color); padding: 6px; border-radius: var(--r-sm); border: 1px solid var(--border-color); }
-        .sel-turno { font-size: 11px; padding: 4px; width: 100%; border-radius: var(--r-sm); border: 1px solid var(--border-color); margin-bottom: 6px; }
-
-        /* MAPA DO RODÍZIO */
-        .accordion-header { background: var(--bg-color); color: var(--text-color); padding: 12px 18px; cursor: pointer; border-radius: var(--r-md); margin-top: 10px; display: flex; justify-content: space-between; align-items: center; font-weight: 600; border: 1px solid var(--border-color); transition: border-color 0.2s; }
-        .accordion-header:hover { border-color: var(--accent-color); }
-        .accordion-content { display: none; padding: 15px; border: 1px solid var(--border-color); border-top: none; border-radius: 0 0 10px 10px; background: var(--card-bg); overflow-x: auto; margin-top: -4px; }
-        .accordion-content.active { display: block; }
-        .progress-bar-bg { width: 100%; background: color-mix(in srgb, var(--text-color) 10%, transparent); border-radius: var(--r-pill); height: 8px; overflow: hidden; margin-top: 8px; }
-        .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--primary-color), var(--accent-color)); border-radius: var(--r-pill); box-shadow: var(--glow); transition: width 0.4s ease; }
-
-        /* MODAL */
-        .modal { display: none; position: fixed; inset: 0; background: rgba(3, 6, 14, 0.72); justify-content: center; align-items: center; z-index: 10000; backdrop-filter: blur(8px); }
-        .modal-content { background: var(--card-bg); color: var(--text-color); padding: 30px; border-radius: var(--r-xl); width: 90%; max-width: 550px; max-height: 85vh; overflow-y: auto; border: 1px solid var(--border-color); box-shadow: 0 30px 70px rgba(0,0,0,0.5), var(--glow); }
-        .grafico-container { position: relative; height: 300px; width: 100%; }
-
-        .row-form { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; }
-        .col-form { flex: 1; min-width: 150px; }
-
-        /* ABAS */
-        .tab-content { display: none; animation: fadeIn 0.3s ease; }
-        .tab-content.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* MANUAL DE BORDO */
-        .manual-section { margin-bottom: 30px; }
-        .manual-section h3 { color: var(--accent-color); border-bottom: 1px solid var(--border-color); padding-bottom: 8px; margin-bottom: 15px; font-size: 18px; }
-        .manual-box { background: var(--bg-color); border-left: 3px solid var(--accent-color); padding: 15px 20px; border-radius: 0 10px 10px 0; margin-bottom: 15px; font-size: 14px; line-height: 1.65; }
-        .manual-list li { margin-bottom: 10px; font-size: 14px; line-height: 1.65; }
-        .manual-list b { color: var(--text-color); }
-
-        /* ========================================================
-           RESPONSIVIDADE MOBILE
-           ======================================================== */
-        .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(3, 6, 14, 0.62); z-index: 90; backdrop-filter: blur(3px); }
-        .sidebar-overlay.active { display: block; }
-
-        @media (max-width: 850px) {
-            .sidebar { position: fixed; top: 0; left: -320px; height: 100vh; transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 8px 0 30px rgba(0,0,0,0.35); }
-            .sidebar.active { left: 0; }
-            .main-content { padding: 15px; }
-            #btnMenuMobile {
-                display: flex !important; align-items: center; justify-content: center;
-                width: 45px; height: 45px; border-radius: var(--r-md);
-                border: 1px solid var(--border-color); background: var(--card-bg);
-                color: var(--text-color); font-size: 22px; cursor: pointer;
-                padding: 0; margin-right: 12px; margin-top: 0; box-shadow: var(--shadow-btn);
-            }
-            header { flex-direction: column; align-items: flex-start; gap: 15px; padding-bottom: 15px; }
-            .header-top-row { display: flex; align-items: center; width: 100%; }
-            .header-actions { width: 100%; justify-content: space-between; overflow-x: auto; padding-bottom: 5px; }
-            #headerAbaTitulo { font-size: 18px !important; }
-            .dashboard-grid { grid-template-columns: 1fr 1fr; }
-            .pomodoro-box { flex-direction: column; text-align: center; }
-            .semana-grid { grid-template-columns: 1fr; }
-            .dia-col { margin-bottom: 10px; }
-        }
-        @media (max-width: 480px) {
-            .dashboard-grid { grid-template-columns: 1fr; }
-            .row-form { flex-direction: column; align-items: stretch; }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-            *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
-        }
-    
-        /* ---------- TOKENS ---------- */
-        :root { --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:24px; --sp-6:32px; --r-sm:8px; --r-md:10px; --r-lg:14px; --r-xl:18px; --r-pill:999px; --fs-xs:12px; --fs-sm:13px; --fs-md:14px; --fs-lg:17px; --fs-xl:22px; --ok-color:#22c55e; }
-
-        /* ---------- ÍCONES SVG ---------- */
-        .ic { width:1.2em; height:1.2em; vertical-align:-0.22em; margin-right:.4em; flex:none; }
-        .ic:only-child { margin:0; }
-        .ic-dot-red { color:var(--danger-color); } .ic-dot-green { color:var(--ok-color); } .ic-dot-gray { color:var(--muted); }
-        .sidebar-logo h1 .ic { color:var(--accent-color); }
-        .empty-ico .ic { width:1em; height:1em; margin:0; }
-
-        /* ---------- PAINEL "REVISÕES DE HOJE" ---------- */
-        .hero-review { border-color:color-mix(in srgb, var(--accent-color) 35%, var(--border-color)); box-shadow:var(--shadow-soft), var(--glow); }
-        .hero-head { display:flex; justify-content:space-between; align-items:center; gap:var(--sp-4); flex-wrap:wrap; margin-bottom:var(--sp-4); }
-        .hero-head h2 { font-size:var(--fs-xl); margin:0 0 var(--sp-1); }
-        .btn-hero { width:auto; margin:0; padding:14px 28px; font-size:15px; border-radius:var(--r-lg); }
-        .btn-hero:disabled { opacity:.45; cursor:not-allowed; filter:none; box-shadow:none; }
-        .rev-list, .alert-list { display:flex; flex-direction:column; gap:var(--sp-2); }
-        .rev-item { display:flex; justify-content:space-between; align-items:center; gap:var(--sp-3); padding:var(--sp-3) var(--sp-4); background:var(--bg-color); border:1px solid var(--border-color); border-left:3px solid var(--macro, var(--accent-color)); border-radius:var(--r-md); cursor:pointer; transition:border-color .2s; }
-        .rev-item:hover { border-color:var(--accent-color); border-left-color:var(--macro, var(--accent-color)); }
-        .rev-item strong { display:block; font-size:var(--fs-md); }
-        .rev-item small, .steps small, .alert-item small { display:block; color:var(--muted); font-size:var(--fs-xs); margin-top:2px; }
-        .tag { padding:3px 10px; border-radius:var(--r-pill); font-size:var(--fs-xs); font-weight:600; white-space:nowrap; }
-        .tag-danger { background:color-mix(in srgb, var(--danger-color) 18%, transparent); color:var(--danger-color); }
-        .tag-ok { background:color-mix(in srgb, var(--accent-color) 16%, transparent); color:var(--accent-color); }
-        .peso-tag { font-size:11px; font-weight:700; padding:2px 7px; border-radius:var(--r-pill); background:color-mix(in srgb, var(--text-color) 10%, transparent); color:var(--muted); margin-left:6px; white-space:nowrap; }
-        .peso-tag.p4, .peso-tag.p5 { background:color-mix(in srgb, var(--warning-bg) 22%, transparent); color:var(--warning-bg); }
-
-        /* ---------- ONBOARDING E ALERTAS ---------- */
-        .steps { list-style:none; padding:0; margin:var(--sp-4) 0 0; display:flex; flex-direction:column; gap:var(--sp-2); }
-        .steps li { display:flex; align-items:center; gap:var(--sp-3); padding:var(--sp-3); background:var(--bg-color); border:1px solid var(--border-color); border-radius:var(--r-md); }
-        .steps li div { flex:1; } .steps li.done { opacity:.6; }
-        .step-n { width:28px; height:28px; border-radius:50%; display:grid; place-items:center; font-weight:700; font-size:var(--fs-sm); background:color-mix(in srgb, var(--accent-color) 18%, transparent); color:var(--accent-color); flex:none; }
-        .step-n .ic { margin:0; }
-        .alert-item { display:flex; align-items:center; gap:var(--sp-3); padding:var(--sp-3) var(--sp-4); border-radius:var(--r-md); border:1px solid var(--border-color); background:var(--bg-color); }
-        .alert-item div { flex:1; }
-        .alert-item.warn { border-left:3px solid var(--warning-bg); } .alert-item.warn .alert-ico { color:var(--warning-bg); }
-        .alert-item.danger { border-left:3px solid var(--danger-color); } .alert-item.danger .alert-ico { color:var(--danger-color); }
-
-        /* ---------- HEATMAP ---------- */
-        .heatmap { display:grid; grid-auto-flow:column; grid-template-rows:repeat(7, 12px); grid-auto-columns:12px; gap:3px; overflow-x:auto; padding:var(--sp-2) 0; }
-        .hm { display:block; width:12px; height:12px; border-radius:3px; background:color-mix(in srgb, var(--text-color) 8%, transparent); }
-        .hm.l1 { background:color-mix(in srgb, var(--accent-color) 28%, transparent); } .hm.l2 { background:color-mix(in srgb, var(--accent-color) 50%, transparent); }
-        .hm.l3 { background:color-mix(in srgb, var(--accent-color) 75%, transparent); } .hm.l4 { background:var(--accent-color); }
-        .heat-legend { display:flex; align-items:center; gap:4px; font-size:var(--fs-xs); color:var(--muted); margin-top:var(--sp-2); }
-
-        /* ---------- UTILITÁRIOS (substituem estilos inline repetidos) ---------- */
-        .ta-c { text-align:center; } .flex-1 { flex:1; } .m-0 { margin:0; } .mt-0 { margin-top:0; } .mt-20 { margin-top:20px; }
-        .hint { font-size:var(--fs-sm); color:var(--muted); }
-        .fx-120 { flex:1; min-width:120px; }
-        .empty-state { text-align:center; padding:var(--sp-5) var(--sp-4); color:var(--muted); }
-        .empty-state b { color:var(--text-color); }
-        .empty-ico { font-size:30px; margin-bottom:10px; color:var(--accent-color); }
-        .list-tight { padding-left:15px; margin:0; }
-        .btn-neutral { background:var(--border-color); color:var(--text-color); }
-/* ==========================================================
-           CORREÇÕES DE CONTRASTE (CLARO / ESCURO) E LAYOUT DO KANBAN
-           ========================================================== */
-        :root {
-            --btn-sec-bg: #dce5f4;
-            --btn-sec-text: #0f1b33;
-            --surface-subtle: #f1f5fb;
-        }
-        .dark-mode {
-            --btn-sec-bg: #1e293b;
-            --btn-sec-text: #f1f5f9;
-            --surface-subtle: #111a2e;
-        }
-
-        /* Corrige botões neutros e secundários que sumiam na troca de tema */
-        .btn-neutral,
-        button[style*="background:var(--text-color)"],
-        button[style*="background-color: var(--text-color)"],
-        button[style*="background:var(--border-color)"] {
-            background: var(--btn-sec-bg) !important;
-            color: var(--btn-sec-text) !important;
-            border: 1px solid var(--border-color) !important;
-        }
-
-        /* Corrige botões e inputs forçados com fundo branco fixo no HTML */
-        button[style*="background:white"],
-        input[style*="background:white"] {
-            background: var(--card-bg) !important;
-            color: var(--text-color) !important;
-            border-color: var(--border-color) !important;
-        }
-
-        /* Corrige textos com cores fixas (#555, #7f8c8d, --header-bg) */
-        [style*="color:var(--header-bg)"] {
-            color: var(--text-color) !important;
-        }
-        .badge[style*="background:var(--header-bg)"] {
-            background: var(--primary-color) !important;
-            color: #ffffff !important;
-        }
-        [style*="color:#555"],
-        [style*="color:#7f8c8d"],
-        [style*="color:#95a5a6"] {
-            color: var(--muted) !important;
-        }
-
-        /* Melhora contraste das tags de peso (P1 a P5) */
-        .peso-tag {
-            background: var(--btn-sec-bg);
-            color: var(--text-color);
-            border: 1px solid var(--border-color);
-        }
-        .peso-tag.p4, .peso-tag.p5 {
-            background: color-mix(in srgb, var(--warning-bg) 22%, var(--card-bg));
-            color: #b45309;
-            border-color: var(--warning-bg);
-        }
-        .dark-mode .peso-tag.p4, .dark-mode .peso-tag.p5 {
-            color: #fbbf24;
-        }
-
-        /* Botão para expandir/recolher "+ X na fila" nas Revisões de Hoje */
-        .btn-expand-fila {
-            background: var(--surface-subtle);
-            color: var(--accent-color);
-            border: 1px dashed var(--accent-color);
-            padding: 9px 14px;
-            border-radius: var(--r-md);
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 6px;
-            box-shadow: none;
-            transition: background 0.2s, transform 0.1s;
-        }
-        .btn-expand-fila:hover {
-            background: color-mix(in srgb, var(--accent-color) 14%, transparent);
-            filter: none;
-            box-shadow: none;
-        }
-
-        /* Cartões do Kanban com nome completo da aula e destaque de Peso */
-        .kanban-tema-nome {
-            font-size: 11px;
-            line-height: 1.38;
-            font-weight: 600;
-            margin: 5px 0;
-            word-break: break-word;
-            overflow-wrap: anywhere;
-            white-space: normal;
-            color: #ffffff;
-        }
-        .kanban-peso-badge {
-            display: inline-block;
-            background: rgba(0, 0, 0, 0.35);
-            color: #fde047;
-            padding: 2px 6px;
-            border-radius: 6px;
-            font-size: 10px;
-            font-weight: 700;
-            border: 1px solid rgba(255, 255, 255, 0.22);
-        }
-/* ==========================================================
-           GAMIFICAÇÃO, MOTIVAÇÃO E PRODUTIVIDADE MÉDICA
-           ========================================================== */
-        /* Barra de Nível e XP Médico */
-        .xp-container {
-            display: flex; align-items: center; gap: 12px;
-            background: var(--card-bg); border: 1px solid var(--border-color);
-            padding: 8px 16px; border-radius: var(--r-pill);
-            box-shadow: var(--shadow-btn); font-size: 12px;
-        }
-        .xp-bar-bg {
-            width: 110px; height: 8px; background: color-mix(in srgb, var(--text-color) 12%, transparent);
-            border-radius: var(--r-pill); overflow: hidden;
-        }
-        .xp-bar-fill {
-            height: 100%; background: linear-gradient(90deg, #f59e0b, #eab308);
-            border-radius: var(--r-pill); transition: width 0.4s ease;
-        }
-
-        /* Card de Missões Diárias */
-        .missoes-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 12px; margin-top: 12px;
-        }
-        .missao-item {
-            background: var(--bg-color); border: 1px solid var(--border-color);
-            border-radius: var(--r-md); padding: 12px 14px;
-            display: flex; align-items: center; gap: 12px;
-            transition: border-color 0.2s, transform 0.1s;
-        }
-        .missao-item.concluida {
-            border-color: var(--ok-color);
-            background: color-mix(in srgb, var(--ok-color) 8%, var(--card-bg));
-        }
-        .missao-check {
-            width: 22px; height: 22px; border-radius: 50%;
-            border: 2px solid var(--border-color); display: grid; place-items: center;
-            font-size: 11px; font-weight: bold; flex: none;
-        }
-        .missao-item.concluida .missao-check {
-            background: var(--ok-color); border-color: var(--ok-color); color: white;
-        }
-
-        /* Botão Café Express no Header */
-        .btn-cafe-express {
-            background: linear-gradient(135deg, #d97706, #b45309);
-            color: white; border: none; padding: 7px 14px; border-radius: var(--r-sm);
-            font-size: 12px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 6px;
+            background: var(--primary-color); color: #ffffff;
+            padding: 10px 16px; border: 1px solid transparent; border-radius: var(--r-md);
+            cursor: pointer; font-size: 13.5px; font-family: inherit; width: 100%;
+            margin-top: 8px; font-weight: 600; transition: background 0.15s, border-color 0.15s, opacity 0.15s;
             box-shadow: var(--shadow-btn);
         }
-        .btn-cafe-express:hover { filter: brightness(1.15); }
+        button:hover { background: var(--primary-hover); }
+        button:active { opacity: 0.9; }
+        button:disabled { opacity: 0.45; cursor: not-allowed; }
 
-        /* Mural de Pegadinhas */
+        .btn-acao { width: auto; padding: 7px 12px; font-size: 12px; margin: 2px; }
+        .btn-secondary, .btn-neutral {
+            background: var(--btn-sec-bg) !important; color: var(--btn-sec-text) !important;
+            border: 1px solid var(--border-color) !important; box-shadow: none !important;
+        }
+        .btn-secondary:hover, .btn-neutral:hover { border-color: var(--muted) !important; }
+        .btn-ghost {
+            background: transparent !important; color: var(--muted) !important;
+            border: 1px solid transparent !important; box-shadow: none !important;
+        }
+        .btn-ghost:hover { background: var(--surface-subtle) !important; color: var(--text-color) !important; }
+        .btn-excluir { background: var(--danger-color); color: #fff; }
+        .btn-excluir:hover { background: #b91c1c; }
+        .btn-edit { background: var(--warning-bg); color: #fff; }
+        .btn-cafe-express {
+            background: var(--btn-sec-bg); color: var(--text-color);
+            border: 1px solid var(--border-color); width: auto; margin: 0;
+            padding: 7px 12px; font-size: 12.5px; display: inline-flex; align-items: center; gap: 6px; box-shadow: none;
+        }
+        .btn-cafe-express:hover { border-color: var(--warning-bg); background: var(--surface-subtle); }
+
+        /* SEGMENTED CONTROL (SUB-ABAS E FILTROS) */
+        .sub-nav-abas {
+            display: inline-flex; gap: 4px; padding: 4px;
+            background: var(--surface-subtle); border: 1px solid var(--border-color);
+            border-radius: var(--r-md); margin-bottom: 16px; flex-wrap: wrap;
+        }
+        .sub-aba-btn {
+            background: transparent; color: var(--muted); border: none;
+            padding: 6px 12px; cursor: pointer; border-radius: var(--r-sm);
+            font-weight: 500; width: auto; font-size: 12.5px; margin: 0; box-shadow: none;
+        }
+        .sub-aba-btn:hover { color: var(--text-color); background: transparent; }
+        .sub-aba-btn.active {
+            background: var(--card-bg); color: var(--text-color); font-weight: 600;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+        }
+
+        /* DASHBOARD ASSIMÉTRICO (65% / 35%) */
+        .dashboard-split {
+            display: grid; grid-template-columns: minmax(0, 1.85fr) minmax(290px, 1fr);
+            gap: 20px; align-items: start;
+        }
+        .dashboard-col-right { position: sticky; top: 0; }
+        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 18px; }
+        .stat-box {
+            background: var(--card-bg); padding: 16px; border-radius: var(--r-lg);
+            border: 1px solid var(--border-color); text-align: center; box-shadow: var(--shadow-soft);
+        }
+        .stat-box h3 { margin: 0; font-size: 26px; font-weight: 700; color: var(--text-color); }
+        .stat-box p { margin: 4px 0 0; font-size: 12px; color: var(--muted); font-weight: 500; }
+
+        /* TABELAS */
+        table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 13px; font-variant-numeric: tabular-nums; }
+        th, td { border-bottom: 1px solid var(--border-color); padding: 11px 10px; text-align: left; }
+        th { color: var(--muted); font-weight: 600; font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.03em; }
+        tr:hover { background: var(--surface-subtle); }
+        tr.atrasado { box-shadow: inset 3px 0 0 var(--danger-color); }
+
+        /* TAGS E BADGES */
+        .badge { padding: 3px 8px; border-radius: var(--r-pill); color: #fff; font-weight: 600; font-size: 11px; display: inline-block; }
+        .tag { padding: 3px 9px; border-radius: var(--r-pill); font-size: 11.5px; font-weight: 600; white-space: nowrap; }
+        .tag-danger { background: color-mix(in srgb, var(--danger-color) 14%, transparent); color: var(--danger-color); }
+        .tag-ok { background: color-mix(in srgb, var(--primary-color) 14%, transparent); color: var(--primary-color); }
+        .peso-tag {
+            font-size: 11px; font-weight: 600; padding: 2px 6px; border-radius: var(--r-sm);
+            background: var(--surface-subtle); color: var(--muted); border: 1px solid var(--border-color);
+            margin-left: 6px; white-space: nowrap;
+        }
+        .peso-tag.p4, .peso-tag.p5 {
+            background: color-mix(in srgb, var(--warning-bg) 15%, transparent);
+            color: var(--warning-bg); border-color: color-mix(in srgb, var(--warning-bg) 35%, transparent);
+        }
+
+        /* KANBAN LIMPO (FUNDO NEUTRO + BORDA ESQUERDA 4PX + MENU ⋮) */
+        .semana-grid {
+            display: grid; grid-template-columns: repeat(7, minmax(145px, 1fr));
+            gap: 10px; margin-top: 12px; overflow-x: auto; padding-bottom: 8px;
+        }
+        .dia-col {
+            background: var(--surface-subtle); border: 1px solid var(--border-color);
+            border-radius: var(--r-lg); padding: 8px; min-width: 0;
+        }
+        .dia-col h4 {
+            font-size: 12px; margin: 0 0 8px 0; background: var(--card-bg);
+            color: var(--text-color); padding: 6px; border-radius: var(--r-sm);
+            border: 1px solid var(--border-color); text-align: center;
+        }
+        .kanban-slot {
+            background: var(--card-bg); border: 1px solid var(--border-color);
+            border-radius: var(--r-md); padding: 8px; margin-bottom: 8px;
+            min-height: 68px; position: relative;
+        }
+        .kanban-slot.teoria { border-left: 4px solid var(--macro, var(--primary-color)); }
+        .kanban-slot.revisao { border-left: 4px solid var(--warning-bg); }
+        .kanban-slot.descanso { border-left: 4px solid var(--ok-color); }
+        .kanban-slot.ocupado { background: transparent; border-style: solid; opacity: 0.72; }
+        .kanban-slot.estudo { background: color-mix(in srgb, var(--primary-color) 6%, var(--card-bg)); border-color: color-mix(in srgb, var(--primary-color) 35%, var(--border-color)); }
+
+        .kanban-slot-top {
+            display: flex; justify-content: space-between; align-items: center; gap: 4px;
+            font-size: 10px; color: var(--muted); text-transform: uppercase; font-weight: 600; margin-bottom: 4px;
+        }
+        .kanban-tema-nome {
+            font-size: 12px; line-height: 1.35; font-weight: 600; color: var(--text-color);
+            margin: 4px 0 8px; word-break: break-word;
+        }
+        .kanban-menu-wrap { position: relative; }
+        .kanban-dots-btn {
+            background: transparent; color: var(--muted); border: none; box-shadow: none;
+            width: 22px; height: 22px; padding: 0; margin: 0; border-radius: var(--r-sm);
+            font-size: 14px; line-height: 1; display: grid; place-items: center;
+        }
+        .kanban-dots-btn:hover { background: var(--surface-subtle); color: var(--text-color); }
+        .kanban-dropdown {
+            display: none; position: absolute; right: 0; top: 24px; z-index: 50;
+            background: var(--card-bg); border: 1px solid var(--border-color);
+            border-radius: var(--r-md); padding: 4px; min-width: 118px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+        }
+        .kanban-dropdown.open { display: flex; flex-direction: column; gap: 2px; }
+        .kanban-dropdown button {
+            background: transparent; color: var(--text-color); box-shadow: none; margin: 0;
+            padding: 6px 8px; font-size: 12px; font-weight: 500; text-align: left; border-radius: var(--r-sm);
+        }
+        .kanban-dropdown button:hover { background: var(--surface-subtle); }
+
+        /* REVISÕES, MISSÕES, ALERTAS E POMODORO */
+        .hero-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+        .hero-head h2 { font-size: 18px; margin: 0 0 2px; }
+        .btn-hero { width: auto; margin: 0; padding: 9px 18px; font-size: 13.5px; }
+        .rev-list, .alert-list { display: flex; flex-direction: column; gap: 8px; }
+        .rev-item {
+            display: flex; justify-content: space-between; align-items: center; gap: 12px;
+            padding: 11px 14px; background: var(--surface-subtle); border: 1px solid var(--border-color);
+            border-left: 4px solid var(--macro, var(--primary-color)); border-radius: var(--r-md); cursor: pointer;
+        }
+        .rev-item:hover { border-color: var(--primary-color); border-left-color: var(--macro, var(--primary-color)); }
+        .rev-item strong { display: block; font-size: 13.5px; }
+        .rev-item small, .steps small, .alert-item small { display: block; color: var(--muted); font-size: 12px; margin-top: 2px; }
+
+        .btn-expand-fila {
+            background: var(--surface-subtle); color: var(--primary-color); border: 1px solid var(--border-color);
+            padding: 8px; font-size: 12.5px; font-weight: 600; width: 100%; margin-top: 6px; box-shadow: none;
+        }
+        .btn-expand-fila:hover { background: var(--btn-sec-bg); }
+
+        .pomodoro-box {
+            display: flex; flex-direction: column; gap: 12px;
+            background: var(--card-bg); padding: 18px; border-radius: var(--r-lg);
+            border: 1px solid var(--border-color); margin-bottom: 18px; box-shadow: var(--shadow-soft);
+        }
+        .timer-display { font-size: 32px; font-weight: 600; color: var(--text-color); text-align: center; }
+
+        .missoes-grid { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+        .missao-item {
+            background: var(--surface-subtle); border: 1px solid var(--border-color);
+            border-radius: var(--r-md); padding: 10px 12px; display: flex; align-items: center; gap: 10px;
+        }
+        .missao-item.concluida { border-color: color-mix(in srgb, var(--ok-color) 45%, transparent); }
+        .missao-check {
+            width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--border-color);
+            display: grid; place-items: center; font-size: 11px; font-weight: 700; flex: none;
+        }
+        .missao-item.concluida .missao-check { background: var(--ok-color); border-color: var(--ok-color); color: #fff; }
+
         .pegadinha-card {
-            background: var(--bg-color); border-left: 4px solid var(--warning-bg);
-            border-radius: 0 var(--r-md) var(--r-md) 0; padding: 12px 15px; margin-bottom: 10px;
-            display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;
+            background: var(--surface-subtle); border: 1px solid var(--border-color);
+            border-left: 4px solid var(--warning-bg); border-radius: var(--r-md);
+            padding: 12px 14px; margin-bottom: 10px; display: flex; justify-content: space-between; gap: 10px;
         }
 
-/* ==========================================================
-           MODO FOCO CUSTOMIZÁVEL (BLOCOS DE TEMPO)
-           ========================================================== */
-        .foco-modo-botoes {
-            display: flex; gap: 8px; justify-content: center; margin-bottom: 15px; flex-wrap: wrap;
-        }
-        .btn-modo-foco {
-            background: var(--bg-color); color: var(--text-color); border: 1px solid var(--border-color);
-            padding: 6px 14px; border-radius: var(--r-pill); font-size: 12px; font-weight: 600;
-            cursor: pointer; width: auto; margin: 0; box-shadow: none; transition: all 0.2s;
-        }
-        .btn-modo-foco:hover { border-color: var(--accent-color); }
-        .btn-modo-foco.active {
-            background: var(--accent-color); color: #fff; border-color: var(--accent-color);
-            box-shadow: var(--glow);
-        }
+        /* ALERTS, ONBOARDING, ACCORDION, HEATMAP */
+        .alert-bar { background: var(--danger-color); color: #fff; padding: 10px 14px; text-align: center; font-size: 13px; font-weight: 600; border-radius: var(--r-md); margin-bottom: 16px; }
+        .alert-item { display: flex; align-items: center; gap: 12px; padding: 11px 14px; border-radius: var(--r-md); border: 1px solid var(--border-color); background: var(--surface-subtle); }
+        .alert-item div { flex: 1; }
+        .alert-item.warn { border-left: 4px solid var(--warning-bg); }
+        .alert-item.danger { border-left: 4px solid var(--danger-color); }
+        .steps { list-style: none; padding: 0; margin: 14px 0 0; display: flex; flex-direction: column; gap: 8px; }
+        .steps li { display: flex; align-items: center; gap: 12px; padding: 10px; background: var(--surface-subtle); border: 1px solid var(--border-color); border-radius: var(--r-md); }
+        .steps li div { flex: 1; } .steps li.done { opacity: 0.55; }
+        .step-n { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; font-size: 12px; background: color-mix(in srgb, var(--primary-color) 15%, transparent); color: var(--primary-color); flex: none; }
 
-/* ==========================================================
-           MODAL DE PATENTES E PROGRESSO MÉDICO
-           ========================================================== */
-        .xp-container {
-            cursor: pointer; transition: transform 0.2s;
-        }
-        .xp-container:hover {
-            transform: scale(1.03);
-            border-color: var(--accent-color);
-        }
-        .patente-nivel-card {
-            display: flex; align-items: center; justify-content: space-between;
-            background: var(--bg-color); border: 1px solid var(--border-color);
-            padding: 10px 14px; border-radius: var(--r-md); margin-bottom: 8px;
-        }
-        .patente-nivel-card.atual {
-            border-color: #f59e0b;
-            background: color-mix(in srgb, #f59e0b 12%, var(--card-bg));
-        }
+        .accordion-header { background: var(--surface-subtle); color: var(--text-color); padding: 11px 16px; cursor: pointer; border-radius: var(--r-md); margin-top: 8px; display: flex; justify-content: space-between; align-items: center; font-weight: 600; font-size: 13.5px; border: 1px solid var(--border-color); }
+        .accordion-content { display: none; padding: 14px; border: 1px solid var(--border-color); border-top: none; border-radius: 0 0 var(--r-md) var(--r-md); background: var(--card-bg); overflow-x: auto; margin-top: -3px; }
+        .accordion-content.active { display: block; }
+        .progress-bar-bg { width: 100%; background: var(--border-color); border-radius: var(--r-pill); height: 7px; overflow: hidden; margin-top: 6px; }
+        .progress-bar-fill { height: 100%; background: var(--primary-color); border-radius: var(--r-pill); transition: width 0.35s ease; }
 
-</style>
+        .heatmap { display: grid; grid-auto-flow: column; grid-template-rows: repeat(7, 12px); grid-auto-columns: 12px; gap: 3px; overflow-x: auto; padding: 8px 0; }
+        .hm { display: block; width: 12px; height: 12px; border-radius: 3px; background: var(--surface-subtle); }
+        .hm.l1 { background: color-mix(in srgb, var(--primary-color) 28%, transparent); }
+        .hm.l2 { background: color-mix(in srgb, var(--primary-color) 50%, transparent); }
+        .hm.l3 { background: color-mix(in srgb, var(--primary-color) 75%, transparent); }
+        .hm.l4 { background: var(--primary-color); }
+        .heat-legend { display: flex; align-items: center; gap: 4px; font-size: 12px; color: var(--muted); margin-top: 8px; }
+
+        /* MODAIS, FOCO E LOGIN */
+        .modal { display: none; position: fixed; inset: 0; background: rgba(9, 13, 22, 0.72); justify-content: center; align-items: center; z-index: 10000; backdrop-filter: blur(4px); }
+        .modal-content { background: var(--card-bg); color: var(--text-color); padding: 26px; border-radius: var(--r-xl); width: 92%; max-width: 520px; max-height: 85vh; overflow-y: auto; border: 1px solid var(--border-color); box-shadow: 0 24px 50px rgba(0, 0, 0, 0.45); }
+        #loginOverlay { display: flex; position: fixed; inset: 0; background: rgba(9, 13, 22, 0.92); z-index: 100000; flex-direction: column; justify-content: center; align-items: center; backdrop-filter: blur(4px); }
+        .login-box { background: var(--card-bg); color: var(--text-color); padding: 34px; border-radius: var(--r-xl); width: 90%; max-width: 400px; text-align: center; border: 1px solid var(--border-color); }
+        .focus-overlay { display: none; position: fixed; inset: 0; background: var(--bg-color); z-index: 99999; flex-direction: column; justify-content: center; align-items: center; gap: 18px; }
+        body.focus-mode .focus-overlay { display: flex; }
+        body.focus-mode .app-container { display: none !important; }
+        .focus-dashboard { display: flex; gap: 28px; background: var(--card-bg); padding: 16px 28px; border-radius: var(--r-lg); border: 1px solid var(--border-color); text-align: center; }
+        .foco-modo-botoes { display: flex; gap: 6px; padding: 4px; background: var(--surface-subtle); border: 1px solid var(--border-color); border-radius: var(--r-pill); }
+        .btn-modo-foco { background: transparent; color: var(--muted); border: none; padding: 6px 14px; border-radius: var(--r-pill); font-size: 12px; font-weight: 600; width: auto; margin: 0; box-shadow: none; }
+        .btn-modo-foco.active { background: var(--card-bg); color: var(--text-color); box-shadow: var(--shadow-btn); }
+        .patente-nivel-card { display: flex; align-items: center; justify-content: space-between; background: var(--surface-subtle); border: 1px solid var(--border-color); padding: 10px 14px; border-radius: var(--r-md); margin-bottom: 8px; }
+        .patente-nivel-card.atual { border-color: var(--warning-bg); }
+
+        /* TOASTS & SKELETONS (FASE 4) */
+        #toastContainer {
+            position: fixed; right: 20px; bottom: 20px; z-index: 110000;
+            display: flex; flex-direction: column; gap: 8px; pointer-events: none;
+        }
+        .toast-item {
+            pointer-events: auto; background: var(--card-bg); color: var(--text-color);
+            border: 1px solid var(--border-color); border-left: 4px solid var(--primary-color);
+            padding: 12px 16px; border-radius: var(--r-md); font-size: 13px; font-weight: 500;
+            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.25); max-width: 340px;
+            animation: toastIn 0.2s ease;
+        }
+        .toast-item.success { border-left-color: var(--ok-color); }
+        .toast-item.warn { border-left-color: var(--warning-bg); }
+        .toast-item.error { border-left-color: var(--danger-color); }
+        @keyframes toastIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .skeleton {
+            background: linear-gradient(90deg, var(--surface-subtle) 25%, var(--border-color) 50%, var(--surface-subtle) 75%);
+            background-size: 200% 100%; border-radius: var(--r-sm); animation: shimmer 1.2s infinite;
+            height: 16px; width: 100%; margin-bottom: 8px;
+        }
+        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+        /* CHECKLIST DE CICLOS CM */
+        .ciclo-check-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; max-height: 280px; overflow-y: auto; margin: 14px 0; }
+        .ciclo-check-item {
+            display: flex; align-items: center; gap: 8px; padding: 8px 10px;
+            background: var(--surface-subtle); border: 1px solid var(--border-color);
+            border-radius: var(--r-md); cursor: pointer; font-size: 13px; margin: 0; color: var(--text-color);
+        }
+        .ciclo-check-item input { width: 16px; height: 16px; margin: 0; }
+
+        /* UTILITÁRIOS E ÍCONES */
+        .ic { width: 16px; height: 16px; vertical-align: -0.2em; flex: none; }
+        .grafico-container { position: relative; height: 280px; width: 100%; }
+        .row-form { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; }
+        .col-form { flex: 1; min-width: 150px; }
+        .tab-content { display: none; animation: fadeIn 0.2s ease; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+        .plan-subview { display: none; }
+        .plan-subview.active { display: block; }
+        .sel-turno { font-size: 11px; padding: 5px; margin-bottom: 6px; }
+        .ta-c { text-align: center; } .flex-1 { flex: 1; } .m-0 { margin: 0; } .mt-0 { margin-top: 0; } .mt-20 { margin-top: 20px; }
+        .hint { font-size: 12.5px; color: var(--muted); }
+        .fx-120 { flex: 1; min-width: 120px; }
+        .empty-state { text-align: center; padding: 24px 16px; color: var(--muted); font-size: 13px; }
+        .empty-state b { color: var(--text-color); }
+        .empty-ico { font-size: 24px; margin-bottom: 8px; }
+        .list-tight { padding-left: 16px; margin: 0; }
+        .manual-section { margin-bottom: 24px; }
+        .manual-section h3 { color: var(--text-color); border-bottom: 1px solid var(--border-color); padding-bottom: 8px; margin-bottom: 12px; font-size: 16px; }
+        .manual-box { background: var(--surface-subtle); border-left: 3px solid var(--primary-color); padding: 14px 18px; border-radius: 0 var(--r-md) var(--r-md) 0; font-size: 13.5px; line-height: 1.6; }
+
+        /* RESPONSIVIDADE */
+        .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(9, 13, 22, 0.6); z-index: 90; }
+        .sidebar-overlay.active { display: block; }
+        @media (max-width: 1080px) {
+            .dashboard-split { grid-template-columns: 1fr; }
+            .dashboard-col-right { position: static; }
+        }
+        @media (max-width: 850px) {
+            .sidebar { position: fixed; top: 0; left: -280px; height: 100vh; transition: left 0.25s ease; }
+            .sidebar.active { left: 0; }
+            .main-content { padding: 16px; }
+            #btnMenuMobile { display: flex !important; align-items: center; justify-content: center; width: 40px; height: 40px; background: var(--card-bg); color: var(--text-color); border: 1px solid var(--border-color); margin: 0 10px 0 0; padding: 0; }
+            header { flex-direction: column; align-items: flex-start; gap: 12px; }
+            .header-top-row { display: flex; align-items: center; width: 100%; }
+            .semana-grid { grid-template-columns: 1fr; }
+        }
+    </style>
 </head>
 <body class="dark-mode">
 
@@ -648,56 +548,55 @@
         <!-- SIDEBAR DE NAVEGAÇÃO -->
         <aside class="sidebar" id="appSidebar">
             <div class="sidebar-logo">
-                <h1>🧠⚕️ <span class="span-texto">MED MENTORY</span></h1>
-                <p>Sistema Preditivo</p>
+                <h1><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg><span class="span-texto">MED MENTORY</span></h1>
+                <p>Sistema Preditivo de Revisão</p>
             </div>
             
             <nav class="sidebar-nav">
-                <button class="sidebar-btn active" onclick="mudarAba('tab-inicio', this)">🏠 <span>Dashboard Inicial</span></button>
-                <button class="sidebar-btn" onclick="mudarAba('tab-planejamento', this)">📅 <span>Cronograma</span></button>
-                <button class="sidebar-btn" onclick="mudarAba('tab-rastreio', this)">🧭 <span>Rastreio de Temas</span></button>
-                <button class="sidebar-btn" onclick="mudarAba('tab-estudo', this)">✍️ <span>Registro de Estudo</span></button>
-                <button class="sidebar-btn" onclick="mudarAba('tab-analytics', this)">📊 <span>Radar de Evolução</span></button>
-                <button class="sidebar-btn" onclick="mudarAba('tab-nerd', this)">🤓 <span>Carga de Estudo</span></button>
-                <button class="sidebar-btn" onclick="mudarAba('tab-caderno', this)">📚 <span>Metas & Incidência</span></button>
-                <button class="sidebar-btn" onclick="mudarAba('tab-manual', this)">📖 <span>Manual de Bordo</span></button>
-                <button class="sidebar-btn" onclick="mudarAba('tab-config', this)">⚙️ <span>Configurações</span></button>
+                <button class="sidebar-btn active" onclick="mudarAba('tab-inicio', this)"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span>Dashboard </span></button>
+                <button class="sidebar-btn" onclick="mudarAba('tab-planejamento', this)"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 2v4M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg><span>Cronograma</span></button>
+                <button class="sidebar-btn" onclick="mudarAba('tab-rastreio', this)"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m16.24 7.76-2.12 6.36-6.36 2.12 2.12-6.36z"/></svg><span>Rastreio de Temas</span></button>
+                <button class="sidebar-btn" onclick="mudarAba('tab-estudo', this)"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.376 3.622a1 1 0 0 1 3.002 3.002L7.368 18.635a2 2 0 0 1-.855.506l-2.872.838a.5.5 0 0 1-.62-.62l.838-2.872a2 2 0 0 1 .506-.854z"/></svg><span>Registro de Estudo</span></button>
+                <button class="sidebar-btn" onclick="mudarAba('tab-analytics', this)"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M18 17V9M13 17V5M8 17v-3"/></svg><span>Radar de Evolução</span></button>
+                <button class="sidebar-btn" onclick="mudarAba('tab-nerd', this)"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></svg><span>Carga de Estudo</span></button>
+                <button class="sidebar-btn" onclick="mudarAba('tab-caderno', this)"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg><span>Metas & Incidência</span></button>
+                <button class="sidebar-btn" onclick="mudarAba('tab-manual', this)"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z"/><path d="M14 2v4a2 2 0 0 0 2 2h4M10 9H8M16 13H8M16 17H8"/></svg><span>Manual de Bordo</span></button>
+                <button class="sidebar-btn" onclick="mudarAba('tab-config', this)"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 5H3M12 19H3M14 3v4M16 17v4M21 12h-9M21 19h-5M21 5h-3M8 10v4M8 12H3"/></svg><span>Configurações</span></button>
             </nav>
 
-            <div>
-                <button type="button" class="btn-toggle-sidebar" onclick="toggleSidebarCollapse()" title="Recolher / Expandir Menu">
-                    ◀️ <span class="span-texto">Recolher Menu</span>
-                </button>
-                <div style="margin-top:10px; font-size:11px; opacity:0.5; text-align:center;" class="sidebar-footer-text">
-                    MED MENTORY v5.9
+            <!-- RODAPÉ: XP/PATENTE, CONTA, SAIR E RECOLHER -->
+            <div class="sidebar-footer">
+                <div class="sidebar-xp-card" id="xpContainer" onclick="abrirModalPatentes()" title="Ver detalhes da patente e XP">
+                    <div style="display:flex; justify-content:space-between; align-items:center; gap:6px;">
+                        <span id="rankBadge" style="font-weight:700; font-size:12px; color:var(--warning-bg);">Interno Mediano</span>
+                        <span class="sidebar-xp-meta mono-num" id="xpTexto" style="font-size:10.5px; color:var(--muted);">0/1000 XP</span>
+                    </div>
+                    <div class="xp-bar-bg sidebar-xp-meta"><div class="xp-bar-fill" id="xpBarFill" style="width: 0%;"></div></div>
                 </div>
+
+                <div class="sidebar-account-row">
+                    <span id="userInfoHeader" class="sidebar-account-email">Offline (Local)</span>
+                    <button type="button" class="btn-ghost btn-acao" onclick="fazerLogout()" id="btnLogout" style="display:none; padding:4px 8px; color:var(--danger-color)!important;">Sair</button>
+                </div>
+
+                <button type="button" class="btn-toggle-sidebar" onclick="toggleSidebarCollapse()" title="Recolher / Expandir Menu">
+                    <span>◀</span> <span class="span-texto">Recolher Menu</span>
+                </button>
             </div>
         </aside>
 
         <!-- CONTEÚDO PRINCIPAL -->
         <main class="main-content">
             
-            <!-- CABEÇALHO DO MAIN (COM BOTÃO MOBILE) -->
+            <!-- CABEÇALHO MINIMALISTA (APENAS TÍTULO + 2 AÇÕES RÁPIDAS) -->
             <header>
                 <div class="header-top-row">
                     <button id="btnMenuMobile" aria-label="Abrir menu" onclick="toggleSidebar()">☰</button>
-                    <h2 id="headerAbaTitulo" style="margin:0; font-size:22px; font-weight:700;">🏠 Dashboard Inicial</h2>
+                    <h2 id="headerAbaTitulo" style="margin:0; font-size:20px; font-weight:700;">Dashboard</h2>
                 </div>
-                <div class="header-actions" style="display: flex; gap: 8px; align-items:center;">
-                    <!-- Nível & XP Médico -->
-                    <div class="xp-container" id="xpContainer" onclick="abrirModalPatentes()" title="Clique para ver os detalhes do seu nível e patentes">
-                        <span id="rankBadge" style="font-weight:700; color:#f59e0b;">🩺 Interno Geral</span>
-                        <div class="xp-bar-bg"><div class="xp-bar-fill" id="xpBarFill" style="width: 0%;"></div></div>
-                        <span id="xpTexto" style="color:var(--muted); font-size:11px;">0/500 XP</span>
-                    </div>
-
-                    <!-- Botão Café Express -->
-                    <button type="button" class="btn-cafe-express" onclick="abrirCafeExpress()">☕ Café Express</button>
-
-                    <span id="userInfoHeader" style="font-size:12px; margin-right:15px; font-weight:bold; background:var(--bg-color); padding:6px 12px; border-radius:20px;">Offline (Local)</span>
-                    <button class="sub-aba-btn m-0" onclick="toggleSobrevivencia()" id="btnSobrevivencia">🛡️ Sobrevivência</button>
-                    <button class="sub-aba-btn active m-0" onclick="toggleFocusMode()">🎯 Foco</button>
-                    <button class="sub-aba-btn" onclick="fazerLogout()" style="background:var(--danger-color); color:white; border-color:var(--danger-color); display:none; margin:0;" id="btnLogout">Sair</button>
+                <div class="header-actions">
+                    <button type="button" class="btn-cafe-express" onclick="abrirCafeExpress()">Café Express (5m)</button>
+                    <button type="button" class="btn-acao m-0" onclick="toggleFocusMode()">Modo Foco</button>
                 </div>
             </header>
 
@@ -705,88 +604,107 @@
             <div id="sobrevivenciaAlert" class="alert-bar" style="display:none; background:var(--sobrevivencia-bg);">🛡️ MODO SOBREVIVÊNCIA ATIVO: Exibindo estritamente revisões para hoje e atrasadas.</div>
             <div id="sprintAlert" class="alert-bar" style="display:none; background:var(--accent-color);">⚡ SPRINT ATIVO: Exibindo estritamente temas com Pesos 4 e 5 para reta final.</div>
 
-            <!-- ABA 1: PÁGINA INICIAL -->
+           <!-- ABA 1: PÁGINA INICIAL (GRADE ASSIMÉTRICA 65% / 35%) -->
             <div id="tab-inicio" class="tab-content active">
+                <div class="dashboard-split">
+                    <!-- COLUNA ESQUERDA (65%): FOCO OPERACIONAL -->
+                    <div class="dashboard-col-left">
+                        <section class="card onboarding" id="onboardingCard" style="display:none;"></section>
 
-                <section class="card onboarding" id="onboardingCard" style="display:none;"></section>
-
-                <section class="card hero-review" id="heroRevisoes">
-                    <div class="hero-head">
-                        <div><h2>Revisões de hoje</h2><p class="hint m-0" id="heroResumo">Carregando...</p></div>
-                        <button class="btn-hero" id="btnComecarRevisao" onclick="comecarRevisao()">▶️ Começar revisão</button>
-                    </div>
-                    <div id="listaRevisoesHoje" class="rev-list"></div>
-                </section>
-
-<!-- MISSÕES DIÁRIAS (DESAFIO RELÂMPAGO) -->
-                <section class="card">
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <h2 class="m-0">⚡ Missões Diárias de Hoje</h2>
-                        <span id="shieldIndicator" style="font-size:12px; font-weight:700; color:#3b82f6;">🛡️ 0 Escudos de Plantão</span>
-                    </div>
-                    <p class="hint">Cumpra os 3 objetivos diários para manter o ritmo e acumular escudos de proteção de sequência.</p>
-                    <div class="missoes-grid" id="missoesDiariasGrid"></div>
-                </section>
-
-                <div class="dashboard-grid">
-                    <div class="stat-box"><h3 id="statHoje">0</h3><p>Para Hoje</p></div>
-                    <div class="stat-box"><h3 id="statAtrasadas" style="color: var(--danger-color);">0</h3><p>Atrasadas</p></div>
-                    <div class="stat-box"><h3 id="statPendentesTeoria" style="color: #f39c12;">0</h3><p>Aguardando Questões</p></div>
-                    <div class="stat-box">
-                        <h3 id="statCarga3Dias">0</h3><p>Carga Próx. 3 dias</p>
-                        <div id="burnoutAlert" style="display:none; color:var(--danger-color); font-weight:bold; font-size:12px; margin-top:8px;">⚠️ Risco de Saturação!</div>
-                    </div>
-                </div>
-
-                <section class="card" id="alertasCard"><h2>Alertas inteligentes</h2><div id="alertasInteligentes" class="alert-list"></div></section>
-
-                
-                <div class="pomodoro-box">
-                    <div style="font-size:14px;">🔥 <strong>Sequência:</strong> <span id="streakCount">0</span> dias | 🎯 <strong>Metas FSRS:</strong> <span id="metaStatus">0/0</span> concluídas.</div>
-                    <div class="timer-display" id="timerDisplay">25:00</div>
-                    <div style="display: flex; gap: 8px; width: auto;">
-                        <button class="btn-acao" style="padding:10px 15px; font-size:14px; margin:0; border-radius:8px;" onclick="iniciarPomodoro()" aria-label="Iniciar">▶️</button>
-                        <button class="btn-acao" style="padding:10px 15px; font-size:14px; margin:0; border-radius:8px; background:var(--text-color);" onclick="pausarPomodoro()" aria-label="Pausar">⏸️</button>
-                        <button class="btn-acao" style="padding:10px 15px; font-size:14px; margin:0; border-radius:8px; background:var(--border-color); color:var(--text-color);" onclick="resetarPomodoro()" aria-label="Reiniciar">🔄</button>
-                    </div>
-                </div>
-
-                <!-- PAINEL DE RITMO PREDITIVO -->
-                <div class="card">
-                    <h2 style="font-size: 16px; margin-bottom: 15px;">🎯 Meta Anual de Questões: Painel de Ritmo Preditivo</h2>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px; font-weight: bold;">
-                        <span id="metaAnualProgressoText">0 / 10000 questões resolvidas</span>
-                        <span id="metaAnualPercent">0%</span>
-                    </div>
-                    <div class="progress-bar-bg" style="margin-bottom: 20px;">
-                        <div id="metaAnualBar" class="progress-bar-fill" style="width: 0%;"></div>
-                    </div>
-                    <div class="dashboard-grid" style="margin-bottom:0; gap:15px;">
-                        <div class="stat-box" style="padding:15px; box-shadow:none; background:var(--bg-color);">
-                            <h4 style="margin:0; font-size:11px; opacity:0.6; text-transform:uppercase;">RITMO ATUAL</h4>
-                            <p id="metaRitmoAtual" style="font-size:18px; font-weight:bold; color:var(--accent-color); margin:8px 0;">0 qts/dia</p>
+                        <div class="dashboard-grid">
+                            <div class="stat-box"><h3 id="statHoje">0</h3><p>Para Hoje</p></div>
+                            <div class="stat-box"><h3 id="statAtrasadas" style="color: var(--danger-color);">0</h3><p>Atrasadas</p></div>
+                            <div class="stat-box"><h3 id="statPendentesTeoria" style="color: var(--warning-bg);">0</h3><p>Aguardando Questões</p></div>
+                            <div class="stat-box">
+                                <h3 id="statCarga3Dias">0</h3><p>Próx. 3 dias</p>
+                                <div id="burnoutAlert" style="display:none; color:var(--danger-color); font-weight:600; font-size:11px; margin-top:4px;">Risco de Saturação</div>
+                            </div>
                         </div>
-                        <div class="stat-box" style="padding:15px; border-left:4px solid #f39c12; box-shadow:none; background:var(--bg-color);">
-                            <h4 style="margin:0; font-size:11px; opacity:0.6; text-transform:uppercase;">RITMO NECESSÁRIO</h4>
-                            <p id="metaRitmoNecessario" style="font-size:18px; font-weight:bold; color:#f39c12; margin:8px 0;">0 qts/dia</p>
-                            <small id="metaDiasRestantes" style="font-size:11px; opacity:0.8;">Até a prova principal</small>
-                        </div>
-                        <div class="stat-box" style="padding:15px; border-left:4px solid var(--accent-color); box-shadow:none; background:var(--bg-color);">
-                            <h4 style="margin:0; font-size:11px; opacity:0.6; text-transform:uppercase;">PROJEÇÃO NO EXAME</h4>
-                            <p id="metaNotaEstimada" style="font-size:18px; font-weight:bold; color:var(--accent-color); margin:8px 0;">-- pts</p>
-                            <small id="metaFaixaEstimada" style="font-size:11px; opacity:0.8;">Cálculo Preditivo</small>
-                        </div>
-                        <div class="stat-box" style="padding:15px; box-shadow:none; background:var(--bg-color);">
-                            <h4 style="margin:0; font-size:11px; opacity:0.6; text-transform:uppercase;">STATUS PREDITIVO</h4>
-                            <p id="metaStatusRitmo" style="font-size:14px; font-weight:bold; margin:10px 0;">Aguardando dados</p>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- WIDGET DE PROVAS -->
-                <div class="card">
-                    <h2 style="font-size: 16px; margin-bottom: 15px;">⏳ Contagem Regressiva</h2>
-                    <div id="widgetProvasContainer"></div>
+                        <section class="card" id="heroRevisoes">
+                            <div class="hero-head">
+                                <div>
+                                    <h2>Revisões de hoje</h2>
+                                    <p class="hint m-0" id="heroResumo">Carregando...</p>
+                                </div>
+                                <div style="display:flex; gap:8px; align-items:center;">
+                                    <button type="button" class="btn-secondary btn-acao m-0" onclick="toggleSobrevivencia()" id="btnSobrevivencia">Sobrevivência</button>
+                                    <button type="button" class="btn-hero" id="btnComecarRevisao" onclick="comecarRevisao()">Começar revisão</button>
+                                </div>
+                            </div>
+                            <div id="listaRevisoesHoje" class="rev-list">
+                                <div class="skeleton" style="height:48px;"></div>
+                                <div class="skeleton" style="height:48px;"></div>
+                                <div class="skeleton" style="height:48px;"></div>
+                            </div>
+                        </section>
+
+                        <section class="card" id="alertasCard">
+                            <h2>Alertas inteligentes</h2>
+                            <div id="alertasInteligentes" class="alert-list"></div>
+                        </section>
+
+                        <!-- PAINEL DE RITMO PREDITIVO -->
+                        <section class="card">
+                            <h2 style="margin-bottom: 12px;">Meta Anual & Ritmo Preditivo</h2>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 12.5px; font-weight: 600;">
+                                <span id="metaAnualProgressoText" class="mono-num">0 / 10000 questões resolvidas</span>
+                                <span id="metaAnualPercent" class="mono-num">0%</span>
+                            </div>
+                            <div class="progress-bar-bg" style="margin-bottom: 16px;">
+                                <div id="metaAnualBar" class="progress-bar-fill" style="width: 0%;"></div>
+                            </div>
+                            <div class="dashboard-grid" style="margin-bottom:0; gap:10px;">
+                                <div class="surface-box">
+                                    <div style="font-size:11px; color:var(--muted); text-transform:uppercase;">Ritmo Atual</div>
+                                    <p id="metaRitmoAtual" class="mono-num" style="font-size:16px; font-weight:700; margin:6px 0 0;">0 qts/dia</p>
+                                </div>
+                                <div class="surface-box">
+                                    <div style="font-size:11px; color:var(--muted); text-transform:uppercase;">Necessário</div>
+                                    <p id="metaRitmoNecessario" class="mono-num" style="font-size:16px; font-weight:700; color:var(--warning-bg); margin:6px 0 2px;">0 qts/dia</p>
+                                    <small id="metaDiasRestantes" class="hint" style="font-size:11px;">Até a prova principal</small>
+                                </div>
+                                <div class="surface-box">
+                                    <div style="font-size:11px; color:var(--muted); text-transform:uppercase;">Projeção Exame</div>
+                                    <p id="metaNotaEstimada" class="mono-num" style="font-size:16px; font-weight:700; color:var(--primary-color); margin:6px 0 2px;">-- pts</p>
+                                    <small id="metaFaixaEstimada" class="hint" style="font-size:11px;">Cálculo Preditivo</small>
+                                </div>
+                                <div class="surface-box">
+                                    <div style="font-size:11px; color:var(--muted); text-transform:uppercase;">Status</div>
+                                    <p id="metaStatusRitmo" style="font-size:13px; font-weight:600; margin:8px 0 0;">Aguardando dados</p>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+
+                    <!-- COLUNA DIREITA (35%): POMODORO, MISSÕES E PROVAS -->
+                    <div class="dashboard-col-right">
+                        <div class="pomodoro-box">
+                            <div style="display:flex; justify-content:space-between; font-size:12.5px; color:var(--muted);">
+                                <span>Sequência: <strong class="mono-num" style="color:var(--text-color);" id="streakCount">0</strong> dias</span>
+                                <span>Metas: <strong class="mono-num" style="color:var(--text-color);" id="metaStatus">0/0</strong></span>
+                            </div>
+                            <div class="timer-display" id="timerDisplay">25:00</div>
+                            <div style="display:flex; gap:6px; justify-content:center;">
+                                <button type="button" class="btn-acao flex-1 m-0" onclick="iniciarPomodoro()">Iniciar</button>
+                                <button type="button" class="btn-secondary btn-acao flex-1 m-0" onclick="pausarPomodoro()">Pausar</button>
+                                <button type="button" class="btn-ghost btn-acao m-0" onclick="resetarPomodoro()">Reiniciar</button>
+                            </div>
+                        </div>
+
+                        <section class="card">
+                            <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+                                <h2 class="m-0">Missões de Hoje</h2>
+                                <span id="shieldIndicator" class="mono-num" style="font-size:11.5px; font-weight:600; color:var(--primary-color);">0 Escudos</span>
+                            </div>
+                            <div class="missoes-grid" id="missoesDiariasGrid"></div>
+                        </section>
+
+                        <section class="card">
+                            <h2 style="margin-bottom: 12px;">Contagem Regressiva</h2>
+                            <div id="widgetProvasContainer"></div>
+                        </section>
+                    </div>
                 </div>
             </div>
 
@@ -832,127 +750,114 @@
                 </div>
             </div>
 
-            <!-- ABA 2: CRONOGRAMA ADAPTADO AO INTERNATO -->
+            <!-- ABA 2: CRONOGRAMA SEGMENTADO -->
             <div id="tab-planejamento" class="tab-content">
-                
-                <!-- 1. KANBAN DA SEMANA ATIVA (CRONOGRAMA SEMANAL) -->
-                <div class="card">
-                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
-                        <h2 class="m-0">📅 Cronograma Semanal</h2>
-                        <div style="display:flex; gap:10px; align-items:center;">
-                            <label style="margin:0; font-size:13px;">Semana:</label>
-                            <select id="seletorSemanaInternato" onchange="mudarSemanaAtiva(this.value)" style="font-weight:bold; color:var(--accent-color); margin:0; width:auto; padding:6px 12px;">
-                                <option value="">Cadastre um rodízio primeiro...</option>
-                            </select>
-                        </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
+                    <div class="sub-nav-abas m-0" id="navCronogramaSub">
+                        <button type="button" class="sub-aba-btn active" onclick="mudarSubAbaCronograma('sub-semana', this)">Semana Ativa</button>
+                        <button type="button" class="sub-aba-btn" onclick="mudarSubAbaCronograma('sub-mapa', this)">Mapa do Rodízio</button>
+                        <button type="button" class="sub-aba-btn" onclick="mudarSubAbaCronograma('sub-config', this)">Configurar Rodízios & Turnos</button>
                     </div>
-                    <p style="font-size:13px; opacity:0.8; margin-top:8px; margin-bottom:0;">Acompanhe os turnos da semana ativa. Clique em <b>Estudar</b>, <b>Trocar</b> ou <b>Adiar</b> diretamente nos cartões.</p>
-                    
-                    <div id="resultadoInternato" style="margin-top:15px; display:block;"></div>
-                </div>
-
-                <!-- 2. BUSCA LIVRE UNIVERSAL -->
-                <div class="card" id="cardResgateEspecial" style="border: 2px dashed var(--accent-color); background: rgba(52, 152, 219, 0.02);">
-                    <h2 style="color:var(--accent-color);">🔎 Busca Livre de Temas no Edital</h2>
-                    <p class="hint">Pesquise qualquer assunto do edital para alocar diretamente em um turno livre desta semana (ideal para casos vistos em plantão ou temas de interesse).</p>
-                    <input type="text" id="inputBuscaLivre" placeholder="Digite para buscar no edital (mínimo 3 letras)..." onkeyup="renderizarBuscaLivre()" style="border: 1px solid var(--accent-color); background:white;">
-                    <div id="listaBuscaLivre" style="max-height:250px; overflow-y:auto; margin-top:10px;"></div>
-                </div>
-
-                <!-- 3. TEMAS ADIADOS -->
-                <div class="card">
-                    <h2>📦 Temas Adiados</h2>
-                    <p style="font-size:13px; opacity:0.8; margin-bottom:15px;">Temas cancelados por falta de tempo. Resgate-os para um turno livre ou envie direto para as revisões práticas.</p>
-                    
-                    <div class="sub-nav-abas" style="margin-bottom: 15px;">
-                        <button class="sub-aba-btn active" id="btnFiltroBacklog_todas" onclick="setFiltroBacklog('todas')">Todas</button>
-                        <button class="sub-aba-btn" id="btnFiltroBacklog_CM" onclick="setFiltroBacklog('Clínica Médica')">Clínica</button>
-                        <button class="sub-aba-btn" id="btnFiltroBacklog_CIR" onclick="setFiltroBacklog('Cirurgia')">Cirurgia</button>
-                        <button class="sub-aba-btn" id="btnFiltroBacklog_GO" onclick="setFiltroBacklog('Ginecologia e Obstetrícia')">GO</button>
-                        <button class="sub-aba-btn" id="btnFiltroBacklog_PED" onclick="setFiltroBacklog('Pediatria')">Pediatria</button>
-                        <button class="sub-aba-btn" id="btnFiltroBacklog_PREV" onclick="setFiltroBacklog('Preventiva')">Preventiva</button>
-                    </div>
-
-                    <div id="listaBacklogAdiados" style="max-height:300px; overflow-y:auto;"></div>
-                </div>
-
-                <!-- 4. MAPA DO RODÍZIO VIGENTE -->
-                <div class="card" id="cardMapaRodizio">
-                    <h2>🗺️ Mapa do Rodízio Vigente</h2>
-                    <p class="hint">Acompanhe o status completo de todos os temas do edital da macro-área atual.</p>
-                    <div id="mapaRodizioContainer">
-                        <!-- Preenchido via JS -->
+                    <div style="display:flex; gap:8px; align-items:center;">
+                        <label style="margin:0; font-size:12.5px;">Semana:</label>
+                        <select id="seletorSemanaInternato" onchange="mudarSemanaAtiva(this.value)" style="font-weight:600; margin:0; width:auto; padding:7px 12px;">
+                            <option value="">Cadastre um rodízio...</option>
+                        </select>
                     </div>
                 </div>
 
-                <!-- 5. CONFIGURAÇÃO DE RODÍZIOS E TURNOS (FICHA TÉCNICA / POR ÚLTIMO) -->
-                <div class="card">
-                    <h2>🏥 Data de Rodízios no Internato</h2>
-                    <p class="hint">Cadastre os blocos de rodízio do seu internato. O sistema calculará o número exato de semanas e montará o calendário completo.</p>
-                    <form onsubmit="adicionarRodizio(event)" class="row-form">
-                        <div class="col-form"><label>Início do Rodízio:</label><input type="date" id="rodInicio" required></div>
-                        <div class="col-form"><label>Fim do Rodízio:</label><input type="date" id="rodFim" required></div>
-                        <div class="col-form">
-                            <label>Macro-Área:</label>
-                            <select id="rodMacro" required></select>
+                <!-- SUB-ABA 1: SEMANA ATIVA (USO DIÁRIO) -->
+                <div id="sub-semana" class="plan-subview active">
+                    <div class="card">
+                        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                            <div>
+                                <h2 class="m-0">Cronograma Semanal</h2>
+                                <p class="hint m-0" style="margin-top:4px;">Use <b>Estudar</b> para registrar ou o menu <b>⋮</b> para trocar/adiar.</p>
+                            </div>
                         </div>
-                        <div><button type="submit" style="margin:0; padding:11px 20px;">Adicionar</button></div>
-                    </form>
-                    <div id="listaRodizios" style="margin-top:20px; font-size:13px;"></div>
-                </div>
-
-                <div class="card">
-                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
-                        <h2 class="m-0">⚙️ Configuração de Turnos & Geração do Rodízio</h2>
-                        <button onclick="gerarTodoORodizio()" style="background:var(--primary-color); width:auto; padding:10px 20px; margin:0;">🚀 Gerar Cronograma do Rodízio</button>
-                    </div>
-                    <p style="font-size:13px; opacity:0.8; margin-top:10px;">Configure a disponibilidade dos seus turnos semanais e recalcule o planejamento de forma isolada.</p>
-                    
-                    <div class="row-form" style="margin-bottom:20px; margin-top:20px;">
-                        <div class="col-form" style="display:flex; align-items:flex-end;">
-                            <label style="display:flex; align-items:center; gap:10px; margin:0; cursor:pointer; height:42px; background:var(--bg-color); padding:0 15px; border-radius:8px; border:1px solid var(--border-color); width:100%;">
-                                <input type="checkbox" id="chkMisto" checked style="width:18px; height:18px; margin:0;">
-                                <span>Modo Misto (65% Rodízio / 35% Revisão Global)</span>
-                            </label>
-                        </div>
+                        <div id="resultadoInternato" style="margin-top:14px;"></div>
                     </div>
 
-                    <!-- BOTÕES DE AÇÃO EM LOTE -->
-                    <div style="background:var(--bg-color); padding:15px; border-radius:10px; border:1px solid var(--border-color); margin-bottom:20px;">
-                        <b style="font-size:13px; display:block; margin-bottom:12px; color:var(--header-bg);">⚡ Ações Rápidas da Grade (Semana Ativa)</b>
-                        
-                        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:12px;">
-                            <button type="button" class="sub-aba-btn" style="background:white;" onclick="copiarSemanaAnterior()">📋 Copiar da Semana Anterior</button>
-                        </div>
-                        
-                        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:12px;">
-                            <button type="button" class="sub-aba-btn" style="background:var(--accent-color); color:white;" onclick="aplicarLote(['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'], ['m'], 'estudo')">📘 Manhãs Livres</button>
-                            <button type="button" class="sub-aba-btn" style="background:var(--accent-color); color:white;" onclick="aplicarLote(['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'], ['t'], 'estudo')">📘 Tardes Livres</button>
-                            <button type="button" class="sub-aba-btn" style="background:var(--accent-color); color:white;" onclick="aplicarLote(['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'], ['n'], 'estudo')">📘 Noites Livres</button>
-                            <button type="button" class="sub-aba-btn" style="background:var(--primary-color); color:white;" onclick="aplicarLote(['Sáb','Dom'], ['m','t','n'], 'descanso')">🌿 FDS Livre</button>
-                        </div>
-
-                        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:12px;">
-                            <button type="button" class="sub-aba-btn btn-neutral" onclick="aplicarLote(['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'], ['m'], 'ocupado')">🏥 Manhãs Ocupadas</button>
-                            <button type="button" class="sub-aba-btn btn-neutral" onclick="aplicarLote(['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'], ['t'], 'ocupado')">🏥 Tardes Ocupadas</button>
-                            <button type="button" class="sub-aba-btn btn-neutral" onclick="aplicarLote(['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'], ['n'], 'ocupado')">🏥 Noites Ocupadas</button>
-                            <button type="button" class="sub-aba-btn btn-neutral" onclick="aplicarLote(['Sáb','Dom'], ['m','t','n'], 'ocupado')">🏥 FDS Ocupado</button>
-                        </div>
-
-                        <div style="display:flex; gap:10px; flex-wrap:wrap; border-top:1px dashed var(--border-color); padding-top:15px;">
-                            <button type="button" class="sub-aba-btn" style="background:var(--danger-color); color:white;" onclick="aplicarLote(['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'], ['m','t','n'], 'ocupado')">🗑️ Limpar Semana Atual (Deixar Tudo Ocupado)</button>
-                            <button type="button" class="sub-aba-btn" style="background:#8b0000; color:white;" onclick="limparTodoRodizio()">⚠️ Excluir Cronograma do Rodízio</button>
-                        </div>
+                    <div class="card" id="cardResgateEspecial">
+                        <h2>Busca Livre no Edital</h2>
+                        <p class="hint">Aloque qualquer tema do edital em um turno livre desta semana.</p>
+                        <input type="text" id="inputBuscaLivre" placeholder="Digite pelo menos 3 letras para buscar..." onkeyup="renderizarBuscaLivre()">
+                        <div id="listaBuscaLivre" style="max-height:240px; overflow-y:auto; margin-top:8px;"></div>
                     </div>
 
-                    <div class="semana-grid" id="gridSemanaSetup"></div>
-                    
-                    <div style="display:flex; gap:15px; margin-top:25px;">
-                        <button onclick="gerarPlanoSemanaAtiva()" style="background:var(--accent-color); flex:2;">🔄 Recalcular Apenas Esta Semana (Efeito Local Isolado)</button>
-                        <button onclick="salvarGradeTurnosSemana()" style="background:var(--text-color); flex:1;">💾 Salvar Turnos Desta Semana</button>
+                    <div class="card">
+                        <h2>Temas Adiados (Backlog)</h2>
+                        <div class="sub-nav-abas">
+                            <button type="button" class="sub-aba-btn active" id="btnFiltroBacklog_todas" onclick="setFiltroBacklog('todas')">Todas</button>
+                            <button type="button" class="sub-aba-btn" id="btnFiltroBacklog_CM" onclick="setFiltroBacklog('Clínica Médica')">Clínica</button>
+                            <button type="button" class="sub-aba-btn" id="btnFiltroBacklog_CIR" onclick="setFiltroBacklog('Cirurgia')">Cirurgia</button>
+                            <button type="button" class="sub-aba-btn" id="btnFiltroBacklog_GO" onclick="setFiltroBacklog('Ginecologia e Obstetrícia')">GO</button>
+                            <button type="button" class="sub-aba-btn" id="btnFiltroBacklog_PED" onclick="setFiltroBacklog('Pediatria')">Pediatria</button>
+                            <button type="button" class="sub-aba-btn" id="btnFiltroBacklog_PREV" onclick="setFiltroBacklog('Preventiva')">Preventiva</button>
+                        </div>
+                        <div id="listaBacklogAdiados" style="max-height:280px; overflow-y:auto;"></div>
                     </div>
                 </div>
 
+                <!-- SUB-ABA 2: MAPA DO RODÍZIO -->
+                <div id="sub-mapa" class="plan-subview">
+                    <div class="card" id="cardMapaRodizio">
+                        <h2>Mapa do Rodízio Vigente</h2>
+                        <p class="hint">Status completo de cobertura dos temas do rodízio atual.</p>
+                        <div id="mapaRodizioContainer"></div>
+                    </div>
+                </div>
+
+                <!-- SUB-ABA 3: CONFIGURAÇÃO DE RODÍZIOS E TURNOS -->
+                <div id="sub-config" class="plan-subview">
+                    <div class="card">
+                        <h2>Datas dos Rodízios no Internato</h2>
+                        <form onsubmit="adicionarRodizio(event)" class="row-form">
+                            <div class="col-form"><label>Início:</label><input type="date" id="rodInicio" required></div>
+                            <div class="col-form"><label>Fim:</label><input type="date" id="rodFim" required></div>
+                            <div class="col-form"><label>Macro-Área:</label><select id="rodMacro" required></select></div>
+                            <div><button type="submit" style="margin:0 0 10px; width:auto;">Adicionar</button></div>
+                        </form>
+                        <div id="listaRodizios" style="margin-top:14px; font-size:13px;"></div>
+                    </div>
+
+                    <div class="card">
+                        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:14px;">
+                            <h2 class="m-0">Grade de Turnos & Geração do Rodízio</h2>
+                            <button type="button" onclick="gerarTodoORodizio()" style="width:auto; margin:0;">Gerar Cronograma do Rodízio</button>
+                        </div>
+
+                        <label style="display:flex; align-items:center; gap:10px; margin:0 0 14px; cursor:pointer; background:var(--surface-subtle); padding:10px 14px; border-radius:var(--r-md); border:1px solid var(--border-color);">
+                            <input type="checkbox" id="chkMisto" checked style="width:16px; height:16px; margin:0;">
+                            <span style="color:var(--text-color);">Modo Misto (65% Rodízio / 35% Revisão Global)</span>
+                        </label>
+
+                        <div class="surface-box" style="margin-bottom:16px;">
+                            <div style="font-size:12px; font-weight:600; margin-bottom:10px;">Ações Rápidas da Semana Ativa</div>
+                            <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:8px;">
+                                <button type="button" class="btn-secondary btn-acao" onclick="copiarSemanaAnterior()">Copiar Semana Anterior</button>
+                                <button type="button" class="btn-secondary btn-acao" onclick="aplicarLote(['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'], ['m'], 'estudo')">Manhãs Livres</button>
+                                <button type="button" class="btn-secondary btn-acao" onclick="aplicarLote(['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'], ['t'], 'estudo')">Tardes Livres</button>
+                                <button type="button" class="btn-secondary btn-acao" onclick="aplicarLote(['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'], ['n'], 'estudo')">Noites Livres</button>
+                                <button type="button" class="btn-secondary btn-acao" onclick="aplicarLote(['Sáb','Dom'], ['m','t','n'], 'descanso')">FDS Descanso</button>
+                            </div>
+                            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                                <button type="button" class="btn-ghost btn-acao" onclick="aplicarLote(['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'], ['m'], 'ocupado')">Manhãs Ocup.</button>
+                                <button type="button" class="btn-ghost btn-acao" onclick="aplicarLote(['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'], ['t'], 'ocupado')">Tardes Ocup.</button>
+                                <button type="button" class="btn-ghost btn-acao" onclick="aplicarLote(['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'], ['n'], 'ocupado')">Noites Ocup.</button>
+                                <button type="button" class="btn-ghost btn-acao" style="color:var(--danger-color)!important;" onclick="aplicarLote(['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'], ['m','t','n'], 'ocupado')">Limpar Semana</button>
+                                <button type="button" class="btn-ghost btn-acao" style="color:var(--danger-color)!important;" onclick="limparTodoRodizio()">Excluir Rodízio</button>
+                            </div>
+                        </div>
+
+                        <div class="semana-grid" id="gridSemanaSetup"></div>
+
+                        <div style="display:flex; gap:12px; margin-top:18px;">
+                            <button type="button" onclick="gerarPlanoSemanaAtiva()" style="flex:2; margin:0;">Recalcular Apenas Esta Semana</button>
+                            <button type="button" class="btn-secondary" onclick="salvarGradeTurnosSemana()" style="flex:1; margin:0;">Salvar Turnos</button>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- ABA 3: REGISTRO DE ESTUDO -->
@@ -1294,7 +1199,7 @@
         <div class="modal-content">
             <form onsubmit="salvarRevisaoModal(event)">
                 <div id="modalBodyContent"></div>
-<div id="boxPegadinhaRevisao" style="margin: 15px 0; background: var(--bg-color); padding: 12px; border-radius: 8px; border: 1px dashed var(--warning-bg);">
+<div id="boxPegadinhaRevisao" style="margin: 15px 0; background: var(--bg-color); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--surface-subtle);">
                     <label class="mt-0" style="color:var(--text-color); font-weight:600;">🧠 Ponto-chave / Pegadinha da questão (Opcional):</label>
                     <input type="text" id="modPegadinhaInput" placeholder="Ex: Na apendicite, TC é padrão-ouro no adulto; USG em gestantes..." style="margin-bottom:0;">
                 </div>
@@ -1417,6 +1322,39 @@
             <div style="display:flex; gap:12px; margin-top:25px;">
                 <button type="button" onclick="confirmarAlocacaoManualTema()" style="flex:1; margin:0;">Alocar no Turno</button>
                 <button type="button" class="btn-excluir" style="flex:1; margin:0;" onclick="fecharModal('modalEscolherTemaKanban')">Cancelar</button>
+            </div>
+        </div>
+    </div>
+<!-- CONTAINER DE NOTIFICAÇÕES TOAST -->
+    <div id="toastContainer"></div>
+
+    <!-- MODAL CICLOS DE CLÍNICA MÉDICA (SUBSTITUI PROMPT) -->
+    <div class="modal" id="modalCiclosCM">
+        <div class="modal-content" style="max-width: 480px;">
+            <h3 class="mt-0">Ciclos de Clínica Médica</h3>
+            <p class="hint">Marque as especialidades que deseja incluir na geração deste rodízio.</p>
+            <div style="display:flex; gap:8px; margin-bottom:8px;">
+                <button type="button" class="btn-secondary btn-acao m-0" onclick="marcarTodosCiclosCM(true)">Marcar Todas</button>
+                <button type="button" class="btn-ghost btn-acao m-0" onclick="marcarTodosCiclosCM(false)">Desmarcar Todas</button>
+            </div>
+            <div id="listaCheckCiclosCM" class="ciclo-check-grid"></div>
+            <div style="display:flex; gap:10px; margin-top:16px;">
+                <button type="button" onclick="confirmarGerarRodizioCM()" style="flex:1; margin:0;">Gerar Rodízio</button>
+                <button type="button" class="btn-secondary" onclick="fecharModal('modalCiclosCM')" style="flex:1; margin:0;">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL ESCOLHER TURNO LIVRE (SUBSTITUI PROMPT DE RESGATE/BUSCA LIVRE) -->
+    <div class="modal" id="modalEscolherSlot">
+        <div class="modal-content" style="max-width: 420px;">
+            <h3 class="mt-0">Escolher Turno na Semana</h3>
+            <p class="hint" id="slotTemaPreview"></p>
+            <label>Turno disponível:</label>
+            <select id="selectSlotDisponivel"></select>
+            <div style="display:flex; gap:10px; margin-top:18px;">
+                <button type="button" onclick="confirmarAlocacaoSlot()" style="flex:1; margin:0;">Alocar Tema</button>
+                <button type="button" class="btn-secondary" onclick="fecharModal('modalEscolherSlot')" style="flex:1; margin:0;">Cancelar</button>
             </div>
         </div>
     </div>
@@ -1547,13 +1485,12 @@
 
             // 2. Contabiliza questões e bônus de simulados (50 XP por simulado feito + 1 XP por questão do simulado)
             let totalSimuladosXp = 0;
-            if (window.listaSimulados && Array.isArray(window.listaSimulados)) {
-                window.listaSimulados.forEach(sim => {
-                    const qtsSim = parseInt(sim.total) || 0;
-                    // 1 XP por questão do simulado + 50 XP de bônus por ter concluído o simulado
-                    totalSimuladosXp += qtsSim + 50;
-                });
-            }
+            if (typeof listaSimulados !== 'undefined' && Array.isArray(listaSimulados)) {
+    listaSimulados.forEach(sim => {
+        const qtsSim = parseInt(sim.total) || 0;
+        totalSimuladosXp += qtsSim + 50;
+    });
+}
 
             // 1 ponto por questão comum + 10 pontos por revisão + XP de simulados
             return (totalQts * 1) + (totalRevs * 10) + totalSimuladosXp;
@@ -1920,45 +1857,57 @@
             });
         }
 
-        function adicionarTemaLivreSemana(macro, esp, tema, peso) {
-            let cg = cronogramaSemanasStore[semanaAtivaId];
-            if(!cg) return alert("Gere o cronograma da semana ativa primeiro!");
+        let pendenciaSlotAlocacao = null;
 
-            let slotsLivres = [];
-            diasSemanaArr.forEach((d, dIdx) => {
-                turnosArr.forEach(t => {
-                    if(cg[d] && cg[d][t] && (cg[d][t].tipo === 'revisao' || cg[d][t].tipo === 'descanso' || cg[d][t].tipo === 'estudo')) {
-                        let labelT = t==='m'?'Manhã':t==='t'?'Tarde':'Noite';
-                        let dt = calcularDataExataRodizio(semanaAtivaId, dIdx);
-                        slotsLivres.push({ d, t, desc: `${d} (${dt}) - ${labelT}` });
-                    }
-                });
-            });
+     function abrirModalAlocarSlot(macro, esp, tema, peso) {
+         let cg = cronogramaSemanasStore[semanaAtivaId];
+         if (!cg) return mostrarToast("Gere o cronograma da semana ativa primeiro.", "warn");
 
-            if(slotsLivres.length === 0) return alert("Não há turnos de revisão, descanso ou estudo livres nesta semana para alocar!");
+         let slotsLivres = [];
+         diasSemanaArr.forEach((d, dIdx) => {
+             turnosArr.forEach(t => {
+                 if (cg[d] && cg[d][t] && ['revisao', 'descanso', 'estudo'].includes(cg[d][t].tipo)) {
+                     let labelT = t === 'm' ? 'Manhã' : t === 't' ? 'Tarde' : 'Noite';
+                     let dt = calcularDataExataRodizio(semanaAtivaId, dIdx);
+                     slotsLivres.push({ d, t, desc: `${d} (${dt}) — ${labelT}` });
+                 }
+             });
+         });
 
-            let msg = `Escolha o turno para alocar o tema:\n` + slotsLivres.map((s, i) => `${i+1}. ${s.desc}`).join('\n');
-            let esc = prompt(msg, "1");
-            if(esc === null) return;
-            let num = parseInt(esc) - 1;
-            if(isNaN(num) || num < 0 || num >= slotsLivres.length) return alert("Opção inválida!");
+         if (!slotsLivres.length) return mostrarToast("Não há turnos livres nesta semana.", "warn");
 
-            let destino = slotsLivres[num];
+         pendenciaSlotAlocacao = { macro, esp, tema, peso };
+         document.getElementById("slotTemaPreview").textContent = `${tema} (P${peso})`;
+         document.getElementById("selectSlotDisponivel").innerHTML = slotsLivres
+             .map(s => `<option value="${s.d}|${s.t}">${s.desc}</option>`)
+             .join('');
+         document.getElementById("modalEscolherSlot").style.display = "flex";
+     }
 
-            // Limpa o tema se ele estiver no backlog ou em outra semana no futuro
-            removerAlocacaoAnterior(tema);
+     function confirmarAlocacaoSlot() {
+         if (!pendenciaSlotAlocacao) return;
+         const [d, t] = document.getElementById("selectSlotDisponivel").value.split('|');
+         let cg = cronogramaSemanasStore[semanaAtivaId];
 
-            cg[destino.d][destino.t] = { tipo: 'teoria', macro: macro, esp: esp, tema: tema, peso: peso };
-            
-            cronogramaSemanasStore[semanaAtivaId] = cg;
-            window.syncToCloud();
-            
-            renderizarKanbanSemanaAtiva();
-            renderizarBuscaLivre();
-            if(document.getElementById('tab-rastreio').classList.contains('active')) renderizarRastreio(); 
-            
-            alert(`Tema adicionado com sucesso na ${destino.d} (${destino.t === 'm' ? 'Manhã' : destino.t === 't' ? 'Tarde' : 'Noite'})!`);
-        }
+         removerAlocacaoAnterior(pendenciaSlotAlocacao.tema);
+         cg[d][t] = { tipo: 'teoria', ...pendenciaSlotAlocacao };
+
+         cronogramaSemanasStore[semanaAtivaId] = cg;
+         window.syncToCloud();
+
+         fecharModal('modalEscolherSlot');
+         renderizarKanbanSemanaAtiva();
+         renderizarBuscaLivre();
+         renderizarBacklogAdiados();
+         if (document.getElementById('tab-rastreio').classList.contains('active')) renderizarRastreio();
+
+         mostrarToast(`Tema alocado em ${d} com sucesso!`, "success");
+         pendenciaSlotAlocacao = null;
+     }
+
+     function adicionarTemaLivreSemana(macro, esp, tema, peso) {
+         abrirModalAlocarSlot(macro, esp, tema, peso);
+     }
 
         // ------------------------------------------------------------------
         // ABA: RASTREIO E AUDITORIA DE TEMAS
@@ -3725,13 +3674,37 @@ let baseDias = (faseDestino <= 1) ? 1 : listaInt[Math.min(faseDestino - 1, 5)];
         }
 
         function gerarTodoORodizio() {
-            if(cronogramaInternato.length === 0) return alert("Cadastre pelo menos um rodízio!");
+            if (cronogramaInternato.length === 0) return mostrarToast("Cadastre pelo menos um rodízio!", "warn");
             salvarGradeTurnosSemanaSilencioso();
-            
             let rIdx = parseInt(semanaAtivaId.split('_')[1]);
             let rod = cronogramaInternato[rIdx];
-            if(!rod) return alert("Selecione um rodízio válido!");
+            if (!rod) return mostrarToast("Selecione um rodízio válido!", "warn");
 
+            if (rod.macro === "Clínica Médica" && taxonomia["Clínica Médica"]) {
+                const esps = Object.keys(taxonomia["Clínica Médica"]);
+                document.getElementById("listaCheckCiclosCM").innerHTML = esps.map(e =>
+                    `<label class="ciclo-check-item"><input type="checkbox" class="chk-ciclo-cm" value="${e}" checked> <span>${e}</span></label>`
+                ).join('');
+                document.getElementById("modalCiclosCM").style.display = "flex";
+                return;
+            }
+            executarGeracaoRodizio(rIdx, rod, null);
+        }
+
+        function marcarTodosCiclosCM(estado) {
+            document.querySelectorAll('.chk-ciclo-cm').forEach(c => c.checked = estado);
+        }
+
+        function confirmarGerarRodizioCM() {
+            let selecionadas = [...document.querySelectorAll('.chk-ciclo-cm:checked')].map(c => c.value);
+            if (!selecionadas.length) return mostrarToast("Marque ao menos uma especialidade.", "warn");
+            let rIdx = parseInt(semanaAtivaId.split('_')[1]);
+            let rod = cronogramaInternato[rIdx];
+            fecharModal('modalCiclosCM');
+            executarGeracaoRodizio(rIdx, rod, selecionadas);
+        }
+
+        function executarGeracaoRodizio(rIdx, rod, espPermitidas) {
             let dIni = new Date(rod.inicio + 'T00:00:00');
             let dFim = new Date(rod.fim + 'T00:00:00');
             let diffDias = Math.ceil((dFim - dIni) / (1000 * 60 * 60 * 24)) + 1;
@@ -3739,75 +3712,43 @@ let baseDias = (faseDestino <= 1) ? 1 : listaInt[Math.min(faseDestino - 1, 5)];
             let misto = document.getElementById("chkMisto").checked;
 
             let pool = [];
-            backlogAdiados.forEach(item => { if(item.macro === rod.macro) pool.push(item); });
+            backlogAdiados.forEach(item => { if (item.macro === rod.macro) pool.push(item); });
             backlogAdiados = backlogAdiados.filter(item => item.macro !== rod.macro);
 
-            if(taxonomia[rod.macro]) {
-                let espPermitidas = null;
-
-                // SE FOR CLÍNICA MÉDICA, PERMITE ESCOLHER OS SUB-CICLOS / SUBCATEGORIAS
-                if (rod.macro === "Clínica Médica") {
-                    const espsDisponiveis = Object.keys(taxonomia["Clínica Médica"]);
-                    let mensagemPrompt = "🏥 CICLOS DE CLÍNICA MÉDICA\n\nEste rodízio é dividido em ciclos. Digite os números correspondentes às especialidades que deseja incluir nesta geração (separados por vírgula):\n\n";
-                    
-                    espsDisponiveis.forEach((espName, idx) => {
-                        mensagemPrompt += `${idx + 1}. ${espName}\n`;
-                    });
-                    mensagemPrompt += `\nDeixe em branco ou digite "todas" para incluir a Clínica Médica inteira.`;
-
-                    let escolhaUsuario = prompt(mensagemPrompt, "todas");
-                    
-                    if (escolhaUsuario && escolhaUsuario.toLowerCase() !== "todas" && escolhaUsuario.trim() !== "") {
-                        let indices = escolhaUsuario.split(',').map(s => parseInt(s.trim()) - 1);
-                        espPermitidas = [];
-                        indices.forEach(idx => {
-                            if (espsDisponiveis[idx]) espPermitidas.push(espsDisponiveis[idx]);
-                        });
-                        if (espPermitidas.length === 0) {
-                            alert("Nenhuma especialidade válida selecionada. O sistema incluirá todas por segurança.");
-                            espPermitidas = null;
-                        }
-                    }
-                }
-
-                // Popula o pool respeitando o filtro de especialidades (se houver)
+            if (taxonomia[rod.macro]) {
                 let espAlvo = espPermitidas || Object.keys(taxonomia[rod.macro]);
                 espAlvo.forEach(esp => {
                     if (taxonomia[rod.macro][esp]) {
                         taxonomia[rod.macro][esp].forEach(sub => {
                             let jaFez = listaEstudos.some(e => e.tema === sub.n);
                             let jaNoPool = pool.some(p => p.tema === sub.n);
-                            if(!jaFez && !jaNoPool) pool.push({ macro: rod.macro, esp: esp, tema: sub.n, peso: sub.p });
+                            if (!jaFez && !jaNoPool) pool.push({ macro: rod.macro, esp: esp, tema: sub.n, peso: sub.p });
                         });
                     }
                 });
             }
+            pool.sort((a, b) => b.peso - a.peso);
 
-            pool.sort((a,b) => b.peso - a.peso);
-
-            for(let s=1; s<=numSemanasRod; s++) {
+            for (let s = 1; s <= numSemanasRod; s++) {
                 let sId = `rod_${rIdx}_sem_${s}`;
-                let grade = gradesSemanaisStore[sId] || { 
-                    Seg:{m:'ocupado',t:'ocupado',n:'estudo'}, Ter:{m:'ocupado',t:'ocupado',n:'estudo'}, 
-                    Qua:{m:'ocupado',t:'ocupado',n:'estudo'}, Qui:{m:'ocupado',t:'ocupado',n:'estudo'}, 
-                    Sex:{m:'ocupado',t:'ocupado',n:'estudo'}, Sáb:{m:'estudo',t:'estudo',n:'descanso'}, 
-                    Dom:{m:'descanso',t:'descanso',n:'descanso'} 
+                let grade = gradesSemanaisStore[sId] || {
+                    Seg: { m: 'ocupado', t: 'ocupado', n: 'estudo' }, Ter: { m: 'ocupado', t: 'ocupado', n: 'estudo' },
+                    Qua: { m: 'ocupado', t: 'ocupado', n: 'estudo' }, Qui: { m: 'ocupado', t: 'ocupado', n: 'estudo' },
+                    Sex: { m: 'ocupado', t: 'ocupado', n: 'estudo' }, Sáb: { m: 'estudo', t: 'estudo', n: 'descanso' },
+                    Dom: { m: 'descanso', t: 'descanso', n: 'descanso' }
                 };
                 gradesSemanaisStore[sId] = grade;
-
                 let slotsEstudo = [];
-                diasSemanaArr.forEach(d => { turnosArr.forEach(t => { if(grade[d] && grade[d][t] === 'estudo') slotsEstudo.push({d, t}); }); });
-
+                diasSemanaArr.forEach(d => turnosArr.forEach(t => { if (grade[d] && grade[d][t] === 'estudo') slotsEstudo.push({ d, t }); }));
                 let qTeoria = misto ? Math.round(slotsEstudo.length * 0.65) : slotsEstudo.length;
                 let cronoSemanal = {};
                 diasSemanaArr.forEach(d => {
                     cronoSemanal[d] = {};
                     turnosArr.forEach(t => cronoSemanal[d][t] = { tipo: grade[d] ? grade[d][t] : 'ocupado' });
                 });
-
                 let count = 0;
                 slotsEstudo.forEach(slot => {
-                    if(count < qTeoria && pool.length > 0) {
+                    if (count < qTeoria && pool.length > 0) {
                         let t = pool.shift();
                         cronoSemanal[slot.d][slot.t] = { tipo: 'teoria', macro: t.macro, esp: t.esp, tema: t.tema, peso: t.peso };
                         count++;
@@ -3815,26 +3756,17 @@ let baseDias = (faseDestino <= 1) ? 1 : listaInt[Math.min(faseDestino - 1, 5)];
                         cronoSemanal[slot.d][slot.t] = { tipo: 'revisao' };
                     }
                 });
-
                 cronogramaSemanasStore[sId] = cronoSemanal;
             }
-
-            if(pool.length > 0) {
-                pool.forEach(sobra => {
-                    backlogAdiados.push({
-                        macro: sobra.macro, esp: sobra.esp, tema: sobra.tema, peso: sobra.peso,
-                        dataAdiado: "Fim do Rodízio",
-                        dataRealAdiado: new Date().toISOString(),
-                        motivo: "Sem espaço no rodízio completo"
-                    });
-                });
-            }
+            pool.forEach(sobra => backlogAdiados.push({
+                macro: sobra.macro, esp: sobra.esp, tema: sobra.tema, peso: sobra.peso,
+                dataAdiado: "Fim do Rodízio", dataRealAdiado: new Date().toISOString(), motivo: "Sem espaço no rodízio completo"
+            }));
 
             window.syncToCloud();
             renderizarKanbanSemanaAtiva();
             renderizarBacklogAdiados();
-            
-            alert(`Cronograma do rodízio de ${rod.macro} (${numSemanasRod} semanas) gerado com sucesso com base no ciclo selecionado!`);
+            mostrarToast(`Rodízio de ${rod.macro} (${numSemanasRod} sem.) gerado!`, "success");
         }
 
         function gerarPlanoSemanaAtiva() {
@@ -4054,76 +3986,84 @@ function trocarTemaDoTurno(dia, turno) {
             slotManualAlvo = null;
         }
 
+        function mudarSubAbaCronograma(subId, btn) {
+            document.querySelectorAll('.plan-subview').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('#navCronogramaSub .sub-aba-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(subId).classList.add('active');
+            if (btn) btn.classList.add('active');
+            if (subId === 'sub-mapa') renderizarMapaRodizio();
+        }
+
+        function toggleKanbanMenu(e, menuId) {
+            e.stopPropagation();
+            document.querySelectorAll('.kanban-dropdown.open').forEach(m => {
+                if (m.id !== menuId) m.classList.remove('open');
+            });
+            const el = document.getElementById(menuId);
+            if (el) el.classList.toggle('open');
+        }
+        document.addEventListener('click', () => {
+            document.querySelectorAll('.kanban-dropdown.open').forEach(m => m.classList.remove('open'));
+        });
+
         function renderizarKanbanSemanaAtiva() {
             let cg = cronogramaSemanasStore[semanaAtivaId];
             let res = document.getElementById("resultadoInternato");
-            
-            if(!cg) { res.style.display = "none"; return; }
+            if (!cg) { res.style.display = "none"; return; }
 
-            let html = `<div style="display:grid; grid-template-columns: repeat(7, 1fr); gap:10px; margin-top:10px;" class="semana-grid">`;
-            
+            let html = `<div class="semana-grid">`;
             diasSemanaArr.forEach((d, idx) => {
                 let dtExata = calcularDataExataRodizio(semanaAtivaId, idx);
-                html += `<div style="background:var(--card-bg); border:1px solid var(--border-color); border-radius:10px; padding:8px; box-shadow:var(--shadow-btn);" class="dia-col">
-                            <h4 style="text-align:center; margin-top:0; border-bottom:1px solid var(--border-color); padding-bottom:8px; font-size:13px;">${d}<br><small style="font-size:10px; opacity:0.7; font-weight:normal;">${dtExata}</small></h4>`;
+                html += `<div class="dia-col"><h4>${d} <span class="mono-num" style="font-size:10.5px; color:var(--muted); font-weight:500;">${dtExata}</span></h4>`;
                 turnosArr.forEach(t => {
-                    let b = cg[d] && cg[d][t] ? cg[d][t] : {tipo: 'ocupado'};
-                    let label = t==='m'?'Manhã':t==='t'?'Tarde':'Noite';
-                    let bg, cont;
+                    let b = cg[d] && cg[d][t] ? cg[d][t] : { tipo: 'ocupado' };
+                    let label = t === 'm' ? 'Manhã' : t === 't' ? 'Tarde' : 'Noite';
+                    let menuId = `kmenu_${d}_${t}`;
 
-                    if(b.tipo === 'ocupado') {
-                        bg = 'var(--bg-color)'; cont = `<div style="font-size:11px; color:var(--muted); text-align:center; padding:10px 0;">🏥 Ocupado</div>`;
-                    } else if(b.tipo === 'descanso') {
-                        bg = '#16a34a'; cont = `<div style="font-size:11px; color:white; text-align:center; padding:10px 0;">🌿 Descanso</div>`;
-                    } else if(b.tipo === 'estudo') {
-                        bg = 'rgba(52, 152, 219, 0.08)'; 
-                        cont = `<div style="font-size:11px; color:var(--accent-color); text-align:center; padding:6px 0; border: 1px dashed var(--accent-color); border-radius:6px;">
-                                    <b>📘 Estudo Livre</b><br>
-                                    <button style="padding:4px 6px; font-size:10px; margin-top:5px; border-radius:4px; box-shadow:none; width:auto; display:inline-block;" onclick="abrirSelecaoManualTema('${d}', '${t}')">➕ Escolher Tema</button>
-                                </div>`;
-                    } else if(b.tipo === 'teoria') {
-                        bg = getMacroColor(b.macro);
+                    if (b.tipo === 'ocupado') {
+                        html += `<div class="kanban-slot ocupado"><div class="kanban-slot-top"><span>${label}</span></div><div style="font-size:11.5px; color:var(--muted); text-align:center; padding:8px 0;">Ocupado</div></div>`;
+                    } else if (b.tipo === 'descanso') {
+                        html += `<div class="kanban-slot descanso"><div class="kanban-slot-top"><span>${label}</span></div><div style="font-size:12px; color:var(--ok-color); font-weight:600; text-align:center; padding:8px 0;">Descanso</div></div>`;
+                    } else if (b.tipo === 'estudo') {
+                        html += `<div class="kanban-slot estudo"><div class="kanban-slot-top"><span>${label}</span></div>
+                            <div style="text-align:center; padding:4px 0;">
+                                <div style="font-size:11.5px; font-weight:600; color:var(--primary-color); margin-bottom:6px;">Estudo Livre</div>
+                                <button type="button" class="btn-secondary btn-acao m-0" style="font-size:11px; padding:4px 8px;" onclick="abrirSelecaoManualTema('${d}', '${t}')">+ Escolher Tema</button>
+                            </div></div>`;
+                    } else if (b.tipo === 'teoria') {
+                        let corMacro = getMacroColor(b.macro);
                         let jaEstudou = listaEstudos.some(e => e.tema === b.tema);
                         let pesoVal = b.peso || 1;
-                        let espLabel = b.esp ? `<div style="font-size:9.5px; opacity:0.9; font-weight:500;">${b.esp}</div>` : '';
-                        
-                        if (jaEstudou) {
-                            cont = `<div style="color:white; text-shadow: 0px 1px 2px rgba(0,0,0,0.45); text-align:left;">
-                                      <div style="display:flex; justify-content:space-between; align-items:center; gap:4px; margin-bottom:3px;">
-                                          <b style="font-size:10px;">✅ Estudado</b>
-                                          <span class="kanban-peso-badge">⭐ P${pesoVal}</span>
-                                      </div>
-                                      ${espLabel}
-                                      <div class="kanban-tema-nome">${b.tema}</div>
-                                    </div>`;
-                        } else {
-                            cont = `<div style="color:white; text-shadow: 0px 1px 2px rgba(0,0,0,0.45); text-align:left;">
-                                      <div style="display:flex; justify-content:space-between; align-items:center; gap:4px; margin-bottom:3px;">
-                                          <b style="font-size:10px;">📘 Teoria</b>
-                                          <span class="kanban-peso-badge">⭐ P${pesoVal}</span>
-                                      </div>
-                                      ${espLabel}
-                                      <div class="kanban-tema-nome">${b.tema}</div>
-                                      <div style="display:flex; gap:3px; margin-top:8px;">
-                                          <button title="Estudar este tema" style="padding:5px 4px; font-size:9.5px; margin:0; border-radius:4px; box-shadow:none; text-shadow:none; background:rgba(0,0,0,0.45); color:#fff; border:1px solid rgba(255,255,255,0.25); flex:1;" onclick="iniciarTeoriaKanban('${b.macro}', '${b.esp}', '${b.tema}')">✔️ Estudar</button>
-                                          <button title="Trocar ou desocupar este turno" style="padding:5px 4px; font-size:9.5px; margin:0; border-radius:4px; box-shadow:none; background:rgba(255,255,255,0.18); color:#fff; border:1px solid rgba(255,255,255,0.3); text-shadow:none; flex:1;" onclick="trocarTemaDoTurno('${d}', '${t}')">🔄 Trocar</button>
-                                          <button title="Adiar para a fila de atrasados" style="padding:5px 4px; font-size:9.5px; margin:0; border-radius:4px; box-shadow:none; background:#f59e0b; color:#1a1200; font-weight:700; text-shadow:none; flex:1;" onclick="adiarTemaParaBacklog('${d}', '${t}', '${dtExata}')">📦 Adiar</button>
-                                      </div>
-                                    </div>`;
-                        }
-                    } else if(b.tipo === 'revisao') {
-                        bg = '#d97706';
-                        cont = `<div style="font-size:11px; color:white; text-align:center; padding:10px 0;"><b>🔁 FSRS</b><br>Revisões</div>`;
-                    }
+                        let espLabel = b.esp ? `<div style="font-size:10.5px; color:var(--muted);">${esc(b.esp)}</div>` : '';
 
-                    html += `<div style="background:${bg}; padding:8px; border-radius:6px; margin-bottom:8px; min-height:68px; display:flex; flex-direction:column; justify-content:center;">
-                                <div style="font-size:9px; opacity:0.85; margin-bottom:4px; text-transform:uppercase; font-weight:bold; color:${(b.tipo==='ocupado' || b.tipo==='estudo') ?'var(--muted)':'white'};">${label}</div>
-                                ${cont}
-                             </div>`;
+                        html += `<div class="kanban-slot teoria" style="--macro:${corMacro}">
+                            <div class="kanban-slot-top">
+                                <span>${label}</span>
+                                <div style="display:flex; align-items:center; gap:4px;">
+                                    <span class="peso-tag p${pesoVal}" style="margin:0;">P${pesoVal}</span>
+                                    ${jaEstudou ? '' : `<div class="kanban-menu-wrap">
+                                        <button type="button" class="kanban-dots-btn" aria-label="Opções" onclick="toggleKanbanMenu(event, '${menuId}')">⋮</button>
+                                        <div class="kanban-dropdown" id="${menuId}">
+                                            <button type="button" onclick="trocarTemaDoTurno('${d}', '${t}')">Trocar tema</button>
+                                            <button type="button" onclick="adiarTemaParaBacklog('${d}', '${t}', '${dtExata}')">Adiar estudo</button>
+                                        </div>
+                                    </div>`}
+                                </div>
+                            </div>
+                            ${espLabel}
+                            <div class="kanban-tema-nome">${esc(b.tema)}</div>
+                            ${jaEstudou
+                                ? `<span class="tag tag-ok" style="font-size:10.5px;">Estudado</span>`
+                                : `<button type="button" class="btn-acao m-0" style="width:100%; padding:5px 8px; font-size:11.5px;" onclick="iniciarTeoriaKanban('${b.macro}', '${b.esp}', '${b.tema}')">Estudar</button>`
+                            }
+                        </div>`;
+                    } else if (b.tipo === 'revisao') {
+                        html += `<div class="kanban-slot revisao"><div class="kanban-slot-top"><span>${label}</span></div><div style="font-size:12px; font-weight:600; color:var(--warning-bg); text-align:center; padding:8px 0;">Revisões FSRS</div></div>`;
+                    }
                 });
                 html += `</div>`;
             });
-            res.innerHTML = html + "</div>";
+            res.innerHTML = html + `</div>`;
             res.style.display = "block";
             renderizarMapaRodizio();
         }
@@ -4195,48 +4135,12 @@ function trocarTemaDoTurno(dia, turno) {
             renderizarBacklogAdiados();
             alert("Tema movido para o Cronograma de Revisões (Questões) com sucesso!");
         }
+function abrirModalResgate(idx) {
+         let item = backlogAdiados[idx];
+         if (item) abrirModalAlocarSlot(item.macro, item.esp, item.tema, item.peso);
+     }
 
-        function abrirModalResgate(idx) {
-            let item = backlogAdiados[idx];
-            let cg = cronogramaSemanasStore[semanaAtivaId];
-            if(!cg) return alert("Gere o cronograma da semana ativa primeiro!");
-
-            let slotsLivres = [];
-            diasSemanaArr.forEach((d, dIdx) => {
-                turnosArr.forEach(t => {
-                    if(cg[d] && cg[d][t] && (cg[d][t].tipo === 'revisao' || cg[d][t].tipo === 'descanso' || cg[d][t].tipo === 'estudo')) {
-                        let labelT = t==='m'?'Manhã':t==='t'?'Tarde':'Noite';
-                        let dt = calcularDataExataRodizio(semanaAtivaId, dIdx);
-                        slotsLivres.push({ d, t, desc: `${d} (${dt}) - ${labelT}` });
-                    }
-                });
-            });
-
-            if(slotsLivres.length === 0) return alert("Não há turnos de revisão, descanso ou estudo livres nesta semana para resgate!");
-
-            let msg = `Escolha o turno para encaixar:\n` + slotsLivres.map((s, i) => `${i+1}. ${s.desc}`).join('\n');
-            let esc = prompt(msg, "1");
-            if(esc === null) return;
-            let num = parseInt(esc) - 1;
-            if(isNaN(num) || num < 0 || num >= slotsLivres.length) return alert("Opção inválida!");
-
-            let destino = slotsLivres[num];
-
-            removerAlocacaoAnterior(item.tema);
-
-            cg[destino.d][destino.t] = { tipo: 'teoria', macro: item.macro, esp: item.esp, tema: item.tema, peso: item.peso };
-            
-            cronogramaSemanasStore[semanaAtivaId] = cg;
-            window.syncToCloud();
-
-            renderizarKanbanSemanaAtiva();
-            renderizarBacklogAdiados();
-            if(document.getElementById('tab-rastreio').classList.contains('active')) renderizarRastreio();
-
-            alert("Tema resgatado com sucesso para o turno escolhido!");
-        }
-
-        function iniciarTeoriaKanban(macro, esp, tema) {
+                function iniciarTeoriaKanban(macro, esp, tema) {
             mudarAba('tab-estudo', document.querySelectorAll('.sidebar-btn')[3]);
             document.getElementById('reg_macro').value = macro;
             popularEspecialidades('reg_macro', 'reg_esp', 'reg_subtema', false);
@@ -4549,6 +4453,21 @@ function trocarTemaDoTurno(dia, turno) {
         function esc(s) { return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
         function diasEntre(a, b) { return Math.floor((new Date(b + 'T00:00:00') - new Date(a + 'T00:00:00')) / 864e5); }
         function cssVar(n) { return getComputedStyle(document.body).getPropertyValue(n).trim(); }
+function cssVar(n) { return getComputedStyle(document.body).getPropertyValue(n).trim(); }
+
+function mostrarToast(mensagem, tipo = 'info') {
+    const container = document.getElementById('toastContainer');
+    if (!container) return;
+    const toast = document.createElement('div');
+    toast.className = `toast-item ${tipo}`;
+    toast.textContent = mensagem;
+    container.appendChild(toast);
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transition = 'opacity 0.25s ease';
+        setTimeout(() => toast.remove(), 250);
+    }, 3400);
+}
         function irParaAba(id) { const b = [...document.querySelectorAll('.sidebar-btn')].find(x => (x.getAttribute('onclick') || '').includes("'" + id + "'")); mudarAba(id, b); }
         function temaChart() { if (!window.Chart) return; Chart.defaults.color = cssVar('--muted'); Chart.defaults.borderColor = cssVar('--border-color'); Chart.defaults.font.family = cssVar('--font-body'); }
 
@@ -4657,86 +4576,30 @@ function trocarTemaDoTurno(dia, turno) {
         }
 
         // ==================================================================
-        // ÍCONES SVG (estilo Lucide) — substitui emojis em todo o DOM, inclusive conteúdo dinâmico
+        // ==================================================================
+        // HELPER DIRETO DE ÍCONES SVG (SEM MUTATION OBSERVER)
         // ==================================================================
         const ICONES = {
-            'home': '<path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
-            'calendar': '<path d="M8 2v4M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/>',
-            'compass': '<circle cx="12" cy="12" r="10"/><path d="m16.24 7.76-2.12 6.36-6.36 2.12 2.12-6.36z"/>',
-            'pen': '<path d="M12 20h9"/><path d="M16.376 3.622a1 1 0 0 1 3.002 3.002L7.368 18.635a2 2 0 0 1-.855.506l-2.872.838a.5.5 0 0 1-.62-.62l.838-2.872a2 2 0 0 1 .506-.854z"/>',
-            'chart': '<path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M18 17V9M13 17V5M8 17v-3"/>',
-            'gauge': '<path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/>',
-            'book': '<path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/>',
-            'file': '<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z"/><path d="M14 2v4a2 2 0 0 0 2 2h4M10 9H8M16 13H8M16 17H8"/>',
-            'sliders': '<path d="M10 5H3M12 19H3M14 3v4M16 17v4M21 12h-9M21 19h-5M21 5h-3M8 10v4M8 12H3"/>',
-            'shield': '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>',
-            'target': '<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>',
-            'flame': '<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>',
-            'zap': '<path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/>',
-            'play': '<polygon points="6 3 20 12 6 21 6 3"/>',
-            'pause': '<rect x="14" y="4" width="4" height="16" rx="1"/><rect x="6" y="4" width="4" height="16" rx="1"/>',
-            'rotate': '<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>',
-            'moon': '<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/>',
-            'alert': '<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4M12 17h.01"/>',
             'check': '<path d="M21.801 10A10 10 0 1 1 17 3.335"/><path d="m9 11 3 3L22 4"/>',
-            'star': '<path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"/>',
-            'pin': '<path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/>',
-            'package': '<path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"/><path d="M12 22V12M3.29 7 12 12l8.71-5"/>',
-            'hourglass': '<path d="M5 22h14M5 2h14M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"/>',
-            'inbox': '<path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/>',
-            'sparkles': '<path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4M22 5h-4M4 17v2M5 18H3"/>',
-            'save': '<path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7M7 3v4a1 1 0 0 0 1 1h7"/>',
-            'download': '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>',
-            'trash': '<path d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>',
-            'search': '<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
-            'menu': '<path d="M4 6h16M4 12h16M4 18h16"/>', 'plus': '<path d="M5 12h14M12 5v14"/>', 'minus': '<path d="M5 12h14"/>',
-            'eye': '<path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/>',
-            'battery': '<rect x="2" y="7" width="16" height="10" rx="2"/><path d="M22 11v2M6 11v2M10 11v2M14 11v2"/>',
-            'battery-low': '<rect x="2" y="7" width="16" height="10" rx="2"/><path d="M22 11v2M6 11v2"/>',
-            'leaf': '<path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>',
-            'globe': '<circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20M2 12h20"/>',
-            'heart': '<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7z"/><path d="M3.22 12H9.5l.5-1 2 4.5 2-7 1.5 3.5h5.27"/>',
-            'activity': '<path d="M22 12h-4l-3 9L9 3l-3 9H2"/>',
-            'dot-red': '<circle cx="12" cy="12" r="6" fill="currentColor" stroke="none"/>',
-            'dot-green': '<circle cx="12" cy="12" r="6" fill="currentColor" stroke="none"/>',
-            'dot-gray': '<circle cx="12" cy="12" r="6" fill="currentColor" stroke="none"/>'
+            'alert': '<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4M12 17h.01"/>',
+            'calendar': '<path d="M8 2v4M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/>'
         };
-        const EMOJI_ICONE = {
-            '🧠⚕': 'activity', '🧠': 'activity', '🩺': 'heart', '🏥': 'heart', '🏠': 'home', '📅': 'calendar', '🗓': 'calendar', '🧭': 'compass', '🗺': 'compass',
-            '✍': 'pen', '📊': 'chart', '🤓': 'gauge', '📚': 'book', '📘': 'book', '📖': 'book', '📋': 'file', '📝': 'file', '📂': 'file', '⚙': 'sliders', '🎨': 'sliders',
-            '🛡': 'shield', '🎯': 'target', '🔥': 'flame', '⚡': 'zap', '🚀': 'zap', '▶': 'play', '⏸': 'pause', '🔄': 'rotate', '🔁': 'rotate', '🌓': 'moon', '⚠': 'alert',
-            '✅': 'check', '✔': 'check', '🔴': 'dot-red', '🟢': 'dot-green', '⚪': 'dot-gray', '⭐': 'star', '🥇': 'star', '🥈': 'star', '🥉': 'star', '☰': 'menu', '🏆': 'star', '📌': 'pin',
-            '📦': 'package', '⏳': 'hourglass', '📭': 'inbox', '🎉': 'sparkles', '✨': 'sparkles', '🔮': 'sparkles', '💾': 'save', '📥': 'download', '🗑': 'trash',
-            '🔎': 'search', '🔍': 'search', '➕': 'plus', '➖': 'minus', '👁': 'eye', '🔋': 'battery', '🪫': 'battery-low', '🌿': 'leaf', '🌐': 'globe'
-        };
-        const RX_EMOJI = new RegExp('(' + Object.keys(EMOJI_ICONE).sort((a, b) => b.length - a.length).map(k => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|') + ')\uFE0F?\\s*', 'g');
-        function iconeSvg(n) { return '<svg class="ic ic-' + n + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + ICONES[n] + '</svg>'; }
-        function iconizar(raiz) {
-            if (!raiz) return;
-            const nos = [];
-            if (raiz.nodeType === 3) nos.push(raiz);
-            else if (raiz.nodeType === 1 && !/^(SCRIPT|STYLE|TEXTAREA|SVG|CANVAS)$/i.test(raiz.tagName)) {
-                const w = document.createTreeWalker(raiz, NodeFilter.SHOW_TEXT);
-                for (let n = w.nextNode(); n; n = w.nextNode()) nos.push(n);
-            }
-            nos.forEach(n => {
-                RX_EMOJI.lastIndex = 0; if (!RX_EMOJI.test(n.nodeValue)) return;
-                const pai = n.parentNode; if (!pai || /^(SCRIPT|STYLE|TEXTAREA|TITLE)$/i.test(pai.nodeName)) return;
-                RX_EMOJI.lastIndex = 0;
-                if (/^(OPTION|OPTGROUP)$/i.test(pai.nodeName)) { n.nodeValue = n.nodeValue.replace(RX_EMOJI, ''); return; }
-                const t = document.createElement('template');
-                t.innerHTML = esc(n.nodeValue).replace(RX_EMOJI, (m, k) => iconeSvg(EMOJI_ICONE[k]));
-                pai.replaceChild(t.content, n);
-            });
+        function iconeSvg(n) {
+            return ICONES[n] ? `<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONES[n]}</svg>` : '';
         }
-        const obsIcones = new MutationObserver(muts => {
-            muts.forEach(m => { m.addedNodes.forEach(n => { if (n.nodeType === 1 || n.nodeType === 3) iconizar(n); }); if (m.type === 'characterData') iconizar(m.target); });
-            obsIcones.takeRecords();
-        });
-        document.querySelectorAll('[placeholder]').forEach(e => { RX_EMOJI.lastIndex = 0; e.placeholder = e.placeholder.replace(RX_EMOJI, ''); });
-        iconizar(document.body);
-        obsIcones.observe(document.body, { childList: true, subtree: true, characterData: true });
 
+        function toggleSidebarCollapse() {
+            const sidebar = document.getElementById("appSidebar");
+            sidebar.classList.toggle("collapsed");
+            const btn = sidebar.querySelector(".btn-toggle-sidebar");
+            if (sidebar.classList.contains("collapsed")) {
+                btn.innerHTML = '<span>▶</span>';
+                btn.title = "Expandir Menu";
+            } else {
+                btn.innerHTML = '<span>◀</span> <span class="span-texto">Recolher Menu</span>';
+                btn.title = "Recolher / Expandir Menu";
+            }
+        }
 function toggleSidebarCollapse() {
             const sidebar = document.getElementById("appSidebar");
             sidebar.classList.toggle("collapsed");
